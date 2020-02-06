@@ -1,6 +1,6 @@
 {
-    "name": "tr33m4n/codeception-module-percy-io",
-    "description": "https://percy.io module for Codeception",
+    "name": "tr33m4n/codeception-module-percy",
+    "description": "Percy https://percy.io module for Codeception",
     "license": "MIT",
     "authors": [
         {
