@@ -16,9 +16,11 @@ class Percy extends Module
     /**
      * @var array
      */
-    private $config = [
+    protected $config = [
         'module' => 'WebDriver',
         'agentEndpoint' => 'http://localhost:5338',
+        'agentJsPath' => 'percy-agent.js',
+        'agentPostPath' => 'percy/snapshot',
         'agentConfig' => [
             'handleAgentCommunication' => false
         ]
@@ -44,7 +46,7 @@ class Percy extends Module
     public function _before(TestInterface $test) : void
     {
         $this->webDriver = $this->getModule($this->config['module']);
-        $this->percyAgentJs = Client::fromUrl($this->buildUrl('percy-agent.js'))->get();
+        $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->config['agentJsPath']))->get();
     }
 
     /**
@@ -125,7 +127,7 @@ class Percy extends Module
             $payload['widths'] = $widths;
         }
 
-        Client::fromUrl($this->buildUrl('percy/snapshot'))->post($payload);
+        Client::fromUrl($this->buildUrl($this->config['agentPostPath']))->post($payload);
     }
 
     /**
