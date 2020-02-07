@@ -48,14 +48,7 @@ final class Client implements ClientInterface
         curl_setopt($this->resource, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->resource, CURLOPT_FAILONERROR, true);
 
-        $output = curl_exec($this->resource);
-        if (curl_errno($this->resource)) {
-            throw new ClientException(curl_error($this->resource));
-        }
-
-        curl_close($this->resource);
-
-        return $output;
+        return $this->send();
     }
 
     /**
@@ -78,6 +71,17 @@ final class Client implements ClientInterface
             'Content-Length: ' . strlen($payload)
         ]);
 
+        return $this->send();
+    }
+
+    /**
+     * Send request
+     *
+     * @throws \Codeception\Module\Percy\Exception\ClientException
+     * @return string
+     */
+    private function send() : string
+    {
         $output = curl_exec($this->resource);
         if (curl_errno($this->resource)) {
             throw new ClientException(curl_error($this->resource));
