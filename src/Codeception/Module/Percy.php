@@ -5,6 +5,7 @@ namespace Codeception\Module;
 use Codeception\Module;
 use Codeception\TestInterface;
 use Codeception\Module\Percy\Exchange\Client;
+use Exception;
 
 /**
  * Class Percy
@@ -57,7 +58,6 @@ class Percy extends Module
      * @param string|null $percyCss
      * @param bool        $enableJavaScript
      * @param array|null  $widths
-     * @author Daniel Doyle <dd@amp.co>
      */
     public function wantToPostAPercySnapshot(
         string $name,
@@ -83,7 +83,7 @@ class Percy extends Module
                 $enableJavaScript,
                 $widths
             );
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->debug($exception->getMessage());
         }
     }
@@ -99,7 +99,6 @@ class Percy extends Module
      * @param string|null $percyCss
      * @param bool        $enableJavaScript
      * @param array|null  $widths
-     * @author Daniel Doyle <dd@amp.co>
      */
     private function postSnapshot(
         string $domSnapshot,
@@ -131,7 +130,6 @@ class Percy extends Module
      *
      * @param string|null $path
      * @return string
-     * @author Daniel Doyle <dd@amp.co>
      */
     private function buildUrl(?string $path = null) : string
     {

@@ -31,7 +31,6 @@ final class Client implements ClientInterface
      *
      * @param string $url
      * @return \Codeception\Module\Percy\Exchange\ClientInterface
-     * @author Daniel Doyle <dd@amp.co>
      */
     public static function fromUrl(string $url) : ClientInterface
     {
@@ -43,7 +42,6 @@ final class Client implements ClientInterface
      *
      * @throws \Codeception\Module\Percy\Exception\ClientException
      * @return string
-     * @author Daniel Doyle <dd@amp.co>
      */
     public function get() : string
     {
@@ -66,7 +64,6 @@ final class Client implements ClientInterface
      * @throws \Codeception\Module\Percy\Exception\ClientException
      * @param array $payload
      * @return string
-     * @author Daniel Doyle <dd@amp.co>
      */
     public function post(array $payload) : string
     {
