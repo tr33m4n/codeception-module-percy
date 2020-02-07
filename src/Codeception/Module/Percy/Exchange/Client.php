@@ -55,13 +55,11 @@ final class Client implements ClientInterface
      * @inheritDoc
      *
      * @throws \Codeception\Module\Percy\Exception\ClientException
-     * @param array $payload
+     * @param string $payload
      * @return string
      */
-    public function post(array $payload) : string
+    public function post(string $payload) : string
     {
-        $payload = json_encode($payload);
-
         curl_setopt($this->resource, CURLOPT_POST, true);
         curl_setopt($this->resource, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($this->resource, CURLOPT_RETURNTRANSFER, true);

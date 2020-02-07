@@ -122,7 +122,7 @@ class Percy extends Module
             $payload['widths'] = $widths;
         }
 
-        Client::fromUrl($this->buildUrl($this->config['agentPostPath']))->post($payload);
+        Client::fromUrl($this->buildUrl($this->config['agentPostPath']))->post(json_encode($payload));
     }
 
     /**

@@ -29,8 +29,8 @@ interface ClientInterface
      * Post
      *
      * @throws \Codeception\Module\Percy\Exception\ClientException
-     * @param array $payload
+     * @param string $payload
      * @return string
      */
-    public function post(array $payload) : string;
+    public function post(string $payload) : string;
 }
