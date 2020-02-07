@@ -19,6 +19,10 @@ class Percy extends Module
      */
     protected $config = [
         'module' => 'WebDriver',
+        'environment' => [
+            'PUPPETEER_SKIP_CHROMIUM_DOWNLOAD' => true,
+            'PUPPETEER_EXECUTABLE_PATH' => 'TBC'
+        ],
         'agentEndpoint' => 'http://localhost:5338',
         'agentJsPath' => 'percy-agent.js',
         'agentPostPath' => 'percy/snapshot',
@@ -46,6 +50,10 @@ class Percy extends Module
      */
     public function _before(TestInterface $test) : void
     {
+        foreach ($this->config['env'] as $envKey => $envParam) {
+            putenv($envKey . '=' . $envParam);
+        }
+
         $this->webDriver = $this->getModule($this->config['module']);
         $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->config['agentJsPath']))->get();
     }
