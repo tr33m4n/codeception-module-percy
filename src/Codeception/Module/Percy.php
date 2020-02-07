@@ -52,8 +52,6 @@ class Percy extends Module
     /**
      * Take snapshot of DOM and send to https://percy.io
      *
-     * @throws \Codeception\Exception\ModuleException
-     * @throws \Codeception\Module\Percy\Exception\ClientException
      * @param string      $name
      * @param int|null    $minHeight
      * @param string|null $percyCss
@@ -61,35 +59,33 @@ class Percy extends Module
      * @param array|null  $widths
      * @author Daniel Doyle <dd@amp.co>
      */
-    public function snapshot(
+    public function wantToPostAPercySnapshot(
         string $name,
         ?int $minHeight = null,
         ?string $percyCss = null,
         bool $enableJavaScript = false,
         ?array $widths = null
     ) : void {
-        $this->webDriver->executeJS($this->percyAgentJs);
-
         try {
-            $domSnapshot = $this->webDriver->executeJS(
-                sprintf(
-                    'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
-                    json_encode($this->config['agentConfig'])
-                )
+            $this->webDriver->executeJS($this->percyAgentJs);
+
+            $this->postSnapshot(
+                $this->webDriver->executeJS(
+                    sprintf(
+                        'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
+                        json_encode($this->config['agentConfig'])
+                    )
+                ),
+                $name,
+                $this->webDriver->_getCurrentUri(),
+                $minHeight,
+                $percyCss,
+                $enableJavaScript,
+                $widths
             );
         } catch (\Exception $exception) {
-            return;
+            $this->debug($exception->getMessage());
         }
-
-        $this->postSnapshot(
-            $domSnapshot,
-            $name,
-            $this->webDriver->_getCurrentUri(),
-            $minHeight,
-            $percyCss,
-            $enableJavaScript,
-            $widths
-        );
     }
 
     /**
