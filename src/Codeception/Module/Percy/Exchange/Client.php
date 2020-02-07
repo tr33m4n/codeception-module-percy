@@ -45,8 +45,10 @@ final class Client implements ClientInterface
      */
     public function get() : string
     {
-        curl_setopt($this->resource, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->resource, CURLOPT_FAILONERROR, true);
+        curl_setopt_array($this->resource, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FAILONERROR => true
+        ]);
 
         return $this->send();
     }
@@ -60,13 +62,15 @@ final class Client implements ClientInterface
      */
     public function post(string $payload) : string
     {
-        curl_setopt($this->resource, CURLOPT_POST, true);
-        curl_setopt($this->resource, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($this->resource, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->resource, CURLOPT_FAILONERROR, true);
-        curl_setopt($this->resource, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($payload)
+        curl_setopt_array($this->resource, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FAILONERROR => true,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($payload)
+            ]
         ]);
 
         return $this->send();
