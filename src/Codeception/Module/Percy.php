@@ -41,14 +41,22 @@ class Percy extends Module
      * @inheritDoc
      *
      * @throws \Codeception\Exception\ModuleException
-     * @throws \Codeception\Module\Percy\Exception\ClientException
      * @throws \Codeception\Module\Percy\Exception\SetupException
      */
     public function _initialize()
     {
-        $this->validateSetup();
         $this->webDriver = $this->getModule($this->config['module']);
-        $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->config['agentJsPath']))->get();
+
+        try {
+            $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->config['agentJsPath']))->get();
+        } catch (Exception $exception) {
+            throw new SetupException(
+                sprintf(
+                    'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`?\nError: %s',
+                    $exception->getMessage()
+                )
+            );
+        }
     }
 
     /**
@@ -78,7 +86,7 @@ class Percy extends Module
                     )
                 ),
                 $name,
-                $this->webDriver->_getCurrentUri(),
+                $this->webDriver->webDriver->getCurrentURL(),
                 $minHeight,
                 $percyCss,
                 $enableJavaScript,
@@ -124,21 +132,6 @@ class Percy extends Module
         }
 
         Client::fromUrl($this->buildUrl($this->config['agentPostPath']))->post(json_encode($payload));
-    }
-
-    /**
-     * Validate setup
-     *
-     * @throws \Codeception\Module\Percy\Exception\SetupException
-     * @author Daniel Doyle <dd@amp.co>
-     */
-    private function validateSetup()
-    {
-        if ((int) substr(get_headers($this->buildUrl())[0], 9, 3) > 200) {
-            throw new SetupException(
-                'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`?'
-            );
-        }
     }
 
     /**
