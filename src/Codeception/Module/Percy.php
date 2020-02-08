@@ -3,7 +3,7 @@
 namespace Codeception\Module;
 
 use Codeception\Module;
-use Codeception\TestInterface;
+use Codeception\Module\Percy\Exception\SetupException;
 use Codeception\Module\Percy\Exchange\Client;
 use Exception;
 
@@ -19,10 +19,6 @@ class Percy extends Module
      */
     protected $config = [
         'module' => 'WebDriver',
-        'environment' => [
-            'PUPPETEER_SKIP_CHROMIUM_DOWNLOAD' => true,
-            'PUPPETEER_EXECUTABLE_PATH' => 'TBC'
-        ],
         'agentEndpoint' => 'http://localhost:5338',
         'agentJsPath' => 'percy-agent.js',
         'agentPostPath' => 'percy/snapshot',
@@ -46,14 +42,11 @@ class Percy extends Module
      *
      * @throws \Codeception\Exception\ModuleException
      * @throws \Codeception\Module\Percy\Exception\ClientException
-     * @param \Codeception\TestInterface $test
+     * @throws \Codeception\Module\Percy\Exception\SetupException
      */
-    public function _before(TestInterface $test) : void
+    public function _initialize()
     {
-        foreach ($this->config['env'] as $envKey => $envParam) {
-            putenv($envKey . '=' . $envParam);
-        }
-
+        $this->validateSetup();
         $this->webDriver = $this->getModule($this->config['module']);
         $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->config['agentJsPath']))->get();
     }
@@ -92,7 +85,7 @@ class Percy extends Module
                 $widths
             );
         } catch (Exception $exception) {
-            $this->debug($exception->getMessage());
+            $this->debugSection('percy', $exception->getMessage());
         }
     }
 
@@ -131,6 +124,21 @@ class Percy extends Module
         }
 
         Client::fromUrl($this->buildUrl($this->config['agentPostPath']))->post(json_encode($payload));
+    }
+
+    /**
+     * Validate setup
+     *
+     * @throws \Codeception\Module\Percy\Exception\SetupException
+     * @author Daniel Doyle <dd@amp.co>
+     */
+    private function validateSetup()
+    {
+        if ((int) substr(get_headers($this->buildUrl())[0], 9, 3) > 200) {
+            throw new SetupException(
+                'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`?'
+            );
+        }
     }
 
     /**
