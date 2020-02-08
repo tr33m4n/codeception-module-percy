@@ -18,7 +18,7 @@ class Percy extends Module
      * @var array
      */
     protected $config = [
-        'module' => 'WebDriver',
+        'driver' => 'WebDriver',
         'agentEndpoint' => 'http://localhost:5338',
         'agentJsPath' => 'percy-agent.js',
         'agentPostPath' => 'percy/snapshot',
@@ -45,14 +45,14 @@ class Percy extends Module
      */
     public function _initialize()
     {
-        $this->webDriver = $this->getModule($this->config['module']);
+        $this->webDriver = $this->getModule($this->_getConfig('driver'));
 
         try {
-            $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->config['agentJsPath']))->get();
+            $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->_getConfig('agentJsPath')))->get();
         } catch (Exception $exception) {
             throw new SetupException(
                 sprintf(
-                    'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`?\nError: %s',
+                    'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`? %s',
                     $exception->getMessage()
                 )
             );
@@ -82,7 +82,7 @@ class Percy extends Module
                 $this->webDriver->executeJS(
                     sprintf(
                         'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
-                        json_encode($this->config['agentConfig'])
+                        json_encode($this->_getConfig('agentConfig'))
                     )
                 ),
                 $name,
@@ -118,20 +118,21 @@ class Percy extends Module
         bool $enableJavaScript = false,
         ?array $widths = null
     ) : void {
-        $payload = [
+        // Merge settings from config if present
+        $payload = array_merge($this->_getConfig('snapshotConfig') ?? [], [
             'url' => $url,
             'name' => $name,
             'percyCSS' => $percyCss,
             'minHeight' => $minHeight,
             'domSnapshot' => $domSnapshot,
             'enableJavaScript' => $enableJavaScript
-        ];
+        ]);
 
         if ($widths) {
             $payload['widths'] = $widths;
         }
 
-        Client::fromUrl($this->buildUrl($this->config['agentPostPath']))->post(json_encode($payload));
+        Client::fromUrl($this->buildUrl($this->_getConfig('agentPostPath')))->post(json_encode($payload));
     }
 
     /**
@@ -142,6 +143,6 @@ class Percy extends Module
      */
     private function buildUrl(?string $path = null) : string
     {
-        return rtrim($this->config['agentEndpoint'], '/') . '/' . $path;
+        return rtrim($this->_getConfig('agentEndpoint'), '/') . '/' . $path;
     }
 }
