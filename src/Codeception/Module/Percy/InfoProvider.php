@@ -80,7 +80,7 @@ class InfoProvider
             return $this->clientInfo;
         }
 
-        $moduleInfo = json_decode(file_get_contents(__DIR__ . '/../../../composer.json'));
+        $moduleInfo = json_decode(file_get_contents(__DIR__ . '/../../../../composer.json'), true);
 
         return $this->clientInfo = sprintf('%s/%s', explode('/', $moduleInfo['name'])[1], $moduleInfo['version']);
     }
