@@ -17,6 +17,16 @@ class InfoProvider
     private $webDriver;
 
     /**
+     * @var string|null
+     */
+    private $environmentInfo;
+
+    /**
+     * @var string|null
+     */
+    private $clientInfo;
+
+    /**
      * InfoProvider constructor.
      *
      * @param \Codeception\Module\WebDriver $webDriver
@@ -28,11 +38,10 @@ class InfoProvider
     }
 
     /**
-     * <description>
+     * From web drivers
      *
      * @param \Codeception\Module\WebDriver $webDriver
      * @return static
-     * @author Daniel Doyle <dd@amp.co>
      */
     public static function fromWebDriver(WebDriver $webDriver) : self
     {
@@ -42,13 +51,17 @@ class InfoProvider
     /**
      * Get environment info
      *
-     * @return string
+     * @return string|null
      */
-    public function getEnvironmentInfo() : string
+    public function getEnvironmentInfo() : ?string
     {
+        if ($this->environmentInfo) {
+            return $this->environmentInfo;
+        }
+
         $webDriverCapabilities = $this->webDriver->webDriver->getCapabilities();
 
-        return sprintf(
+        return $this->environmentInfo = sprintf(
             'codeception-php; %s; %s/%s',
             $webDriverCapabilities->getPlatform(),
             $webDriverCapabilities->getBrowserName(),
@@ -59,12 +72,16 @@ class InfoProvider
     /**
      * Get client info
      *
-     * @return string
+     * @return string|null
      */
-    public function getClientInfo() : string
+    public function getClientInfo() : ?string
     {
+        if ($this->clientInfo) {
+            return $this->clientInfo;
+        }
+
         $moduleInfo = json_decode(file_get_contents(__DIR__ . '/../../../composer.json'));
 
-        return sprintf('%s/%s', explode('/', $moduleInfo['name'])[1], $moduleInfo['version']);
+        return $this->clientInfo = sprintf('%s/%s', explode('/', $moduleInfo['name'])[1], $moduleInfo['version']);
     }
 }

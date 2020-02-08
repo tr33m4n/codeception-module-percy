@@ -34,6 +34,11 @@ class Percy extends Module
     private $webDriver;
 
     /**
+     * @var \Codeception\Module\Percy\InfoProvider
+     */
+    private $infoProvider;
+
+    /**
      * @var string
      */
     private $percyAgentJs;
@@ -47,6 +52,7 @@ class Percy extends Module
     public function _initialize()
     {
         $this->webDriver = $this->getModule($this->_getConfig('driver'));
+        $this->infoProvider = InfoProvider::fromWebDriver($this->webDriver);
 
         try {
             $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->_getConfig('agentJsPath')))->get();
@@ -119,8 +125,6 @@ class Percy extends Module
         bool $enableJavaScript = false,
         ?array $widths = null
     ) : void {
-        $infoProvider = InfoProvider::fromWebDriver($this->webDriver);
-
         // Merge settings from config if present
         $payload = array_merge($this->_getConfig('snapshotConfig') ?? [], [
             'url' => $url,
@@ -128,9 +132,9 @@ class Percy extends Module
             'percyCSS' => $percyCss,
             'minHeight' => $minHeight,
             'domSnapshot' => $domSnapshot,
-            'clientInfo' => $infoProvider->getClientInfo(),
+            'clientInfo' => $this->infoProvider->getClientInfo(),
             'enableJavaScript' => $enableJavaScript,
-            'environmentInfo' => $infoProvider->getEnvironmentInfo()
+            'environmentInfo' => $this->infoProvider->getEnvironmentInfo()
         ]);
 
         if ($widths) {
