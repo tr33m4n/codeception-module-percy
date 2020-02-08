@@ -21,7 +21,7 @@ final class Client implements ClientInterface
      *
      * @param string $url
      */
-    public function __construct(string $url)
+    private function __construct(string $url)
     {
         $this->resource = curl_init($url);
     }

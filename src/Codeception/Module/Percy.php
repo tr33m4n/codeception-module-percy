@@ -5,6 +5,7 @@ namespace Codeception\Module;
 use Codeception\Module;
 use Codeception\Module\Percy\Exception\SetupException;
 use Codeception\Module\Percy\Exchange\Client;
+use Codeception\Module\Percy\InfoProvider;
 use Exception;
 
 /**
@@ -118,6 +119,8 @@ class Percy extends Module
         bool $enableJavaScript = false,
         ?array $widths = null
     ) : void {
+        $infoProvider = InfoProvider::fromWebDriver($this->webDriver);
+
         // Merge settings from config if present
         $payload = array_merge($this->_getConfig('snapshotConfig') ?? [], [
             'url' => $url,
@@ -125,7 +128,9 @@ class Percy extends Module
             'percyCSS' => $percyCss,
             'minHeight' => $minHeight,
             'domSnapshot' => $domSnapshot,
-            'enableJavaScript' => $enableJavaScript
+            'clientInfo' => $infoProvider->getClientInfo(),
+            'enableJavaScript' => $enableJavaScript,
+            'environmentInfo' => $infoProvider->getEnvironmentInfo()
         ]);
 
         if ($widths) {
