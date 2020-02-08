@@ -18,6 +18,14 @@ interface ClientInterface
     public static function fromUrl(string $url) : self;
 
     /**
+     * With payload
+     *
+     * @param \Codeception\Module\Percy\Exchange\Payload $payload
+     * @return $this
+     */
+    public function withPayload(Payload $payload) : self;
+
+    /**
      * Get
      *
      * @throws \Codeception\Module\Percy\Exception\ClientException
@@ -29,8 +37,7 @@ interface ClientInterface
      * Post
      *
      * @throws \Codeception\Module\Percy\Exception\ClientException
-     * @param string $payload
      * @return string
      */
-    public function post(string $payload) : string;
+    public function post() : string;
 }

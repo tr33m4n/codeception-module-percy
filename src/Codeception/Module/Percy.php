@@ -5,6 +5,7 @@ namespace Codeception\Module;
 use Codeception\Module;
 use Codeception\Module\Percy\Exception\SetupException;
 use Codeception\Module\Percy\Exchange\Client;
+use Codeception\Module\Percy\Exchange\Payload;
 use Codeception\Module\Percy\InfoProvider;
 use Exception;
 
@@ -83,65 +84,32 @@ class Percy extends Module
         ?array $widths = null
     ) : void {
         try {
+            // Add Percy agent JS to page
             $this->webDriver->executeJS($this->percyAgentJs);
 
-            $this->postSnapshot(
-                $this->webDriver->executeJS(
+            $payload = Payload::from($this->_getConfig('snapshotConfig') ?? [])
+                ->withName($name)
+                ->withUrl($this->webDriver->webDriver->getCurrentURL())
+                ->withPercyCss($percyCss)
+                ->withMinHeight($minHeight)
+                ->withDomSnapshot($this->webDriver->executeJS(
                     sprintf(
                         'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
-                        json_encode($this->_getConfig('agentConfig'))
+                        json_encode($this->_getConfig('agentConfig'), true)
                     )
-                ),
-                $name,
-                $this->webDriver->webDriver->getCurrentURL(),
-                $minHeight,
-                $percyCss,
-                $enableJavaScript,
-                $widths
-            );
+                ))
+                ->withEnableJavascript($enableJavaScript)
+                ->withClientInfo($this->infoProvider->getClientInfo())
+                ->withEnvironmentInfo($this->infoProvider->getEnvironmentInfo());
+
+            if ($widths) {
+                $payload->withWidths($widths);
+            }
+
+            Client::fromUrl($this->buildUrl($this->_getConfig('agentPostPath')))->withPayload($payload)->post();
         } catch (Exception $exception) {
             $this->debugSection('percy', $exception->getMessage());
         }
-    }
-
-    /**
-     * Post to https://percy.io
-     *
-     * @throws \Codeception\Module\Percy\Exception\ClientException
-     * @param string      $domSnapshot
-     * @param string      $name
-     * @param string      $url
-     * @param int|null    $minHeight
-     * @param string|null $percyCss
-     * @param bool        $enableJavaScript
-     * @param array|null  $widths
-     */
-    private function postSnapshot(
-        string $domSnapshot,
-        string $name,
-        string $url,
-        ?int $minHeight = null,
-        ?string $percyCss = null,
-        bool $enableJavaScript = false,
-        ?array $widths = null
-    ) : void {
-        // Merge settings from config if present
-        $payload = array_merge($this->_getConfig('snapshotConfig') ?? [], [
-            'url' => $url,
-            'name' => $name,
-            'percyCSS' => $percyCss,
-            'minHeight' => $minHeight,
-            'domSnapshot' => $domSnapshot,
-            'clientInfo' => $this->infoProvider->getClientInfo(),
-            'enableJavaScript' => $enableJavaScript,
-            'environmentInfo' => $this->infoProvider->getEnvironmentInfo()
-        ]);
-
-        if ($widths) {
-            $payload['widths'] = $widths;
-        }
-
-        Client::fromUrl($this->buildUrl($this->_getConfig('agentPostPath')))->post(json_encode($payload));
     }
 
     /**

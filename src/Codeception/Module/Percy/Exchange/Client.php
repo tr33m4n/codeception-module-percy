@@ -17,6 +17,11 @@ final class Client implements ClientInterface
     private $resource;
 
     /**
+     * @var \Codeception\Module\Percy\Exchange\Payload
+     */
+    private $payload;
+
+    /**
      * Client constructor.
      *
      * @param string $url
@@ -40,6 +45,19 @@ final class Client implements ClientInterface
     /**
      * @inheritDoc
      *
+     * @param \Codeception\Module\Percy\Exchange\Payload $payload
+     * @return \Codeception\Module\Percy\Exchange\ClientInterface
+     */
+    public function withPayload(Payload $payload) : ClientInterface
+    {
+        $this->payload = $payload;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     *
      * @throws \Codeception\Module\Percy\Exception\ClientException
      * @return string
      */
@@ -57,19 +75,20 @@ final class Client implements ClientInterface
      * @inheritDoc
      *
      * @throws \Codeception\Module\Percy\Exception\ClientException
-     * @param string $payload
      * @return string
      */
-    public function post(string $payload) : string
+    public function post() : string
     {
+        $payloadAsString = (string) $this->payload;
+
         curl_setopt_array($this->resource, [
             CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_POSTFIELDS => $payloadAsString,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FAILONERROR => true,
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
-                'Content-Length: ' . strlen($payload)
+                'Content-Length: ' . strlen($payloadAsString)
             ]
         ]);
 
