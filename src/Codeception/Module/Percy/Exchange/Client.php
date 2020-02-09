@@ -2,8 +2,6 @@
 
 namespace Codeception\Module\Percy\Exchange;
 
-use Codeception\Module\Percy\Exception\ClientException;
-
 /**
  * Class Client
  *
@@ -12,9 +10,9 @@ use Codeception\Module\Percy\Exception\ClientException;
 final class Client implements ClientInterface
 {
     /**
-     * @var false|resource
+     * @var \Codeception\Module\Percy\Exchange\AdapterInterface
      */
-    private $resource;
+    private $adapter;
 
     /**
      * @var \Codeception\Module\Percy\Exchange\Payload
@@ -24,11 +22,14 @@ final class Client implements ClientInterface
     /**
      * Client constructor.
      *
-     * @param string $url
+     * @param string                                                   $url
+     * @param \Codeception\Module\Percy\Exchange\AdapterInterface|null $adapter
      */
-    private function __construct(string $url)
-    {
-        $this->resource = curl_init($url);
+    private function __construct(
+        string $url,
+        ?AdapterInterface $adapter = null
+    ) {
+        $this->adapter = $adapter ? $adapter->setUrl($url) : new CurlAdapter($url);
     }
 
     /**
@@ -63,12 +64,12 @@ final class Client implements ClientInterface
      */
     public function get() : string
     {
-        curl_setopt_array($this->resource, [
+        $this->adapter->setOptions([
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FAILONERROR => true
         ]);
 
-        return $this->send();
+        return $this->adapter->execute();
     }
 
     /**
@@ -81,7 +82,7 @@ final class Client implements ClientInterface
     {
         $payloadAsString = (string) $this->payload;
 
-        curl_setopt_array($this->resource, [
+        $this->adapter->setOptions([
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $payloadAsString,
             CURLOPT_RETURNTRANSFER => true,
@@ -92,24 +93,6 @@ final class Client implements ClientInterface
             ]
         ]);
 
-        return $this->send();
-    }
-
-    /**
-     * Send request
-     *
-     * @throws \Codeception\Module\Percy\Exception\ClientException
-     * @return string
-     */
-    private function send() : string
-    {
-        $output = curl_exec($this->resource);
-        if (curl_errno($this->resource)) {
-            throw new ClientException(curl_error($this->resource));
-        }
-
-        curl_close($this->resource);
-
-        return $output;
+        return $this->adapter->execute();
     }
 }
