@@ -53,11 +53,11 @@ class FirstCest
     public function frontpageWorks(AcceptanceTester $I)
     {
         $I->amOnPage('/');
-        $I->wantToPostAPercySnapshot('My snapshot name');
+        $I->wantToTakeAPercySnapshot('My snapshot name');
     }
 }
 ```
-`$I->wantToPostAPercySnapshot` can optionally be passed additional arguments to override the global settings for `percyCSS`, `minHeight`, `enableJavaScript` and `widths` on the fly, for example:
+`$I->wantToTakeAPercySnapshot` can optionally be passed additional arguments to override the global settings for `percyCSS`, `minHeight`, `enableJavaScript` and `widths` on the fly, for example:
 ```php
 /**
  * @param string $name             Snapshot name
@@ -66,5 +66,5 @@ class FirstCest
  * @param string $percyCss         Percy specific CSS
  * @param bool   $enableJavaScript Enable/disable JavaScript 
  */
-$I->wantToPostAPercySnapshot('My snapshot name', [1024, 768, 320], 1080, 'iframe { display: none; }', true);
+$I->wantToTakeAPercySnapshot('My snapshot name', [1024, 768, 320], 1080, 'iframe { display: none; }', true);
 ```
