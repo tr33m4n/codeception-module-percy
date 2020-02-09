@@ -103,7 +103,7 @@ class Percy extends Module
                 ->withEnvironmentInfo($this->infoProvider->getEnvironmentInfo());
 
             if ($widths) {
-                $payload->withWidths($widths);
+                $payload = $payload->withWidths($widths);
             }
 
             Client::fromUrl($this->buildUrl($this->_getConfig('agentPostPath')))->withPayload($payload)->post();
