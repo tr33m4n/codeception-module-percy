@@ -3,7 +3,7 @@ Percy https://percy.io module for Codeception
 
 ## Installation
 ```shell script
-composer require tr33m4n/codeception-module-percy
+composer require --dev tr33m4n/codeception-module-percy
 ```
 If you're using version `4.x` of Codeception, ensure that you have also installed the `codeception/module-webdriver` package. For more information see https://codeception.com/docs/modules/WebDriver
 
