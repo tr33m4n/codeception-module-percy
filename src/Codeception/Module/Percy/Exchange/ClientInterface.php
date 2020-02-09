@@ -13,17 +13,17 @@ interface ClientInterface
      * From URL
      *
      * @param string $url
-     * @return static
+     * @return \Codeception\Module\Percy\Exchange\ClientInterface
      */
-    public static function fromUrl(string $url) : self;
+    public static function fromUrl(string $url) : ClientInterface;
 
     /**
      * With payload
      *
      * @param \Codeception\Module\Percy\Exchange\Payload $payload
-     * @return $this
+     * @return \Codeception\Module\Percy\Exchange\ClientInterface
      */
-    public function withPayload(Payload $payload) : self;
+    public function withPayload(Payload $payload) : ClientInterface;
 
     /**
      * Get

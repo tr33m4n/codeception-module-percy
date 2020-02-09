@@ -41,9 +41,9 @@ class InfoProvider
      * From web drivers
      *
      * @param \Codeception\Module\WebDriver $webDriver
-     * @return static
+     * @return \Codeception\Module\Percy\InfoProvider
      */
-    public static function fromWebDriver(WebDriver $webDriver) : self
+    public static function fromWebDriver(WebDriver $webDriver) : InfoProvider
     {
         return new self($webDriver);
     }
@@ -51,9 +51,9 @@ class InfoProvider
     /**
      * Get environment info
      *
-     * @return string|null
+     * @return string
      */
-    public function getEnvironmentInfo() : ?string
+    public function getEnvironmentInfo() : string
     {
         if ($this->environmentInfo) {
             return $this->environmentInfo;
@@ -72,9 +72,9 @@ class InfoProvider
     /**
      * Get client info
      *
-     * @return string|null
+     * @return string
      */
-    public function getClientInfo() : ?string
+    public function getClientInfo() : string
     {
         if ($this->clientInfo) {
             return $this->clientInfo;

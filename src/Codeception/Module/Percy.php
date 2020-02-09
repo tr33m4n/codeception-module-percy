@@ -52,7 +52,10 @@ class Percy extends Module
      */
     public function _initialize()
     {
-        $this->webDriver = $this->getModule($this->_getConfig('driver'));
+        /** @var \Codeception\Module\WebDriver $webDriverModule */
+        $webDriverModule = $this->getModule($this->_getConfig('driver'));
+
+        $this->webDriver = $webDriverModule;
         $this->infoProvider = InfoProvider::fromWebDriver($this->webDriver);
 
         try {
@@ -95,7 +98,7 @@ class Percy extends Module
                 ->withDomSnapshot($this->webDriver->executeJS(
                     sprintf(
                         'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
-                        json_encode($this->_getConfig('agentConfig'), true)
+                        json_encode($this->_getConfig('agentConfig'))
                     )
                 ))
                 ->withEnableJavascript($enableJavaScript)

@@ -1,0 +1,7 @@
+parameters:
+    paths:
+        - %currentWorkingDirectory%/src
+    excludes_analyse:
+        - *Test*
+        - *tests*
+    level: 5

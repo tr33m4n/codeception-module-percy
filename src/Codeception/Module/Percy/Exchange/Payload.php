@@ -218,6 +218,6 @@ class Payload
      */
     public function __toString() : string
     {
-        return json_encode($this->config, true);
+        return json_encode($this->config);
     }
 }
