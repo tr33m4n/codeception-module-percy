@@ -81,10 +81,10 @@ class Percy extends Module
      */
     public function wantToPostAPercySnapshot(
         string $name,
+        ?array $widths = null,
         ?int $minHeight = null,
         ?string $percyCss = null,
-        bool $enableJavaScript = false,
-        ?array $widths = null
+        bool $enableJavaScript = false
     ) : void {
         try {
             // Add Percy agent JS to page

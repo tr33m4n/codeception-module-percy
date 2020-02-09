@@ -42,9 +42,9 @@ class Payload
     const CLIENT_INFO = 'clientInfo';
 
     /**
-     * Enable Javascript key
+     * Enable JavaScript key
      */
-    const ENABLE_JAVASCRIPT = 'enableJavascript';
+    const ENABLE_JAVASCRIPT = 'enableJavaScript';
 
     /**
      * Environment info key
