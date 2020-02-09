@@ -82,7 +82,7 @@ class Percy extends Module
      * @param string|null $percyCss
      * @param bool|null   $enableJavaScript
      */
-    public function wantToTakeAPercySnapshot(
+    public function takeAPercySnapshot(
         string $name,
         ?array $widths = null,
         ?int $minHeight = null,
