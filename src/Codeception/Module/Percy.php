@@ -79,6 +79,8 @@ class Percy extends Module
     /**
      * Take snapshot of DOM and send to https://percy.io
      *
+     * @throws \Codeception\Module\Percy\Exception\ClientException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @param string      $name
      * @param array|null  $widths
      * @param int|null    $minHeight
@@ -92,42 +94,38 @@ class Percy extends Module
         ?string $percyCss = null,
         ?bool $enableJavaScript = null
     ) : void {
-        try {
-            // Add Percy agent JS to page
-            $this->webDriver->executeJS($this->percyAgentJs);
+        // Add Percy agent JS to page
+        $this->webDriver->executeJS($this->percyAgentJs);
 
-            $payload = Payload::from($this->getSnapshotConfig())
-                ->withName($name)
-                ->withUrl($this->webDriver->webDriver->getCurrentURL())
-                ->withDomSnapshot($this->webDriver->executeJS(
-                    sprintf(
-                        'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
-                        json_encode($this->_getConfig('agentConfig'))
-                    )
-                ))
-                ->withClientInfo($this->infoProvider->getClientInfo())
-                ->withEnvironmentInfo($this->infoProvider->getEnvironmentInfo());
+        $payload = Payload::from($this->getSnapshotConfig())
+            ->withName($name)
+            ->withUrl($this->webDriver->webDriver->getCurrentURL())
+            ->withDomSnapshot($this->webDriver->executeJS(
+                sprintf(
+                    'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
+                    json_encode($this->_getConfig('agentConfig'))
+                )
+            ))
+            ->withClientInfo($this->infoProvider->getClientInfo())
+            ->withEnvironmentInfo($this->infoProvider->getEnvironmentInfo());
 
-            if ($widths !== null) {
-                $payload = $payload->withWidths($widths);
-            }
-
-            if ($minHeight !== null) {
-                $payload = $payload->withMinHeight($minHeight);
-            }
-
-            if ($percyCss !== null) {
-                $payload = $payload->withPercyCss($percyCss);
-            }
-
-            if ($enableJavaScript !== null) {
-                $payload = $payload->withEnableJavaScript($enableJavaScript);
-            }
-
-            Client::fromUrl($this->buildUrl($this->_getConfig('agentPostPath')))->withPayload($payload)->post();
-        } catch (Exception $exception) {
-            $this->debugSection('percy', $exception->getMessage());
+        if ($widths !== null) {
+            $payload = $payload->withWidths($widths);
         }
+
+        if ($minHeight !== null) {
+            $payload = $payload->withMinHeight($minHeight);
+        }
+
+        if ($percyCss !== null) {
+            $payload = $payload->withPercyCss($percyCss);
+        }
+
+        if ($enableJavaScript !== null) {
+            $payload = $payload->withEnableJavaScript($enableJavaScript);
+        }
+
+        Client::fromUrl($this->buildUrl($this->_getConfig('agentPostPath')))->withPayload($payload)->post();
     }
 
     /**
