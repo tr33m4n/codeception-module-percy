@@ -3,6 +3,7 @@
 namespace Codeception\Module\Percy\Exchange;
 
 use Codeception\Module\Percy\Exception\ClientException;
+use Codeception\Module\Percy;
 
 /**
  * Class CurlAdapter
@@ -62,7 +63,7 @@ class CurlAdapter implements AdapterInterface
     {
         $output = curl_exec($this->resource);
         if (curl_errno($this->resource)) {
-            throw new ClientException(curl_error($this->resource));
+            throw new ClientException(Percy::MODULE_NAMESPACE, curl_error($this->resource));
         }
 
         curl_close($this->resource);

@@ -2,14 +2,14 @@
 
 namespace Codeception\Module\Percy\Exception;
 
-use Exception;
+use Codeception\Exception\ModuleException;
 
 /**
  * Class ConfigException
  *
  * @package Codeception\Module\Percy\Exception
  */
-final class ConfigException extends Exception
+final class ConfigException extends ModuleException
 {
     //
 }

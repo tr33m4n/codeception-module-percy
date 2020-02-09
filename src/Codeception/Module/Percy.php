@@ -17,6 +17,11 @@ use Exception;
 class Percy extends Module
 {
     /**
+     * Module namespace, for use with exceptions
+     */
+    const MODULE_NAMESPACE = 'Percy';
+
+    /**
      * @var array
      */
     protected $config = [
@@ -62,6 +67,7 @@ class Percy extends Module
             $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->_getConfig('agentJsPath')))->get();
         } catch (Exception $exception) {
             throw new SetupException(
+                self::MODULE_NAMESPACE,
                 sprintf(
                     'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`? %s',
                     $exception->getMessage()
@@ -139,6 +145,7 @@ class Percy extends Module
             }
 
             throw new ConfigException(
+                self::MODULE_NAMESPACE,
                 sprintf('The following key is not allowed to be set through config: %s', $blacklistKey)
             );
         }
