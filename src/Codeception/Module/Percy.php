@@ -3,7 +3,7 @@
 namespace Codeception\Module;
 
 use Codeception\Module;
-use Codeception\Module\Percy\Exception\{SetupException, ConfigException};
+use Codeception\Module\Percy\Exception\ConfigException;
 use Codeception\Module\Percy\Exchange\Client;
 use Codeception\Module\Percy\Exchange\Payload;
 use Codeception\Module\Percy\InfoProvider;
@@ -45,15 +45,13 @@ class Percy extends Module
     private $infoProvider;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $percyAgentJs;
 
     /**
      * @inheritDoc
-     *
      * @throws \Codeception\Exception\ModuleException
-     * @throws \Codeception\Module\Percy\Exception\SetupException
      */
     public function _initialize()
     {
@@ -66,12 +64,9 @@ class Percy extends Module
         try {
             $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->_getConfig('agentJsPath')))->get();
         } catch (Exception $exception) {
-            throw new SetupException(
+            $this->debugSection(
                 self::MODULE_NAMESPACE,
-                sprintf(
-                    'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`? %s',
-                    $exception->getMessage()
-                )
+                'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`?'
             );
         }
     }
@@ -94,6 +89,11 @@ class Percy extends Module
         ?string $percyCss = null,
         ?bool $enableJavaScript = null
     ) : void {
+        // If we cannot access the agent JS, return silently
+        if (!$this->percyAgentJs) {
+            return;
+        }
+
         // Add Percy agent JS to page
         $this->webDriver->executeJS($this->percyAgentJs);
 
