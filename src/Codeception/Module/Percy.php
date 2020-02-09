@@ -3,7 +3,7 @@
 namespace Codeception\Module;
 
 use Codeception\Module;
-use Codeception\Module\Percy\Exception\SetupException;
+use Codeception\Module\Percy\Exception\{SetupException, ConfigException};
 use Codeception\Module\Percy\Exchange\Client;
 use Codeception\Module\Percy\Exchange\Payload;
 use Codeception\Module\Percy\InfoProvider;
@@ -74,45 +74,76 @@ class Percy extends Module
      * Take snapshot of DOM and send to https://percy.io
      *
      * @param string      $name
+     * @param array|null  $widths
      * @param int|null    $minHeight
      * @param string|null $percyCss
-     * @param bool        $enableJavaScript
-     * @param array|null  $widths
+     * @param bool|null   $enableJavaScript
      */
     public function wantToTakeAPercySnapshot(
         string $name,
         ?array $widths = null,
         ?int $minHeight = null,
         ?string $percyCss = null,
-        bool $enableJavaScript = false
+        ?bool $enableJavaScript = null
     ) : void {
         try {
             // Add Percy agent JS to page
             $this->webDriver->executeJS($this->percyAgentJs);
 
-            $payload = Payload::from($this->_getConfig('snapshotConfig') ?? [])
+            $payload = Payload::from($this->getSnapshotConfig())
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
-                ->withPercyCss($percyCss)
-                ->withMinHeight($minHeight)
                 ->withDomSnapshot($this->webDriver->executeJS(
                     sprintf(
                         'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
                         json_encode($this->_getConfig('agentConfig'))
                     )
                 ))
-                ->withEnableJavascript($enableJavaScript)
                 ->withClientInfo($this->infoProvider->getClientInfo())
                 ->withEnvironmentInfo($this->infoProvider->getEnvironmentInfo());
 
-            if ($widths) {
+            if ($widths !== null) {
                 $payload = $payload->withWidths($widths);
+            }
+
+            if ($minHeight !== null) {
+                $payload = $payload->withMinHeight($minHeight);
+            }
+
+            if ($percyCss !== null) {
+                $payload = $payload->withPercyCss($percyCss);
+            }
+
+            if ($enableJavaScript !== null) {
+                $payload = $payload->withEnableJavaScript($enableJavaScript);
             }
 
             Client::fromUrl($this->buildUrl($this->_getConfig('agentPostPath')))->withPayload($payload)->post();
         } catch (Exception $exception) {
             $this->debugSection('percy', $exception->getMessage());
         }
+    }
+
+    /**
+     * Get snapshot config and throw an error if any blacklisted keys are found
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @return array
+     */
+    private function getSnapshotConfig() : array
+    {
+        $snapshotConfig = $this->_getConfig('snapshotConfig') ?? [];
+        foreach (Payload::CONFIG_BLACKLIST as $blacklistKey) {
+            if (!array_key_exists($blacklistKey, $snapshotConfig)) {
+                continue;
+            }
+
+            throw new ConfigException(
+                sprintf('The following key is not allowed to be set through config: %s', $blacklistKey)
+            );
+        }
+
+        return $snapshotConfig;
     }
 
     /**

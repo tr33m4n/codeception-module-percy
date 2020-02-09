@@ -57,6 +57,17 @@ class Payload
     const WIDTHS = 'widths';
 
     /**
+     * Array of keys that cannot be set from config
+     */
+    const CONFIG_BLACKLIST = [
+        self::NAME,
+        self::URL,
+        self::DOM_SNAPSHOT,
+        self::CLIENT_INFO,
+        self::ENVIRONMENT_INFO
+    ];
+
+    /**
      * All keys as array
      */
     const ALL_KEYS = [
@@ -159,14 +170,14 @@ class Payload
     }
 
     /**
-     * With enable Javascript
+     * With enable JavaScript
      *
-     * @param bool $enableJavascript
+     * @param bool $enableJavaScript
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withEnableJavascript(bool $enableJavascript) : Payload
+    public function withEnableJavaScript(bool $enableJavaScript) : Payload
     {
-        return self::withValue(clone $this, self::ENABLE_JAVASCRIPT, $enableJavascript);
+        return self::withValue(clone $this, self::ENABLE_JAVASCRIPT, $enableJavaScript);
     }
 
     /**
