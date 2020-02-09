@@ -57,14 +57,13 @@ class Payload
     const WIDTHS = 'widths';
 
     /**
-     * Array of keys that cannot be set from config
+     * Array of keys that can be set from config
      */
-    const CONFIG_BLACKLIST = [
-        self::NAME,
-        self::URL,
-        self::DOM_SNAPSHOT,
-        self::CLIENT_INFO,
-        self::ENVIRONMENT_INFO
+    const CONFIG_WHITELIST = [
+        self::PERCY_CSS,
+        self::MIN_HEIGHT,
+        self::ENABLE_JAVASCRIPT,
+        self::WIDTHS
     ];
 
     /**
@@ -97,6 +96,12 @@ class Payload
     {
         $payload = new self();
         foreach ($config as $key => $value) {
+            if (!in_array($key, self::CONFIG_WHITELIST)) {
+                throw new InvalidArgumentException(
+                    sprintf('The following key is not allowed to be set through config: %s', $key)
+                );
+            }
+
             self::withValue($payload, $key, $value);
         }
 

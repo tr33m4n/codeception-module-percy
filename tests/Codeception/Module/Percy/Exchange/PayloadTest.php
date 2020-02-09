@@ -28,12 +28,10 @@ class PayloadTest extends TestCase
     public function testCanBeCastToJson() : void
     {
         $this->assertEquals(
-            '{"name":"Test","url":"https:\/\/example.com","enableJavaScript":true}',
+            '{"enableJavaScript":true,"name":"Test","url":"https:\/\/example.com"}',
             (string) Payload::from([
-                Payload::NAME => 'Test',
-                Payload::URL => 'https://example.com',
                 Payload::ENABLE_JAVASCRIPT => true
-            ])
+            ])->withName('Test')->withUrl('https://example.com')
         );
     }
 }
