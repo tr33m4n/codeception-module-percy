@@ -5,3 +5,5 @@ parameters:
         - *Test*
         - *tests*
     level: 5
+    ignoreErrors:
+        - '#Property Codeception\\Module\\Percy::\$webDriver#'
