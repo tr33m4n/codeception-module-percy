@@ -12,21 +12,12 @@ use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
 interface ClientInterface
 {
     /**
-     * From adapter
-     *
-     * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
-     * @return \Codeception\Module\Percy\Exchange\ClientInterface
-     * @author Daniel Doyle <dd@amp.co>
-     */
-    public static function fromAdapter(AdapterInterface $adapter) : ClientInterface;
-
-    /**
-     * With payload
+     * Set payload
      *
      * @param \Codeception\Module\Percy\Exchange\Payload $payload
      * @return \Codeception\Module\Percy\Exchange\ClientInterface
      */
-    public function withPayload(Payload $payload) : ClientInterface;
+    public function setPayload(Payload $payload) : ClientInterface;
 
     /**
      * Get

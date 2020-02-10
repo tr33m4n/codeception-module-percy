@@ -17,7 +17,7 @@ final class Client implements ClientInterface
     private $adapter;
 
     /**
-     * @var \Codeception\Module\Percy\Exchange\Payload
+     * @var \Codeception\Module\Percy\Exchange\Payload|null
      */
     private $payload;
 
@@ -35,21 +35,10 @@ final class Client implements ClientInterface
     /**
      * @inheritDoc
      *
-     * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
-     * @return \Codeception\Module\Percy\Exchange\ClientInterface
-     */
-    public static function fromAdapter(AdapterInterface $adapter) : ClientInterface
-    {
-        return new self($adapter);
-    }
-
-    /**
-     * @inheritDoc
-     *
      * @param \Codeception\Module\Percy\Exchange\Payload $payload
      * @return \Codeception\Module\Percy\Exchange\ClientInterface
      */
-    public function withPayload(Payload $payload) : ClientInterface
+    public function setPayload(Payload $payload) : ClientInterface
     {
         $this->payload = $payload;
 
@@ -78,6 +67,7 @@ final class Client implements ClientInterface
     public function post(string $path) : string
     {
         $payloadAsString = (string) $this->payload;
+        $this->payload = null;
 
         return $this->adapter->setPath($path)
             ->setIsPost()

@@ -41,7 +41,6 @@ class CurlAdapter implements AdapterInterface
      *
      * @param string $baseUrl
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
-     * @author Daniel Doyle <dd@amp.co>
      */
     public function setBaseUrl(string $baseUrl) : AdapterInterface
     {

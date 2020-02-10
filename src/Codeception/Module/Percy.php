@@ -89,7 +89,7 @@ class Percy extends Module
         $this->webDriver->executeJS($this->percyAgentJs);
 
         $this->client
-            ->withPayload(
+            ->setPayload(
                 Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
                     ->withName($name)
                     ->withUrl($this->webDriver->webDriver->getCurrentURL())
