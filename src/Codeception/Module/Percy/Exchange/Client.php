@@ -3,7 +3,6 @@
 namespace Codeception\Module\Percy\Exchange;
 
 use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
-use Codeception\Module\Percy\Exchange\Adapter\TranslatorInterface;
 
 /**
  * Class Client
@@ -27,7 +26,7 @@ final class Client implements ClientInterface
      *
      * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
      */
-    private function __construct(
+    public function __construct(
         AdapterInterface $adapter
     ) {
         $this->adapter = $adapter;
