@@ -2,6 +2,8 @@
 
 namespace Codeception\Module\Percy\Exchange;
 
+use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
+
 /**
  * Interface ClientInterface
  *
@@ -10,12 +12,13 @@ namespace Codeception\Module\Percy\Exchange;
 interface ClientInterface
 {
     /**
-     * From URL
+     * From adapter
      *
-     * @param string $url
+     * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
      * @return \Codeception\Module\Percy\Exchange\ClientInterface
+     * @author Daniel Doyle <dd@amp.co>
      */
-    public static function fromUrl(string $url) : ClientInterface;
+    public static function fromAdapter(AdapterInterface $adapter) : ClientInterface;
 
     /**
      * With payload
@@ -28,16 +31,18 @@ interface ClientInterface
     /**
      * Get
      *
-     * @throws \Codeception\Module\Percy\Exception\ClientException
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @param string $path
      * @return string
      */
-    public function get() : string;
+    public function get(string $path) : string;
 
     /**
      * Post
      *
-     * @throws \Codeception\Module\Percy\Exception\ClientException
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @param string $path
      * @return string
      */
-    public function post() : string;
+    public function post(string $path) : string;
 }

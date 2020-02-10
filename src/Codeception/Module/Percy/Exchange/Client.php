@@ -2,6 +2,9 @@
 
 namespace Codeception\Module\Percy\Exchange;
 
+use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
+use Codeception\Module\Percy\Exchange\Adapter\TranslatorInterface;
+
 /**
  * Class Client
  *
@@ -10,7 +13,7 @@ namespace Codeception\Module\Percy\Exchange;
 final class Client implements ClientInterface
 {
     /**
-     * @var \Codeception\Module\Percy\Exchange\AdapterInterface
+     * @var \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
     private $adapter;
 
@@ -22,25 +25,23 @@ final class Client implements ClientInterface
     /**
      * Client constructor.
      *
-     * @param string                                                   $url
-     * @param \Codeception\Module\Percy\Exchange\AdapterInterface|null $adapter
+     * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
      */
     private function __construct(
-        string $url,
-        ?AdapterInterface $adapter = null
+        AdapterInterface $adapter
     ) {
-        $this->adapter = $adapter ? $adapter->setUrl($url) : new CurlAdapter($url);
+        $this->adapter = $adapter;
     }
 
     /**
      * @inheritDoc
      *
-     * @param string $url
+     * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
      * @return \Codeception\Module\Percy\Exchange\ClientInterface
      */
-    public static function fromUrl(string $url) : ClientInterface
+    public static function fromAdapter(AdapterInterface $adapter) : ClientInterface
     {
-        return new self($url);
+        return new self($adapter);
     }
 
     /**
@@ -59,40 +60,32 @@ final class Client implements ClientInterface
     /**
      * @inheritDoc
      *
-     * @throws \Codeception\Module\Percy\Exception\ClientException
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @param string $path
      * @return string
      */
-    public function get() : string
+    public function get(string $path) : string
     {
-        $this->adapter->setOptions([
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FAILONERROR => true
-        ]);
-
-        return $this->adapter->execute();
+        return $this->adapter->setPath($path)->execute();
     }
 
     /**
      * @inheritDoc
      *
-     * @throws \Codeception\Module\Percy\Exception\ClientException
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @param string $path
      * @return string
      */
-    public function post() : string
+    public function post(string $path) : string
     {
         $payloadAsString = (string) $this->payload;
 
-        $this->adapter->setOptions([
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $payloadAsString,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FAILONERROR => true,
-            CURLOPT_HTTPHEADER => [
+        return $this->adapter->setPath($path)
+            ->setIsPost()
+            ->setPayload($payloadAsString)
+            ->setHeaders([
                 'Content-Type: application/json',
                 'Content-Length: ' . strlen($payloadAsString)
-            ]
-        ]);
-
-        return $this->adapter->execute();
+            ])->execute();
     }
 }

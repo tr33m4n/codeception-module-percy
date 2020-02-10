@@ -5,11 +5,11 @@ namespace Codeception\Module\Percy\Exception;
 use Codeception\Exception\ModuleException;
 
 /**
- * Class ClientException
+ * Class AdapterException
  *
  * @package Codeception\Module\Percy\Exception
  */
-final class ClientException extends ModuleException
+final class AdapterException extends ModuleException
 {
     //
 }

@@ -3,9 +3,12 @@
 namespace Codeception\Module;
 
 use Codeception\Module;
+use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
 use Codeception\Module\Percy\Exchange\Client;
 use Codeception\Module\Percy\Exchange\Payload;
-use Codeception\Module\Percy\InfoProvider;
+use Codeception\Module\Percy\InfoFactory;
+use Codeception\Module\Percy\ClassFactory;
+use ReflectionClass;
 use Exception;
 
 /**
@@ -15,11 +18,6 @@ use Exception;
  */
 class Percy extends Module
 {
-    /**
-     * Module namespace, for use with exceptions
-     */
-    const MODULE_NAMESPACE = 'Percy';
-
     /**
      * @var array
      */
@@ -39,9 +37,9 @@ class Percy extends Module
     private $webDriver;
 
     /**
-     * @var \Codeception\Module\Percy\InfoProvider
+     * @var \Codeception\Module\Percy\Exchange\Client
      */
-    private $infoProvider;
+    private $client;
 
     /**
      * @var string|null
@@ -50,21 +48,22 @@ class Percy extends Module
 
     /**
      * @inheritDoc
-     * @throws \Codeception\Exception\ModuleException
+     *
+     * @throws \Exception
      */
     public function _initialize()
     {
-        /** @var \Codeception\Module\WebDriver $webDriverModule */
-        $webDriverModule = $this->getModule($this->_getConfig('driver'));
-
-        $this->webDriver = $webDriverModule;
-        $this->infoProvider = InfoProvider::fromWebDriver($this->webDriver);
+        $this->webDriver = $this->getModule($this->_getConfig('driver'));
+        // Init cURL client with default adapter
+        $this->client = ClassFactory::createClass(CurlAdapter::class, [
+            ClassFactory::createClass(Client::class, [$this->_getConfig('agentEndpoint')])
+        ]);
 
         try {
-            $this->percyAgentJs = Client::fromUrl($this->buildUrl($this->_getConfig('agentJsPath')))->get();
+            $this->percyAgentJs = $this->client->get($this->_getConfig('agentJsPath'));
         } catch (Exception $exception) {
             $this->debugSection(
-                self::MODULE_NAMESPACE,
+                (new ReflectionClass($this))->getShortName(),
                 'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`?'
             );
         }
@@ -73,7 +72,7 @@ class Percy extends Module
     /**
      * Take snapshot of DOM and send to https://percy.io
      *
-     * @throws \Codeception\Module\Percy\Exception\ClientException
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @param string $name
      * @param array  $snapshotConfig
      */
@@ -89,37 +88,17 @@ class Percy extends Module
         // Add Percy agent JS to page
         $this->webDriver->executeJS($this->percyAgentJs);
 
-        $payload = Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
-            ->withName($name)
-            ->withUrl($this->webDriver->webDriver->getCurrentURL())
-            ->withDomSnapshot($this->webDriver->executeJS($this->buildSnapshotJs()))
-            ->withClientInfo($this->infoProvider->getClientInfo())
-            ->withEnvironmentInfo($this->infoProvider->getEnvironmentInfo());
-
-        Client::fromUrl($this->buildUrl($this->_getConfig('agentPostPath')))->withPayload($payload)->post();
-    }
-
-    /**
-     * Build snapshot JS
-     *
-     * @return string
-     */
-    private function buildSnapshotJs() : string
-    {
-        return sprintf(
-            'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
-            json_encode($this->_getConfig('agentConfig'))
-        );
-    }
-
-    /**
-     * Build URL relative to agent endpoint
-     *
-     * @param string|null $path
-     * @return string
-     */
-    private function buildUrl(?string $path = null) : string
-    {
-        return rtrim($this->_getConfig('agentEndpoint'), '/') . '/' . $path;
+        $this->client
+            ->withPayload(
+                Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
+                    ->withName($name)
+                    ->withUrl($this->webDriver->webDriver->getCurrentURL())
+                    ->withDomSnapshot($this->webDriver->executeJS(sprintf(
+                        'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
+                        json_encode($this->_getConfig('agentConfig'))
+                    )))
+                    ->withClientInfo(InfoFactory::createClientInfo())
+                    ->withEnvironmentInfo(InfoFactory::createEnvironmentInfo($this->webDriver)))
+            ->post($this->_getConfig('agentPostPath'));
     }
 }
