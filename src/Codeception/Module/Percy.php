@@ -55,8 +55,8 @@ class Percy extends Module
     {
         $this->webDriver = $this->getModule($this->_getConfig('driver'));
         // Init cURL client with default adapter
-        $this->client = ClassFactory::createClass(CurlAdapter::class, [
-            ClassFactory::createClass(Client::class, [$this->_getConfig('agentEndpoint')])
+        $this->client = ClassFactory::createClass(Client::class, [
+            ClassFactory::createClass(CurlAdapter::class, [$this->_getConfig('agentEndpoint')])
         ]);
 
         try {

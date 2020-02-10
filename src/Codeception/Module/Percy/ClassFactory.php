@@ -2,7 +2,7 @@
 
 namespace Codeception\Module\Percy;
 
-use stdClass;
+use Exception;
 
 /**
  * Class ClassFactory
@@ -17,12 +17,12 @@ class ClassFactory
      * @throws \Exception
      * @param string $className
      * @param array  $additionalArguments
-     * @return \stdClass
+     * @return object
      */
-    public static function createClass(string $className, array $additionalArguments = []) : stdClass
+    public static function createClass(string $className, array $additionalArguments = []) : object
     {
-        if (!is_a($className, stdClass::class, true)) {
-            throw new Exception('Config value is not a class');
+        if (!class_exists($className)) {
+            throw new Exception('Class does not exist');
         }
 
         return new $className(...$additionalArguments);
