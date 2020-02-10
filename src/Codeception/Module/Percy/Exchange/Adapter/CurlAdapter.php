@@ -133,7 +133,9 @@ class CurlAdapter implements AdapterInterface
             );
         }
 
-        curl_close($this->resource);
+        // Restore default state after executing
+        curl_reset($this->resource);
+        $this->setDefaults();
 
         return $output;
     }
