@@ -14,8 +14,6 @@ class ClassFactoryTest extends TestCase
 {
     /**
      * Test creating a class that exists
-     *
-     * @author Daniel Doyle <dd@amp.co>
      */
     public function testCreatingAClassThatExists() : void
     {
@@ -24,8 +22,6 @@ class ClassFactoryTest extends TestCase
 
     /**
      * Test creating a class that does not exist
-     *
-     * @author Daniel Doyle <dd@amp.co>
      */
     public function testCreatingAClassThatDoesNotExist() : void
     {
