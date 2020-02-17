@@ -9,7 +9,7 @@ use Codeception\Module\WebDriver;
  *
  * @package Codeception\Module\Percy
  */
-class InfoFactory
+final class InfoFactory
 {
     /**
      * Create environment info

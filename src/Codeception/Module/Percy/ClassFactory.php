@@ -2,19 +2,19 @@
 
 namespace Codeception\Module\Percy;
 
-use Exception;
+use InvalidArgumentException;
 
 /**
  * Class ClassFactory
  *
  * @package Codeception\Module\Percy
  */
-class ClassFactory
+final class ClassFactory
 {
     /**
      * Create class
      *
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      * @param string $className
      * @param array  $additionalArguments
      * @return object
@@ -22,7 +22,7 @@ class ClassFactory
     public static function createClass(string $className, array $additionalArguments = []) : object
     {
         if (!class_exists($className)) {
-            throw new Exception('Class does not exist');
+            throw new InvalidArgumentException('Class does not exist');
         }
 
         return new $className(...$additionalArguments);

@@ -9,7 +9,7 @@ use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
  *
  * @package Codeception\Module\Percy\Exchange
  */
-final class Client implements ClientInterface
+class Client implements ClientInterface
 {
     /**
      * @var \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface

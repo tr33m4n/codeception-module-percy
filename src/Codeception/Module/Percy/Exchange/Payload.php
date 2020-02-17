@@ -59,7 +59,7 @@ class Payload
     /**
      * Array of keys that can be set from config
      */
-    const CONFIG_WHITELIST = [
+    const PUBLIC_KEYS = [
         self::PERCY_CSS,
         self::MIN_HEIGHT,
         self::ENABLE_JAVASCRIPT,
@@ -67,18 +67,14 @@ class Payload
     ];
 
     /**
-     * All keys as array
+     * Array of keys that can't be set from config
      */
-    const ALL_KEYS = [
+    const PRIVATE_KEYS = [
         self::NAME,
         self::URL,
-        self::PERCY_CSS,
-        self::MIN_HEIGHT,
         self::DOM_SNAPSHOT,
         self::CLIENT_INFO,
-        self::ENABLE_JAVASCRIPT,
-        self::ENVIRONMENT_INFO,
-        self::WIDTHS
+        self::ENVIRONMENT_INFO
     ];
 
     /**
@@ -94,18 +90,19 @@ class Payload
      */
     public static function from(array $config) : Payload
     {
-        $payload = new self();
-        foreach ($config as $key => $value) {
-            if (!in_array($key, self::CONFIG_WHITELIST)) {
-                throw new InvalidArgumentException(
-                    sprintf('The following key is not allowed to be set through config: %s', $key)
-                );
-            }
+        return array_reduce(
+            array_keys($config),
+            function (Payload $payload, string $configKey) use ($config) {
+                if (!in_array($configKey, self::PUBLIC_KEYS)) {
+                    throw new InvalidArgumentException(
+                        sprintf('The following key is not allowed to be set through config: %s', $configKey)
+                    );
+                }
 
-            self::withValue($payload, $key, $value);
-        }
-
-        return $payload;
+                return self::withValue($payload, $configKey, $config[$configKey]);
+            },
+            new self()
+        );
     }
 
     /**
@@ -218,7 +215,7 @@ class Payload
      */
     private static function withValue(Payload $payload, $key, $value)
     {
-        if (!in_array($key, self::ALL_KEYS)) {
+        if (!in_array($key, array_merge(self::PUBLIC_KEYS, self::PRIVATE_KEYS))) {
             throw new InvalidArgumentException(sprintf('Invalid payload key %s', $key));
         }
 
