@@ -4,6 +4,6 @@ parameters:
     excludes_analyse:
         - *Test*
         - *tests*
-    level: 5
+    level: 8
     ignoreErrors:
         - '#Property Codeception\\Module\\Percy::\$webDriver#'

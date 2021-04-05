@@ -23,12 +23,19 @@
     },
     "require-dev": {
         "phpstan/phpstan": "^0.12.9",
-        "phpunit/phpunit": "^8.5"
+        "phpunit/phpunit": "^8.5",
+        "friendsofphp/php-cs-fixer": "^2.18",
+        "rector/rector": "^0.8.56"
     },
     "scripts": {
+        "lint": "vendor/bin/rector process && vendor/bin/php-cs-fixer fix --diff",
+        "test:lint": "vendor/bin/rector process --dry-run && vendor/bin/php-cs-fixer fix --dry-run --diff",
+        "test:types": "vendor/bin/phpstan analyse --no-interaction --no-progress",
+        "test:unit": "vendor/bin/phpunit --bootstrap vendor/autoload.php tests",
         "test": [
-            "vendor/bin/phpstan analyse --no-interaction --no-progress",
-            "vendor/bin/phpunit --bootstrap vendor/autoload.php tests"
+            "@test:lint",
+            "@test:types",
+            "@test:unit"
         ]
     }
 }
