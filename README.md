@@ -67,3 +67,5 @@ $I->takeAPercySnapshot('My snapshot name', [
     Payload::ENABLE_JAVASCRIPT => true // Enable/disable JavaScript
 ]);
 ```
+### TODO
+- [ ] Further unit tests
