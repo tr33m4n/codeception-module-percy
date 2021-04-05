@@ -14,7 +14,7 @@ final class InfoFactory
     /**
      * Create environment info
      *
-     * @param WebDriver $webDriver
+     * @param \Codeception\Module\WebDriver $webDriver
      * @return string
      */
     public static function createEnvironmentInfo(WebDriver $webDriver) : string
@@ -36,7 +36,7 @@ final class InfoFactory
      */
     public static function createClientInfo() : string
     {
-        $moduleInfo = json_decode(file_get_contents(__DIR__ . '/../../../../composer.json'), true);
+        $moduleInfo = json_decode(file_get_contents(__DIR__ . '/../../../../composer.json') ?: '', true);
 
         return sprintf('%s/%s', explode('/', $moduleInfo['name'])[1], $moduleInfo['version']);
     }

@@ -7,8 +7,6 @@ use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
 use Codeception\Module\Percy\Exchange\Client;
 use Codeception\Module\Percy\Exchange\Payload;
 use Codeception\Module\Percy\InfoFactory;
-use Codeception\Module\Percy\ClassFactory;
-use ReflectionClass;
 use Exception;
 
 /**
@@ -18,8 +16,10 @@ use Exception;
  */
 class Percy extends Module
 {
+    const EXCEPTION_NAMESPACE = 'Percy';
+
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $config = [
         'driver' => 'WebDriver',
@@ -37,7 +37,7 @@ class Percy extends Module
     private $webDriver;
 
     /**
-     * @var \Codeception\Module\Percy\Exchange\Client
+     * @var \Codeception\Module\Percy\Exchange\ClientInterface
      */
     private $client;
 
@@ -47,23 +47,22 @@ class Percy extends Module
     private $percyAgentJs;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @throws \Exception
      */
-    public function _initialize()
+    public function _initialize() : void
     {
         $this->webDriver = $this->getModule($this->_getConfig('driver'));
+
         // Init cURL client with default adapter
-        $this->client = ClassFactory::createClass(Client::class, [
-            ClassFactory::createClass(CurlAdapter::class, [$this->_getConfig('agentEndpoint')])
-        ]);
+        $this->client = Client::create(CurlAdapter::create($this->_getConfig('agentEndpoint')));
 
         try {
             $this->percyAgentJs = $this->client->get($this->_getConfig('agentJsPath'));
         } catch (Exception $exception) {
             $this->debugSection(
-                (new ReflectionClass($this))->getShortName(),
+                self::EXCEPTION_NAMESPACE,
                 'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`?'
             );
         }
@@ -73,8 +72,8 @@ class Percy extends Module
      * Take snapshot of DOM and send to https://percy.io
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $name
-     * @param array  $snapshotConfig
+     * @param string               $name
+     * @param array<string, mixed> $snapshotConfig
      */
     public function takeAPercySnapshot(
         string $name,
@@ -98,7 +97,8 @@ class Percy extends Module
                         json_encode($this->_getConfig('agentConfig'))
                     )))
                     ->withClientInfo(InfoFactory::createClientInfo())
-                    ->withEnvironmentInfo(InfoFactory::createEnvironmentInfo($this->webDriver)))
+                    ->withEnvironmentInfo(InfoFactory::createEnvironmentInfo($this->webDriver))
+            )
             ->post($this->_getConfig('agentPostPath'));
     }
 }

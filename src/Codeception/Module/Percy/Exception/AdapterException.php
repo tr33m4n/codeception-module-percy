@@ -3,6 +3,7 @@
 namespace Codeception\Module\Percy\Exception;
 
 use Codeception\Exception\ModuleException;
+use Codeception\Module\Percy;
 
 /**
  * Class AdapterException
@@ -11,5 +12,13 @@ use Codeception\Exception\ModuleException;
  */
 final class AdapterException extends ModuleException
 {
-    //
+    /**
+     * AdapterException constructor.
+     *
+     * @param string $message
+     */
+    public function __construct(string $message)
+    {
+        parent::__construct(Percy::EXCEPTION_NAMESPACE, $message);
+    }
 }

@@ -5,8 +5,6 @@ Percy https://percy.io module for Codeception
 ```shell script
 composer require --dev tr33m4n/codeception-module-percy
 ```
-If you're using version `4.x` of Codeception, ensure that you have also installed the `codeception/module-webdriver` package. For more information see https://codeception.com/docs/modules/WebDriver
-
 ## Example Configuration
 The following example configuration assumes the `WebDriver` module has been configured correctly for your test suite
 ```yaml

@@ -2,8 +2,6 @@
 
 namespace Codeception\Module\Percy\Exchange;
 
-use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
-
 /**
  * Interface ClientInterface
  *

@@ -78,14 +78,14 @@ class Payload
     ];
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $config = [];
 
     /**
      * From config
      *
-     * @param array $config
+     * @param array<string, mixed> $config
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public static function from(array $config) : Payload
@@ -196,7 +196,7 @@ class Payload
     /**
      * With widths
      *
-     * @param array $widths
+     * @param int[] $widths
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withWidths(array $widths) : Payload
@@ -207,13 +207,13 @@ class Payload
     /**
      * With value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @param \Codeception\Module\Percy\Exchange\Payload $payload
      * @param string                                     $key
      * @param mixed                                      $value
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    private static function withValue(Payload $payload, $key, $value)
+    private static function withValue(Payload $payload, string $key, $value) : Payload
     {
         if (!in_array($key, array_merge(self::PUBLIC_KEYS, self::PRIVATE_KEYS))) {
             throw new InvalidArgumentException(sprintf('Invalid payload key %s', $key));
@@ -231,6 +231,6 @@ class Payload
      */
     public function __toString() : string
     {
-        return json_encode($this->config);
+        return json_encode($this->config) ?: '';
     }
 }

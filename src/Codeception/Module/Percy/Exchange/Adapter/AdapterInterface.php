@@ -43,7 +43,7 @@ interface AdapterInterface
     /**
      * Set headers
      *
-     * @param array $headers
+     * @param string[] $headers
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
     public function setHeaders(array $headers) : AdapterInterface;

@@ -17,7 +17,7 @@ class Client implements ClientInterface
     private $adapter;
 
     /**
-     * @var \Codeception\Module\Percy\Exchange\Payload|null
+     * @var Payload|null
      */
     private $payload;
 
@@ -33,10 +33,18 @@ class Client implements ClientInterface
     }
 
     /**
-     * @inheritDoc
+     * Create new instance
      *
-     * @param \Codeception\Module\Percy\Exchange\Payload $payload
-     * @return \Codeception\Module\Percy\Exchange\ClientInterface
+     * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
+     * @return ClientInterface
+     */
+    public static function create(AdapterInterface $adapter) : ClientInterface
+    {
+        return new self($adapter);
+    }
+
+    /**
+     * @inheritDoc
      */
     public function setPayload(Payload $payload) : ClientInterface
     {
@@ -47,10 +55,6 @@ class Client implements ClientInterface
 
     /**
      * @inheritDoc
-     *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $path
-     * @return string
      */
     public function get(string $path) : string
     {
@@ -59,10 +63,6 @@ class Client implements ClientInterface
 
     /**
      * @inheritDoc
-     *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $path
-     * @return string
      */
     public function post(string $path) : string
     {
