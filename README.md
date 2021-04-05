@@ -68,4 +68,5 @@ $I->takeAPercySnapshot('My snapshot name', [
 ]);
 ```
 ### TODO
+- [ ] Basic E2E test with codeception
 - [ ] Further unit tests
