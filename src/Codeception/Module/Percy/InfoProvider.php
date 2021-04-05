@@ -3,21 +3,24 @@
 namespace Codeception\Module\Percy;
 
 use Codeception\Module\WebDriver;
+use PackageVersions\Versions;
 
 /**
- * Class InfoFactory
+ * Class InfoProvider
  *
  * @package Codeception\Module\Percy
  */
-final class InfoFactory
+final class InfoProvider
 {
+    const PACKAGE_NAME = 'tr33m4n/codeception-module-percy';
+
     /**
-     * Create environment info
+     * Get environment info
      *
      * @param \Codeception\Module\WebDriver $webDriver
      * @return string
      */
-    public static function createEnvironmentInfo(WebDriver $webDriver) : string
+    public static function getEnvironmentInfo(WebDriver $webDriver) : string
     {
         $webDriverCapabilities = $webDriver->webDriver->getCapabilities();
 
@@ -30,14 +33,16 @@ final class InfoFactory
     }
 
     /**
-     * Create client info
+     * Get client info
      *
      * @return string
      */
-    public static function createClientInfo() : string
+    public static function getClientInfo() : string
     {
-        $moduleInfo = json_decode(file_get_contents(__DIR__ . '/../../../../composer.json') ?: '', true);
-
-        return sprintf('%s/%s', explode('/', $moduleInfo['name'])[1], $moduleInfo['version']);
+        return sprintf(
+            '%s/%s',
+            strstr(self::PACKAGE_NAME, '/'),
+            strstr(Versions::getVersion(self::PACKAGE_NAME), '@', true)
+        );
     }
 }

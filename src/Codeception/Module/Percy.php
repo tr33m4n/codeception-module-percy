@@ -6,7 +6,7 @@ use Codeception\Module;
 use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
 use Codeception\Module\Percy\Exchange\Client;
 use Codeception\Module\Percy\Exchange\Payload;
-use Codeception\Module\Percy\InfoFactory;
+use Codeception\Module\Percy\InfoProvider;
 use Exception;
 
 /**
@@ -96,8 +96,8 @@ class Percy extends Module
                         'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
                         json_encode($this->_getConfig('agentConfig'))
                     )))
-                    ->withClientInfo(InfoFactory::createClientInfo())
-                    ->withEnvironmentInfo(InfoFactory::createEnvironmentInfo($this->webDriver))
+                    ->withClientInfo(InfoProvider::getClientInfo())
+                    ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver))
             )
             ->post($this->_getConfig('agentPostPath'));
     }

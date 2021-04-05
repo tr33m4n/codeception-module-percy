@@ -15,7 +15,8 @@
         "ext-curl": "*",
         "ext-json": "*",
         "codeception/codeception": "^4.0.0",
-        "codeception/module-webdriver": "^1.2"
+        "codeception/module-webdriver": "^1.2",
+        "ocramius/package-versions": "^1.4"
     },
     "autoload": {
         "psr-4": {
@@ -28,6 +29,9 @@
         "friendsofphp/php-cs-fixer": "^2.18",
         "rector/rector": "^0.8.56",
         "adamwojs/php-cs-fixer-phpdoc-force-fqcn": "^1.1"
+    },
+    "config": {
+        "optimize-autoloader": true
     },
     "scripts": {
         "lint": "vendor/bin/rector process && vendor/bin/php-cs-fixer fix --diff",
