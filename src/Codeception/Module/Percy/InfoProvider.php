@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
@@ -15,6 +16,16 @@ final class InfoProvider
     const PACKAGE_NAME = 'tr33m4n/codeception-module-percy';
 
     /**
+     * @var string|null
+     */
+    private static $environmentInfo;
+
+    /**
+     * @var string|null
+     */
+    private static $clientInfo;
+
+    /**
      * Get environment info
      *
      * @param \Codeception\Module\WebDriver $webDriver
@@ -22,9 +33,13 @@ final class InfoProvider
      */
     public static function getEnvironmentInfo(WebDriver $webDriver) : string
     {
+        if (null !== self::$environmentInfo) {
+            return self::$environmentInfo;
+        }
+
         $webDriverCapabilities = $webDriver->webDriver->getCapabilities();
 
-        return sprintf(
+        return self::$environmentInfo = sprintf(
             'codeception-php; %s; %s/%s',
             $webDriverCapabilities->getPlatform(),
             $webDriverCapabilities->getBrowserName(),
@@ -39,7 +54,11 @@ final class InfoProvider
      */
     public static function getClientInfo() : string
     {
-        return sprintf(
+        if (null !== self::$clientInfo) {
+            return self::$clientInfo;
+        }
+
+        return self::$clientInfo = sprintf(
             '%s/%s',
             strstr(self::PACKAGE_NAME, '/'),
             strstr(Versions::getVersion(self::PACKAGE_NAME), '@', true)
