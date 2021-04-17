@@ -37,7 +37,7 @@
         "lint": "vendor/bin/rector process && vendor/bin/php-cs-fixer fix --diff",
         "test:lint": "vendor/bin/rector process --dry-run && vendor/bin/php-cs-fixer fix --dry-run --diff",
         "test:types": "vendor/bin/phpstan analyse --no-interaction --no-progress",
-        "test:unit": "vendor/bin/phpunit --bootstrap vendor/autoload.php tests",
+        "test:unit": "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/unit",
         "test": [
             "@test:lint",
             "@test:types",
