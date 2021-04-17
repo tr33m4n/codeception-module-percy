@@ -12,10 +12,17 @@ modules:
         - \Helper\Acceptance
     config:
         WebDriver:
-            url: 'https://localhost/'
-            wait: 15
-            browser: chrome
-            port: 8081
-            restart: true
-            clear_cookies: true
+            url: 'http://localhost:8081/'
+            browser: firefox
+            path: ''
+            capabilities:
+                acceptInsecureCerts: true
+        Percy:
+            snapshotConfig:
+                enableJavaScript: true
+                widths:
+                    - 1300
+                    - 980
+                    - 740
+                    - 320
 step_decorators: ~

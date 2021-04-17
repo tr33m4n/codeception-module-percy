@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -e
+
+DIR_BASE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+LOGFILE="$DIR_BASE/server.log"
+rm -f $LOGFILE
+touch $LOGFILE
+
+$DIR_BASE/stop.sh
+
+printf "\033[92mLaunching PHP server\n\033[0m";
+
+exec -a PHPServer php -S localhost:8081 ./ &> $LOGFILE &
+
+sleep 2;
+printf "\n";
+
+set +e
