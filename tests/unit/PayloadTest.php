@@ -1,16 +1,12 @@
 <?php
 
-namespace Codeception\Module\Percy\Exchange;
-
-use PHPUnit\Framework\TestCase;
-use InvalidArgumentException;
+use Codeception\Module\Percy\Exchange\Payload;
+use Codeception\Test\Unit;
 
 /**
  * Class PayloadTest
- *
- * @package Codeception\Module\Percy\Exchange
  */
-class PayloadTest extends TestCase
+class PayloadTest extends Unit
 {
     /**
      * Test that an invalid key cannot be set against the payload object

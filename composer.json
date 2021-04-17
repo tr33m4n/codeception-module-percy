@@ -2,7 +2,7 @@
     "name": "tr33m4n/codeception-module-percy",
     "description": "Percy https://percy.io module for Codeception",
     "license": "MIT",
-    "version": "v0.1.5",
+    "version": "v1.0.0",
     "authors": [
         {
             "name": "Daniel Doyle",
@@ -24,24 +24,28 @@
         }
     },
     "require-dev": {
-        "phpstan/phpstan": "^0.12.9",
-        "phpunit/phpunit": "^8.5",
+        "adamwojs/php-cs-fixer-phpdoc-force-fqcn": "^1.1",
+        "codeception/module-asserts": "^1.3",
+        "codeception/module-phpbrowser": "^1.0",
         "friendsofphp/php-cs-fixer": "^2.18",
-        "rector/rector": "^0.8.56",
-        "adamwojs/php-cs-fixer-phpdoc-force-fqcn": "^1.1"
+        "phpstan/phpstan": "^0.12.9",
+        "rector/rector": "^0.8.56"
     },
     "config": {
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "sort-packages": true
     },
     "scripts": {
-        "lint": "vendor/bin/rector process && vendor/bin/php-cs-fixer fix --diff",
+        "fix": "vendor/bin/rector process && vendor/bin/php-cs-fixer fix --diff",
         "test:lint": "vendor/bin/rector process --dry-run && vendor/bin/php-cs-fixer fix --dry-run --diff",
         "test:types": "vendor/bin/phpstan analyse --no-interaction --no-progress",
-        "test:unit": "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/unit",
+        "test:unit": "php vendor/bin/codecept run unit",
+        "test:acceptance": "php -S localhost:8081 tests/server/index.php & php vendor/bin/codecept run acceptance",
         "test": [
             "@test:lint",
             "@test:types",
-            "@test:unit"
+            "@test:unit",
+            "@test:acceptance"
         ]
     }
 }
