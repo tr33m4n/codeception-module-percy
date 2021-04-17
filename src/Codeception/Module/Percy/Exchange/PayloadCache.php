@@ -47,4 +47,12 @@ class PayloadCache
     {
         return $this->payloads;
     }
+
+    /**
+     * Clear payload cache
+     */
+    public function clear() : void
+    {
+        $this->payloads = [];
+    }
 }

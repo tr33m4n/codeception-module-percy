@@ -138,6 +138,7 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail) : void
     {
+        $this->payloadCache->clear();
         $this->client->post($this->_getConfig('agentStopPath'));
     }
 }
