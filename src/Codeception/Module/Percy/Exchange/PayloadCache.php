@@ -16,7 +16,7 @@ class PayloadCache
     private $payloads = [];
 
     /**
-     * Create collection
+     * Create cache
      *
      * @return \Codeception\Module\Percy\Exchange\PayloadCache
      */
@@ -26,7 +26,7 @@ class PayloadCache
     }
 
     /**
-     * Add a payload to the collection
+     * Add a payload to the cache
      *
      * @param \Codeception\Module\Percy\Exchange\Payload $payload
      * @return $this
