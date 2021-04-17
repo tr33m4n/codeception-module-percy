@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exception;
 
@@ -19,6 +20,6 @@ final class AdapterException extends ModuleException
      */
     public function __construct(string $message)
     {
-        parent::__construct(Percy::EXCEPTION_NAMESPACE, $message);
+        parent::__construct(Percy::NAMESPACE, $message);
     }
 }

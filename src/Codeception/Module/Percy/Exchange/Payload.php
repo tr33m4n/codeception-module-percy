@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
 
@@ -222,6 +223,16 @@ class Payload
         $payload->config[$key] = $value;
 
         return $payload;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName() : string
+    {
+        return $this->config[self::NAME] ?? '';
     }
 
     /**
