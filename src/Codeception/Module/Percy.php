@@ -32,7 +32,8 @@ class Percy extends Module
         'agentStopPath' => 'percy/stop',
         'agentConfig' => [
             'handleAgentCommunication' => false
-        ]
+        ],
+        'throwOnAdapterError' => false
     ];
 
     /**
@@ -70,16 +71,14 @@ class Percy extends Module
         try {
             $this->percyAgentJs = $this->client->get($this->_getConfig('agentJsPath'));
         } catch (Exception $exception) {
-            $this->debugSection(
-                self::NAMESPACE,
-                'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`?'
-            );
+            $this->debugConnectionError($exception);
         }
     }
 
     /**
      * Take snapshot of DOM and send to https://percy.io
      *
+     * @throws \Codeception\Module\Percy\Exception\StorageException
      * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
@@ -113,7 +112,7 @@ class Percy extends Module
      *
      * Iterate all payloads and send
      *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @throws \Exception
      */
     public function _afterSuite() : void
     {
@@ -123,7 +122,11 @@ class Percy extends Module
                 sprintf('Sending Percy snapshot "%s"', $payload->getName())
             );
 
-            $this->client->setPayload($payload)->post($this->_getConfig('agentSnapshotPath'));
+            try {
+                $this->client->setPayload($payload)->post($this->_getConfig('agentSnapshotPath'));
+            } catch (Exception $exception) {
+                $this->debugConnectionError($exception);
+            }
         }
 
         $this->payloadCache->clear();
@@ -134,13 +137,42 @@ class Percy extends Module
      *
      * Stop agent without sending on failure
      *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @throws \Exception
      * @param \Codeception\TestInterface $test
      * @param \Exception                 $fail
      */
     public function _failed(TestInterface $test, $fail) : void
     {
         $this->payloadCache->clear();
-        $this->client->post($this->_getConfig('agentStopPath'));
+
+        try {
+            $this->client->post($this->_getConfig('agentStopPath'));
+        } catch (Exception $exception) {
+            $this->debugConnectionError($exception);
+        }
+    }
+
+    /**
+     * Echo connection error message
+     *
+     * @throws \Exception
+     * @param \Exception $exception
+     */
+    private function debugConnectionError(Exception $exception) : void
+    {
+        $this->debugSection(
+            self::NAMESPACE,
+            [
+                'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`?',
+                $exception->getMessage(),
+                $exception->getTraceAsString()
+            ]
+        );
+
+        if (!$this->_getConfig('throwOnAdapterError')) {
+            return;
+        }
+
+        throw $exception;
     }
 }
