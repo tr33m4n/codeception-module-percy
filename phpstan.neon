@@ -5,5 +5,7 @@ parameters:
         - *Test*
         - *tests*
     level: 8
+    bootstrapFiles:
+        - vendor/codeception/codeception/autoload.php
     ignoreErrors:
         - '#Property Codeception\\Module\\Percy::\$webDriver#'

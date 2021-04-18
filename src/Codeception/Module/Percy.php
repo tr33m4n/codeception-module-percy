@@ -125,6 +125,8 @@ class Percy extends Module
 
             $this->client->setPayload($payload)->post($this->_getConfig('agentSnapshotPath'));
         }
+
+        $this->payloadCache->clear();
     }
 
     /**

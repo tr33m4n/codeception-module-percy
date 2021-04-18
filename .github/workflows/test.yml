@@ -1,26 +1,26 @@
 name: Test
 
 on:
-  push:
-    branches: [ development, master ]
-  workflow_dispatch:
+    push:
+        branches: [ development, master ]
+    workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php: [ 7.2 ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup PHP
-        uses: shivammathur/setup-php@2.10.0
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: iconv, intl, xml, soap, opcache, pdo, pdo_mysql, mysqli, sodium, zip, bcmath, xsl, sockets, gd
-          tools: composer
-      - name: Install dependencies
-        run: composer update
-      - name: Run test suite
-        run: composer run test
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php: [ 7.2 ]
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@2.10.0
+                with:
+                    php-version: ${{ matrix.php }}
+                    extensions: iconv, intl, xml, soap, opcache, pdo, pdo_mysql, mysqli, sodium, zip, bcmath, xsl, sockets, gd
+                    tools: composer
+            -   name: Install dependencies
+                run: composer update
+            -   name: Run test suite
+                run: composer run test
