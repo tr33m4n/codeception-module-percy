@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
 
-use InvalidArgumentException;
-
 /**
  * Class Payload
  *
@@ -58,51 +56,34 @@ class Payload
     const WIDTHS = 'widths';
 
     /**
-     * Array of keys that can be set from config
-     */
-    const PUBLIC_KEYS = [
-        self::PERCY_CSS,
-        self::MIN_HEIGHT,
-        self::ENABLE_JAVASCRIPT,
-        self::WIDTHS
-    ];
-
-    /**
-     * Array of keys that can't be set from config
-     */
-    const PRIVATE_KEYS = [
-        self::NAME,
-        self::URL,
-        self::DOM_SNAPSHOT,
-        self::CLIENT_INFO,
-        self::ENVIRONMENT_INFO
-    ];
-
-    /**
      * @var array<string, mixed>
      */
     private $config = [];
 
     /**
+     * Payload constructor.
+     */
+    private function __construct()
+    {
+        //
+    }
+
+    /**
      * From config
      *
-     * @param array<string, mixed> $config
+     * @param array<string, mixed> $publicConfig
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public static function from(array $config) : Payload
+    public static function from(array $publicConfig) : Payload
     {
         return array_reduce(
-            array_keys($config),
-            function (Payload $payload, string $configKey) use ($config) {
-                if (!in_array($configKey, self::PUBLIC_KEYS)) {
-                    throw new InvalidArgumentException(
-                        sprintf('The following key is not allowed to be set through config: %s', $configKey)
-                    );
-                }
+            array_keys($publicConfig),
+            function (Payload $payload, string $configKey) use ($publicConfig) {
+                ValidatePublicConfig::execute($configKey);
 
-                return self::withValue($payload, $configKey, $config[$configKey]);
+                return self::withValue($payload, $configKey, $publicConfig[$configKey]);
             },
-            new self()
+            new self
         );
     }
 
@@ -153,12 +134,13 @@ class Payload
     /**
      * With DOM snapshot
      *
+     * @throws \Codeception\Module\Percy\Exception\StorageException
      * @param string $domSnapshot
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withDomSnapshot(string $domSnapshot) : Payload
     {
-        return self::withValue(clone $this, self::DOM_SNAPSHOT, $domSnapshot);
+        return self::withValue(clone $this, self::DOM_SNAPSHOT, SnapshotStorage::save($domSnapshot));
     }
 
     /**
@@ -216,10 +198,6 @@ class Payload
      */
     private static function withValue(Payload $payload, string $key, $value) : Payload
     {
-        if (!in_array($key, array_merge(self::PUBLIC_KEYS, self::PRIVATE_KEYS))) {
-            throw new InvalidArgumentException(sprintf('Invalid payload key %s', $key));
-        }
-
         $payload->config[$key] = $value;
 
         return $payload;
@@ -236,6 +214,16 @@ class Payload
     }
 
     /**
+     * Get DOM snapshot
+     *
+     * @return string|null
+     */
+    public function getDomSnapshot() : ?string
+    {
+        return $this->config[self::DOM_SNAPSHOT] ?? null;
+    }
+
+    /**
      * Encode config as JSON when casting to string
      *
      * @return string
@@ -243,5 +231,13 @@ class Payload
     public function __toString() : string
     {
         return json_encode($this->config) ?: '';
+    }
+
+    /**
+     * Cleanup any stored snapshots
+     */
+    public function __destruct()
+    {
+        SnapshotStorage::delete($this->getDomSnapshot());
     }
 }
