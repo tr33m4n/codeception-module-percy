@@ -36,41 +36,25 @@ class SnapshotStorage
     /**
      * Load DOM snapshot from file
      *
-     * @param string $filePath
+     * @param \Codeception\Module\Percy\Exchange\Snapshot $snapshot
      * @return string
      */
-    public static function load(string $filePath) : string
+    public static function load(Snapshot $snapshot) : string
     {
-        return file_get_contents($filePath) ?: '';
+        return file_get_contents($snapshot->getFilePath()) ?: '';
     }
 
     /**
-     * Delete by file path
+     * Delete by snapshot
      *
-     * @param string|null $filePath
+     * @param \Codeception\Module\Percy\Exchange\Snapshot|null $snapshot
      */
-    public static function delete(?string $filePath) : void
+    public static function delete(?Snapshot $snapshot) : void
     {
-        if (!$filePath || !is_file($filePath)) {
+        if (!$snapshot || !is_file($snapshot->getFilePath())) {
             return;
         }
 
-        unlink($filePath);
-    }
-
-    /**
-     * Clear snapshot files
-     *
-     * @throws \Codeception\Module\Percy\Exception\StorageException
-     */
-    public static function clear() : void
-    {
-        if (!function_exists('codecept_output_dir')) {
-            throw new StorageException('`codecept_output_dir` function is not available!');
-        }
-
-        foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $filePath) {
-            unlink($filePath);
-        }
+        unlink($snapshot->getFilePath());
     }
 }

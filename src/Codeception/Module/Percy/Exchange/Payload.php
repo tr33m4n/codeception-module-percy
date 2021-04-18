@@ -216,9 +216,9 @@ class Payload
     /**
      * Get DOM snapshot
      *
-     * @return string|null
+     * @return \Codeception\Module\Percy\Exchange\Snapshot|null
      */
-    public function getDomSnapshot() : ?string
+    public function getDomSnapshot() : ?Snapshot
     {
         return $this->config[self::DOM_SNAPSHOT] ?? null;
     }
@@ -234,7 +234,7 @@ class Payload
     }
 
     /**
-     * Cleanup any stored snapshots
+     * Cleanup any stored snapshot
      */
     public function __destruct()
     {

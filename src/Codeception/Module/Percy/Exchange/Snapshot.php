@@ -40,10 +40,20 @@ class Snapshot implements JsonSerializable
     }
 
     /**
+     * Get file path
+     *
+     * @return string
+     */
+    public function getFilePath() : string
+    {
+        return $this->filePath;
+    }
+
+    /**
      * @inheritDoc
      */
     public function jsonSerialize() : string
     {
-        return SnapshotStorage::load($this->filePath);
+        return SnapshotStorage::load($this);
     }
 }
