@@ -17,6 +17,8 @@ modules:
             path: ''
             capabilities:
                 acceptInsecureCerts: true
+                moz:firefoxOptions:
+                    args: [ '-headless' ]
         Percy:
             snapshotConfig:
                 enableJavaScript: true
