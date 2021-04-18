@@ -20,6 +20,7 @@ modules:
                 moz:firefoxOptions:
                     args: [ '-headless' ]
         Percy:
+            throwOnAdapterError: true
             snapshotConfig:
                 enableJavaScript: true
                 widths:
