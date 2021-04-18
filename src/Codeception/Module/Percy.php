@@ -123,7 +123,7 @@ class Percy extends Module
             );
 
             try {
-                $this->client->setPayload($payload)->post($this->_getConfig('agentSnapshotPath'));
+                $this->client->post($this->_getConfig('agentSnapshotPath'), $payload);
             } catch (Exception $exception) {
                 $this->debugConnectionError($exception);
             }

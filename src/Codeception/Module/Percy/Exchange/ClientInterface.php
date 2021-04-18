@@ -11,14 +11,6 @@ namespace Codeception\Module\Percy\Exchange;
 interface ClientInterface
 {
     /**
-     * Set payload
-     *
-     * @param \Codeception\Module\Percy\Exchange\Payload $payload
-     * @return \Codeception\Module\Percy\Exchange\ClientInterface
-     */
-    public function setPayload(Payload $payload) : ClientInterface;
-
-    /**
      * Get
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
@@ -31,8 +23,9 @@ interface ClientInterface
      * Post
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $path
+     * @param string                                          $path
+     * @param \Codeception\Module\Percy\Exchange\Payload|null $payload
      * @return string
      */
-    public function post(string $path) : string;
+    public function post(string $path, Payload $payload = null) : string;
 }
