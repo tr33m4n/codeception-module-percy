@@ -59,18 +59,14 @@ class SnapshotStorage
     }
 
     /**
-     * Delete by snapshot
-     *
-     * @param \Codeception\Module\Percy\Exchange\Snapshot|null $snapshot
+     * Clean snapshot directory
      */
-    public static function delete(?Snapshot $snapshot) : void
+    public static function clean() : void
     {
-        if (!$snapshot || !is_file($snapshot->getFilePath())) {
-            return;
+        foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $snapshotFile) {
+            codecept_debug(sprintf('Deleting snapshot from: "%s"', $snapshotFile));
+
+            unlink($snapshotFile);
         }
-
-        codecept_debug(sprintf('Deleting snapshot from: "%s"', $snapshot->getFilePath()));
-
-        unlink($snapshot->getFilePath());
     }
 }

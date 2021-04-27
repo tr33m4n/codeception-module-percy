@@ -232,12 +232,4 @@ class Payload
     {
         return json_encode($this->config) ?: '';
     }
-
-    /**
-     * Cleanup any stored snapshot
-     */
-    public function __destruct()
-    {
-        SnapshotStorage::delete($this->getDomSnapshot());
-    }
 }

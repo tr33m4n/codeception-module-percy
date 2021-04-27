@@ -54,5 +54,7 @@ class PayloadCache
     public function clear() : void
     {
         $this->payloads = [];
+
+        SnapshotStorage::clean();
     }
 }
