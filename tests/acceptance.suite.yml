@@ -1,0 +1,31 @@
+# Codeception Test Suite Configuration
+#
+# Suite for acceptance tests.
+# Perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+
+actor: AcceptanceTester
+modules:
+    enabled:
+        - WebDriver
+        - Percy
+        - \Helper\Acceptance
+    config:
+        WebDriver:
+            url: 'http://localhost:8081/'
+            browser: firefox
+            path: ''
+            capabilities:
+                acceptInsecureCerts: true
+                moz:firefoxOptions:
+                    args: [ '-headless' ]
+        Percy:
+            throwOnAdapterError: true
+            snapshotConfig:
+                enableJavaScript: true
+                widths:
+                    - 1300
+                    - 980
+                    - 740
+                    - 320
+step_decorators: ~

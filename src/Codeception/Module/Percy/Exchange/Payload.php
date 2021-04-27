@@ -1,8 +1,8 @@
 <?php
 
-namespace Codeception\Module\Percy\Exchange;
+declare(strict_types=1);
 
-use InvalidArgumentException;
+namespace Codeception\Module\Percy\Exchange;
 
 /**
  * Class Payload
@@ -14,98 +14,78 @@ class Payload
     /**
      * Name key
      */
-    const NAME = 'name';
+    public const NAME = 'name';
 
     /**
      * Url key
      */
-    const URL = 'url';
+    public const URL = 'url';
 
     /**
      * Percy CSS key
      */
-    const PERCY_CSS = 'percyCSS';
+    public const PERCY_CSS = 'percyCSS';
 
     /**
      * Min height key
      */
-    const MIN_HEIGHT = 'minHeight';
+    public const MIN_HEIGHT = 'minHeight';
 
     /**
      * DOM snapshot key
      */
-    const DOM_SNAPSHOT = 'domSnapshot';
+    public const DOM_SNAPSHOT = 'domSnapshot';
 
     /**
      * Client info key
      */
-    const CLIENT_INFO = 'clientInfo';
+    public const CLIENT_INFO = 'clientInfo';
 
     /**
      * Enable JavaScript key
      */
-    const ENABLE_JAVASCRIPT = 'enableJavaScript';
+    public const ENABLE_JAVASCRIPT = 'enableJavaScript';
 
     /**
      * Environment info key
      */
-    const ENVIRONMENT_INFO = 'environmentInfo';
+    public const ENVIRONMENT_INFO = 'environmentInfo';
 
     /**
      * Widths key
      */
-    const WIDTHS = 'widths';
+    public const WIDTHS = 'widths';
 
     /**
-     * Array of keys that can be set from config
-     */
-    const CONFIG_WHITELIST = [
-        self::PERCY_CSS,
-        self::MIN_HEIGHT,
-        self::ENABLE_JAVASCRIPT,
-        self::WIDTHS
-    ];
-
-    /**
-     * All keys as array
-     */
-    const ALL_KEYS = [
-        self::NAME,
-        self::URL,
-        self::PERCY_CSS,
-        self::MIN_HEIGHT,
-        self::DOM_SNAPSHOT,
-        self::CLIENT_INFO,
-        self::ENABLE_JAVASCRIPT,
-        self::ENVIRONMENT_INFO,
-        self::WIDTHS
-    ];
-
-    /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $config = [];
 
     /**
+     * Payload constructor.
+     */
+    private function __construct()
+    {
+        //
+    }
+
+    /**
      * From config
      *
-     * @param array $config
+     * @param array<string, mixed> $publicConfig
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public static function from(array $config) : Payload
+    public static function from(array $publicConfig): Payload
     {
-        $payload = new self();
-        foreach ($config as $key => $value) {
-            if (!in_array($key, self::CONFIG_WHITELIST)) {
-                throw new InvalidArgumentException(
-                    sprintf('The following key is not allowed to be set through config: %s', $key)
-                );
-            }
+        return array_reduce(
+            array_keys($publicConfig),
+            function (Payload $payload, string $configKey) use ($publicConfig) {
+                ValidatePublicConfig::execute($configKey);
 
-            self::withValue($payload, $key, $value);
-        }
-
-        return $payload;
+                return self::withValue($payload, $configKey, $publicConfig[$configKey]);
+            },
+            new self()
+        );
     }
 
     /**
@@ -114,7 +94,7 @@ class Payload
      * @param string $name
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withName(string $name) : Payload
+    public function withName(string $name): Payload
     {
         return self::withValue(clone $this, self::NAME, $name);
     }
@@ -125,7 +105,7 @@ class Payload
      * @param string $url
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withUrl(string $url) : Payload
+    public function withUrl(string $url): Payload
     {
         return self::withValue(clone $this, self::URL, $url);
     }
@@ -136,7 +116,7 @@ class Payload
      * @param string|null $percyCss
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withPercyCss(?string $percyCss) : Payload
+    public function withPercyCss(?string $percyCss): Payload
     {
         return self::withValue(clone $this, self::PERCY_CSS, $percyCss);
     }
@@ -147,7 +127,7 @@ class Payload
      * @param int|null $minHeight
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withMinHeight(?int $minHeight) : Payload
+    public function withMinHeight(?int $minHeight): Payload
     {
         return self::withValue(clone $this, self::MIN_HEIGHT, $minHeight);
     }
@@ -155,12 +135,13 @@ class Payload
     /**
      * With DOM snapshot
      *
+     * @throws \Codeception\Module\Percy\Exception\StorageException
      * @param string $domSnapshot
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withDomSnapshot(string $domSnapshot) : Payload
+    public function withDomSnapshot(string $domSnapshot): Payload
     {
-        return self::withValue(clone $this, self::DOM_SNAPSHOT, $domSnapshot);
+        return self::withValue(clone $this, self::DOM_SNAPSHOT, SnapshotStorage::save($domSnapshot));
     }
 
     /**
@@ -169,7 +150,7 @@ class Payload
      * @param string $clientInfo
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withClientInfo(string $clientInfo) : Payload
+    public function withClientInfo(string $clientInfo): Payload
     {
         return self::withValue(clone $this, self::CLIENT_INFO, $clientInfo);
     }
@@ -180,7 +161,7 @@ class Payload
      * @param bool $enableJavaScript
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withEnableJavaScript(bool $enableJavaScript) : Payload
+    public function withEnableJavaScript(bool $enableJavaScript): Payload
     {
         return self::withValue(clone $this, self::ENABLE_JAVASCRIPT, $enableJavaScript);
     }
@@ -191,7 +172,7 @@ class Payload
      * @param string $environmentInfo
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withEnvironmentInfo(string $environmentInfo) : Payload
+    public function withEnvironmentInfo(string $environmentInfo): Payload
     {
         return self::withValue(clone $this, self::ENVIRONMENT_INFO, $environmentInfo);
     }
@@ -199,10 +180,10 @@ class Payload
     /**
      * With widths
      *
-     * @param array $widths
+     * @param int[] $widths
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withWidths(array $widths) : Payload
+    public function withWidths(array $widths): Payload
     {
         return self::withValue(clone $this, self::WIDTHS, $widths);
     }
@@ -210,21 +191,37 @@ class Payload
     /**
      * With value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @param \Codeception\Module\Percy\Exchange\Payload $payload
      * @param string                                     $key
      * @param mixed                                      $value
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    private static function withValue(Payload $payload, $key, $value)
+    private static function withValue(Payload $payload, string $key, $value): Payload
     {
-        if (!in_array($key, self::ALL_KEYS)) {
-            throw new InvalidArgumentException(sprintf('Invalid payload key %s', $key));
-        }
-
         $payload->config[$key] = $value;
 
         return $payload;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->config[self::NAME] ?? '';
+    }
+
+    /**
+     * Get DOM snapshot
+     *
+     * @return \Codeception\Module\Percy\Exchange\Snapshot|null
+     */
+    public function getDomSnapshot(): ?Snapshot
+    {
+        return $this->config[self::DOM_SNAPSHOT] ?? null;
     }
 
     /**
@@ -232,8 +229,8 @@ class Payload
      *
      * @return string
      */
-    public function __toString() : string
+    public function __toString(): string
     {
-        return json_encode($this->config);
+        return json_encode($this->config) ?: '';
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Codeception\Module\Percy\Exchange;
 
 use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
@@ -9,17 +11,12 @@ use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
  *
  * @package Codeception\Module\Percy\Exchange
  */
-final class Client implements ClientInterface
+class Client implements ClientInterface
 {
     /**
      * @var \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
     private $adapter;
-
-    /**
-     * @var \Codeception\Module\Percy\Exchange\Payload|null
-     */
-    private $payload;
 
     /**
      * Client constructor.
@@ -33,41 +30,30 @@ final class Client implements ClientInterface
     }
 
     /**
-     * @inheritDoc
+     * Create new instance
      *
-     * @param \Codeception\Module\Percy\Exchange\Payload $payload
-     * @return \Codeception\Module\Percy\Exchange\ClientInterface
+     * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
+     * @return ClientInterface
      */
-    public function setPayload(Payload $payload) : ClientInterface
+    public static function create(AdapterInterface $adapter): ClientInterface
     {
-        $this->payload = $payload;
-
-        return $this;
+        return new self($adapter);
     }
 
     /**
      * @inheritDoc
-     *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $path
-     * @return string
      */
-    public function get(string $path) : string
+    public function get(string $path): string
     {
         return $this->adapter->setPath($path)->execute();
     }
 
     /**
      * @inheritDoc
-     *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $path
-     * @return string
      */
-    public function post(string $path) : string
+    public function post(string $path, Payload $payload = null): string
     {
-        $payloadAsString = (string) $this->payload;
-        $this->payload = null;
+        $payloadAsString = (string) $payload;
 
         return $this->adapter->setPath($path)
             ->setIsPost()

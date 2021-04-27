@@ -1,8 +1,8 @@
 <?php
 
-namespace Codeception\Module\Percy\Exchange;
+declare(strict_types=1);
 
-use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
+namespace Codeception\Module\Percy\Exchange;
 
 /**
  * Interface ClientInterface
@@ -12,28 +12,21 @@ use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
 interface ClientInterface
 {
     /**
-     * Set payload
-     *
-     * @param \Codeception\Module\Percy\Exchange\Payload $payload
-     * @return \Codeception\Module\Percy\Exchange\ClientInterface
-     */
-    public function setPayload(Payload $payload) : ClientInterface;
-
-    /**
      * Get
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @param string $path
      * @return string
      */
-    public function get(string $path) : string;
+    public function get(string $path): string;
 
     /**
      * Post
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $path
+     * @param string                                          $path
+     * @param \Codeception\Module\Percy\Exchange\Payload|null $payload
      * @return string
      */
-    public function post(string $path) : string;
+    public function post(string $path, Payload $payload = null): string;
 }

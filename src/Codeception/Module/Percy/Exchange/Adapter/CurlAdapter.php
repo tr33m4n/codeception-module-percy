@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Codeception\Module\Percy\Exchange\Adapter;
 
 use Codeception\Module\Percy\Exception\AdapterException;
-use Codeception\Module\Percy;
-use ReflectionClass;
 
 /**
  * Class CurlAdapter
@@ -26,6 +26,7 @@ class CurlAdapter implements AdapterInterface
     /**
      * CurlAdapter constructor.
      *
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @param string $baseUrl
      */
     public function __construct(string $baseUrl)
@@ -37,12 +38,21 @@ class CurlAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritDoc
+     * Create new instance
      *
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @param string $baseUrl
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setBaseUrl(string $baseUrl) : AdapterInterface
+    public static function create(string $baseUrl): AdapterInterface
+    {
+        return new self($baseUrl);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setBaseUrl(string $baseUrl): AdapterInterface
     {
         $this->baseUrl = $baseUrl;
 
@@ -50,26 +60,28 @@ class CurlAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @param string $path
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setPath(string $path) : AdapterInterface
+    public function setPath(string $path): AdapterInterface
     {
-        curl_setopt($this->resource, CURLOPT_URL, rtrim($this->baseUrl, '/') . '/' . $path);
+        curl_setopt($this->getResource(), CURLOPT_URL, rtrim($this->baseUrl, '/') . '/' . $path);
 
         return $this;
     }
 
     /**
-     * @inheritDoc
+     * Set defaults
      *
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setDefaults() : AdapterInterface
+    public function setDefaults(): AdapterInterface
     {
-        curl_setopt_array($this->resource, [
+        curl_setopt_array($this->getResource(), [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FAILONERROR => true
         ]);
@@ -78,64 +90,75 @@ class CurlAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setIsPost() : AdapterInterface
+    public function setIsPost(): AdapterInterface
     {
-        curl_setopt($this->resource, CURLOPT_POST, true);
+        curl_setopt($this->getResource(), CURLOPT_POST, true);
 
         return $this;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @param string $payload
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setPayload(string $payload) : AdapterInterface
+    public function setPayload(string $payload): AdapterInterface
     {
-        curl_setopt($this->resource, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($this->getResource(), CURLOPT_POSTFIELDS, $payload);
 
         return $this;
     }
 
     /**
-     * @inheritDoc
-     *
-     * @param array $headers
-     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
-     */
-    public function setHeaders(array $headers) : AdapterInterface
-    {
-        curl_setopt($this->resource, CURLOPT_HTTPHEADER, $headers);
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @throws \ReflectionException
-     * @return string
+     * @param string[] $headers
+     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function execute() : string
+    public function setHeaders(array $headers): AdapterInterface
     {
-        $output = curl_exec($this->resource);
-        if (curl_errno($this->resource)) {
-            throw new AdapterException(
-                (new ReflectionClass(Percy::class))->getShortName(),
-                curl_error($this->resource)
-            );
+        curl_setopt($this->getResource(), CURLOPT_HTTPHEADER, $headers);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function execute(): string
+    {
+        $output = curl_exec($this->getResource());
+        if (curl_errno($this->getResource()) !== 0) {
+            throw new AdapterException(curl_error($this->getResource()));
         }
 
         // Restore default state after executing
-        curl_reset($this->resource);
+        curl_reset($this->getResource());
         $this->setDefaults();
 
-        return $output;
+        return is_string($output) ? $output : '';
+    }
+
+    /**
+     * Get resource
+     *
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @return resource
+     */
+    private function getResource()
+    {
+        if (!$this->resource) {
+            throw new AdapterException('Resource has not been initialised');
+        }
+
+        return $this->resource;
     }
 }

@@ -5,8 +5,6 @@ Percy https://percy.io module for Codeception
 ```shell script
 composer require --dev tr33m4n/codeception-module-percy
 ```
-If you're using version `4.x` of Codeception, ensure that you have also installed the `codeception/module-webdriver` package. For more information see https://codeception.com/docs/modules/WebDriver
-
 ## Example Configuration
 The following example configuration assumes the `WebDriver` module has been configured correctly for your test suite
 ```yaml
@@ -36,7 +34,9 @@ modules:
 | `snapshotConfig.minHeight`        | int    | `null`                                | Minimum height of the resulting "snapshot" in pixels                                              |
 | `snapshotConfig.enableJavaScript` | bool   | `false`                               | Enable JavaScript in the Percy rendering environment                                              |
 | `snapshotConfig.widths`           | array  | `null`                                | An array of integers representing the browser widths at which you want to take snapshots          |
-
+| `throwOnAdapterError`             | bool   | `false`                               | [debug] Throw exception on adapter error
+| `cleanSnapshotStorageOnFail`      | bool   | `false`                               | [debug] Clean stored snapshot HTML after failure
+| `cleanSnapshotStorageOnSuccess`   | bool   | `false`                               | [debug] Clean stored snapshot HTML after success
 
 ## Running
 For Percy snapshot collection to work, Codeception needs to be wrapped in the Percy agent `exec` command, for example:

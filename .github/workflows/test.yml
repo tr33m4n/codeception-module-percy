@@ -1,0 +1,27 @@
+name: Test
+
+on:
+    push:
+        branches: [ development, master ]
+    workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php: [ 7.2 ]
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@2.10.0
+                with:
+                    php-version: ${{ matrix.php }}
+                    tools: composer
+            -   name: Install dependencies
+                run: composer update
+            -   name: Run test suite
+                env:
+                    PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+                run: composer run test
