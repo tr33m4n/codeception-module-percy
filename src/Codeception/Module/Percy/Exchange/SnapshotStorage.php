@@ -28,6 +28,16 @@ class SnapshotStorage
         }
 
         $filePath = codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, crc32($domString)));
+
+        $fileDirectory = dirname($filePath);
+        if (!file_exists($fileDirectory)) {
+            mkdir($fileDirectory, 0777, true);
+        }
+
+        if (!is_writable($fileDirectory)) {
+            chmod($fileDirectory, 0777);
+        }
+
         file_put_contents($filePath, $domString);
 
         return Snapshot::from($filePath);
