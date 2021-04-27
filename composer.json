@@ -40,15 +40,15 @@
         "test:lint": "vendor/bin/rector process --dry-run && vendor/bin/php-cs-fixer fix --dry-run --diff",
         "test:types": "vendor/bin/phpstan analyse --no-interaction --no-progress",
         "test:unit": "php vendor/bin/codecept run unit",
-        "test:server": "./tests/server/start.sh",
-        "test:browser": "./tests/geckodriver/start.sh",
+        "test:start-server": "./tests/server/start.sh",
+        "test:start-browser": "./tests/geckodriver/start.sh",
         "test:acceptance": "npx percy exec -- php vendor/bin/codecept run acceptance -vvv",
         "test": [
             "@test:lint",
             "@test:types",
             "@test:unit",
-            "@test:server",
-            "@test:browser",
+            "@test:start-server",
+            "@test:start-browser",
             "@test:acceptance"
         ]
     }

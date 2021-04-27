@@ -18,9 +18,10 @@ jobs:
                 uses: shivammathur/setup-php@2.10.0
                 with:
                     php-version: ${{ matrix.php }}
-                    extensions: iconv, intl, xml, soap, opcache, pdo, pdo_mysql, mysqli, sodium, zip, bcmath, xsl, sockets, gd
                     tools: composer
             -   name: Install dependencies
                 run: composer update
             -   name: Run test suite
+                env:
+                    PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
                 run: composer run test
