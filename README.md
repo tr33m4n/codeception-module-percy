@@ -34,9 +34,9 @@ modules:
 | `snapshotConfig.minHeight`        | int    | `null`                                | Minimum height of the resulting "snapshot" in pixels                                              |
 | `snapshotConfig.enableJavaScript` | bool   | `false`                               | Enable JavaScript in the Percy rendering environment                                              |
 | `snapshotConfig.widths`           | array  | `null`                                | An array of integers representing the browser widths at which you want to take snapshots          |
-| `throwOnAdapterError`             | bool   | `false`                               | Throw exception on adapter error
-| `cleanSnapshotStorageOnFail`      | bool   | `false`                               | Clean stored snapshot HTML after failure
-| `cleanSnapshotStorageOnSuccess`   | bool   | `false`                               | Clean stored snapshot HTML after success
+| `throwOnAdapterError`             | bool   | `false`                               | [debug] Throw exception on adapter error
+| `cleanSnapshotStorageOnFail`      | bool   | `false`                               | [debug] Clean stored snapshot HTML after failure
+| `cleanSnapshotStorageOnSuccess`   | bool   | `false`                               | [debug] Clean stored snapshot HTML after success
 
 ## Running
 For Percy snapshot collection to work, Codeception needs to be wrapped in the Percy agent `exec` command, for example:
@@ -69,6 +69,3 @@ $I->takeAPercySnapshot('My snapshot name', [
     Payload::ENABLE_JAVASCRIPT => true // Enable/disable JavaScript
 ]);
 ```
-### TODO
-- [ ] Basic E2E test with codeception
-- [ ] Further unit tests
