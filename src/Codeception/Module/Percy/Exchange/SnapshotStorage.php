@@ -38,6 +38,8 @@ class SnapshotStorage
             chmod($fileDirectory, 0777);
         }
 
+        codecept_debug(sprintf('Writing snapshot to: "%s"', $filePath));
+
         file_put_contents($filePath, $domString);
 
         return Snapshot::from($filePath);
@@ -51,6 +53,8 @@ class SnapshotStorage
      */
     public static function load(Snapshot $snapshot) : string
     {
+        codecept_debug(sprintf('Loading snapshot from: "%s"', $snapshot->getFilePath()));
+
         return file_get_contents($snapshot->getFilePath()) ?: '';
     }
 
@@ -64,6 +68,8 @@ class SnapshotStorage
         if (!$snapshot || !is_file($snapshot->getFilePath())) {
             return;
         }
+
+        codecept_debug(sprintf('Deleting snapshot from: "%s"', $snapshot->getFilePath()));
 
         unlink($snapshot->getFilePath());
     }
