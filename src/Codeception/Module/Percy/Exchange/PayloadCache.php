@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
@@ -20,9 +21,9 @@ class PayloadCache
      *
      * @return \Codeception\Module\Percy\Exchange\PayloadCache
      */
-    public static function create() : PayloadCache
+    public static function create(): PayloadCache
     {
-        return new self;
+        return new self();
     }
 
     /**
@@ -31,7 +32,7 @@ class PayloadCache
      * @param \Codeception\Module\Percy\Exchange\Payload $payload
      * @return $this
      */
-    public function add(Payload $payload) : PayloadCache
+    public function add(Payload $payload): PayloadCache
     {
         $this->payloads[] = $payload;
 
@@ -43,7 +44,7 @@ class PayloadCache
      *
      * @return \Codeception\Module\Percy\Exchange\Payload[]
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->payloads;
     }
@@ -53,7 +54,7 @@ class PayloadCache
      *
      * @param bool $cleanSnapshotStorage
      */
-    public function clear(bool $cleanSnapshotStorage = false) : void
+    public function clear(bool $cleanSnapshotStorage = false): void
     {
         $this->payloads = [];
 

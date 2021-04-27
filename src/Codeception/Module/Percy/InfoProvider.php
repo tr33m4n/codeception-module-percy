@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
@@ -13,7 +14,7 @@ use PackageVersions\Versions;
  */
 final class InfoProvider
 {
-    const PACKAGE_NAME = 'tr33m4n/codeception-module-percy';
+    public const PACKAGE_NAME = 'tr33m4n/codeception-module-percy';
 
     /**
      * @var string|null
@@ -31,7 +32,7 @@ final class InfoProvider
      * @param \Codeception\Module\WebDriver $webDriver
      * @return string
      */
-    public static function getEnvironmentInfo(WebDriver $webDriver) : string
+    public static function getEnvironmentInfo(WebDriver $webDriver): string
     {
         if (null !== self::$environmentInfo) {
             return self::$environmentInfo;
@@ -52,7 +53,7 @@ final class InfoProvider
      *
      * @return string
      */
-    public static function getClientInfo() : string
+    public static function getClientInfo(): string
     {
         if (null !== self::$clientInfo) {
             return self::$clientInfo;

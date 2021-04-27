@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
@@ -34,7 +35,7 @@ class Client implements ClientInterface
      * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
      * @return ClientInterface
      */
-    public static function create(AdapterInterface $adapter) : ClientInterface
+    public static function create(AdapterInterface $adapter): ClientInterface
     {
         return new self($adapter);
     }
@@ -42,7 +43,7 @@ class Client implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function get(string $path) : string
+    public function get(string $path): string
     {
         return $this->adapter->setPath($path)->execute();
     }
@@ -50,7 +51,7 @@ class Client implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function post(string $path, Payload $payload = null) : string
+    public function post(string $path, Payload $payload = null): string
     {
         $payloadAsString = (string) $payload;
 

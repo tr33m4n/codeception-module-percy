@@ -29,7 +29,8 @@
         "codeception/module-phpbrowser": "^1.0",
         "friendsofphp/php-cs-fixer": "^2.18",
         "phpstan/phpstan": "^0.12.9",
-        "rector/rector": "^0.8.56"
+        "rector/rector": "^0.8.56",
+        "squizlabs/php_codesniffer": "^3.6"
     },
     "config": {
         "optimize-autoloader": true,
@@ -38,14 +39,14 @@
     "scripts": {
         "fix": "vendor/bin/rector process && vendor/bin/php-cs-fixer fix --diff",
         "test:lint": "vendor/bin/rector process --dry-run && vendor/bin/php-cs-fixer fix --dry-run --diff",
-        "test:types": "vendor/bin/phpstan analyse --no-interaction --no-progress",
+        "test:static": "vendor/bin/phpstan analyse --no-interaction --no-progress && vendor/bin/phpcs --standard=PSR12 ./src",
         "test:unit": "php vendor/bin/codecept run unit",
         "test:start-server": "./tests/server/start.sh",
         "test:start-browser": "./tests/geckodriver/start.sh",
         "test:acceptance": "npx percy exec -- php vendor/bin/codecept run acceptance -vvv",
         "test": [
             "@test:lint",
-            "@test:types",
+            "@test:static",
             "@test:unit",
             "@test:start-server",
             "@test:start-browser",

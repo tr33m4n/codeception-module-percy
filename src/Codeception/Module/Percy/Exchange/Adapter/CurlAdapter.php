@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange\Adapter;
@@ -43,7 +44,7 @@ class CurlAdapter implements AdapterInterface
      * @param string $baseUrl
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public static function create(string $baseUrl) : AdapterInterface
+    public static function create(string $baseUrl): AdapterInterface
     {
         return new self($baseUrl);
     }
@@ -51,7 +52,7 @@ class CurlAdapter implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function setBaseUrl(string $baseUrl) : AdapterInterface
+    public function setBaseUrl(string $baseUrl): AdapterInterface
     {
         $this->baseUrl = $baseUrl;
 
@@ -65,7 +66,7 @@ class CurlAdapter implements AdapterInterface
      * @param string $path
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setPath(string $path) : AdapterInterface
+    public function setPath(string $path): AdapterInterface
     {
         curl_setopt($this->getResource(), CURLOPT_URL, rtrim($this->baseUrl, '/') . '/' . $path);
 
@@ -78,7 +79,7 @@ class CurlAdapter implements AdapterInterface
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setDefaults() : AdapterInterface
+    public function setDefaults(): AdapterInterface
     {
         curl_setopt_array($this->getResource(), [
             CURLOPT_RETURNTRANSFER => true,
@@ -94,7 +95,7 @@ class CurlAdapter implements AdapterInterface
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setIsPost() : AdapterInterface
+    public function setIsPost(): AdapterInterface
     {
         curl_setopt($this->getResource(), CURLOPT_POST, true);
 
@@ -108,7 +109,7 @@ class CurlAdapter implements AdapterInterface
      * @param string $payload
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setPayload(string $payload) : AdapterInterface
+    public function setPayload(string $payload): AdapterInterface
     {
         curl_setopt($this->getResource(), CURLOPT_POSTFIELDS, $payload);
 
@@ -122,7 +123,7 @@ class CurlAdapter implements AdapterInterface
      * @param string[] $headers
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setHeaders(array $headers) : AdapterInterface
+    public function setHeaders(array $headers): AdapterInterface
     {
         curl_setopt($this->getResource(), CURLOPT_HTTPHEADER, $headers);
 
@@ -132,7 +133,7 @@ class CurlAdapter implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function execute() : string
+    public function execute(): string
     {
         $output = curl_exec($this->getResource());
         if (curl_errno($this->getResource()) !== 0) {

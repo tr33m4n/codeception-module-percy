@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
@@ -15,7 +16,7 @@ class ValidatePublicConfig
     /**
      * Array of keys that can be set from config
      */
-    const PUBLIC_KEYS = [
+    public const PUBLIC_KEYS = [
         Payload::PERCY_CSS,
         Payload::MIN_HEIGHT,
         Payload::ENABLE_JAVASCRIPT,
@@ -27,7 +28,7 @@ class ValidatePublicConfig
      *
      * @param string $key
      */
-    public static function execute(string $key) : void
+    public static function execute(string $key): void
     {
         if (!in_array($key, self::PUBLIC_KEYS)) {
             throw new InvalidArgumentException(

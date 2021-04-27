@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
@@ -31,9 +32,9 @@ class Snapshot implements JsonSerializable
      * @param string $filePath
      * @return \Codeception\Module\Percy\Exchange\Snapshot
      */
-    public static function from(string $filePath) : Snapshot
+    public static function from(string $filePath): Snapshot
     {
-        $snapshot = new self;
+        $snapshot = new self();
         $snapshot->filePath = $filePath;
 
         return $snapshot;
@@ -44,7 +45,7 @@ class Snapshot implements JsonSerializable
      *
      * @return string
      */
-    public function getFilePath() : string
+    public function getFilePath(): string
     {
         return $this->filePath;
     }
@@ -52,7 +53,7 @@ class Snapshot implements JsonSerializable
     /**
      * @inheritDoc
      */
-    public function jsonSerialize() : string
+    public function jsonSerialize(): string
     {
         return SnapshotStorage::load($this);
     }

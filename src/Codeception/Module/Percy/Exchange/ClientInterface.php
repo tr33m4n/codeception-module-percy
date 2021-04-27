@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
@@ -17,7 +18,7 @@ interface ClientInterface
      * @param string $path
      * @return string
      */
-    public function get(string $path) : string;
+    public function get(string $path): string;
 
     /**
      * Post
@@ -27,5 +28,5 @@ interface ClientInterface
      * @param \Codeception\Module\Percy\Exchange\Payload|null $payload
      * @return string
      */
-    public function post(string $path, Payload $payload = null) : string;
+    public function post(string $path, Payload $payload = null): string;
 }

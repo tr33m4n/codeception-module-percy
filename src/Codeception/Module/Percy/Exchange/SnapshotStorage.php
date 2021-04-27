@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
@@ -13,7 +14,7 @@ use Ramsey\Uuid\Uuid;
  */
 class SnapshotStorage
 {
-    const OUTPUT_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s.html';
+    public const OUTPUT_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s.html';
 
     /**
      * Save DOM snapshot to file
@@ -23,7 +24,7 @@ class SnapshotStorage
      * @param string $domString
      * @return \Codeception\Module\Percy\Exchange\Snapshot
      */
-    public static function save(string $domString) : Snapshot
+    public static function save(string $domString): Snapshot
     {
         if (!function_exists('codecept_output_dir')) {
             throw new StorageException('`codecept_output_dir` function is not available!');
@@ -53,7 +54,7 @@ class SnapshotStorage
      * @param \Codeception\Module\Percy\Exchange\Snapshot $snapshot
      * @return string
      */
-    public static function load(Snapshot $snapshot) : string
+    public static function load(Snapshot $snapshot): string
     {
         codecept_debug(sprintf('Loading snapshot from: "%s"', $snapshot->getFilePath()));
 
@@ -63,7 +64,7 @@ class SnapshotStorage
     /**
      * Clean snapshot directory
      */
-    public static function clean() : void
+    public static function clean(): void
     {
         foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $snapshotFile) {
             codecept_debug(sprintf('Deleting snapshot from: "%s"', $snapshotFile));

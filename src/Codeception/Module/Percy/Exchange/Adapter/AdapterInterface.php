@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange\Adapter;
@@ -16,7 +17,7 @@ interface AdapterInterface
      * @param string $baseUrl
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setBaseUrl(string $baseUrl) : AdapterInterface;
+    public function setBaseUrl(string $baseUrl): AdapterInterface;
 
     /**
      * Set adapter path
@@ -24,14 +25,14 @@ interface AdapterInterface
      * @param string $path
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setPath(string $path) : AdapterInterface;
+    public function setPath(string $path): AdapterInterface;
 
     /**
      * Set is POST
      *
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setIsPost() : AdapterInterface;
+    public function setIsPost(): AdapterInterface;
 
     /**
      * Set payload
@@ -39,7 +40,7 @@ interface AdapterInterface
      * @param string $payload
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setPayload(string $payload) : AdapterInterface;
+    public function setPayload(string $payload): AdapterInterface;
 
     /**
      * Set headers
@@ -47,7 +48,7 @@ interface AdapterInterface
      * @param string[] $headers
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setHeaders(array $headers) : AdapterInterface;
+    public function setHeaders(array $headers): AdapterInterface;
 
     /**
      * Execute
@@ -55,5 +56,5 @@ interface AdapterInterface
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @return string
      */
-    public function execute() : string;
+    public function execute(): string;
 }

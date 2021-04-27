@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module;
@@ -15,11 +16,12 @@ use Exception;
 /**
  * Class Percy
  *
+ * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
  * @package Codeception\Module
  */
 class Percy extends Module
 {
-    const NAMESPACE = 'Percy';
+    public const NAMESPACE = 'Percy';
 
     /**
      * @var array<string, mixed>
@@ -63,7 +65,7 @@ class Percy extends Module
      *
      * @throws \Exception
      */
-    public function _initialize() : void
+    public function _initialize(): void
     {
         $this->webDriver = $this->getModule($this->_getConfig('driver'));
         // Init cURL client with default adapter
@@ -87,7 +89,7 @@ class Percy extends Module
     public function takeAPercySnapshot(
         string $name,
         array $snapshotConfig = []
-    ) : void {
+    ): void {
         // If we cannot access the agent JS, return silently
         if (!$this->percyAgentJs) {
             return;
@@ -116,7 +118,7 @@ class Percy extends Module
      *
      * @throws \Exception
      */
-    public function _afterSuite() : void
+    public function _afterSuite(): void
     {
         foreach ($this->payloadCache->all() as $payload) {
             $this->debugSection(
@@ -143,7 +145,7 @@ class Percy extends Module
      * @param \Codeception\TestInterface $test
      * @param \Exception                 $fail
      */
-    public function _failed(TestInterface $test, $fail) : void
+    public function _failed(TestInterface $test, $fail): void
     {
         $this->payloadCache->clear((bool) $this->_getConfig('cleanSnapshotStorageOnFail'));
 
@@ -160,7 +162,7 @@ class Percy extends Module
      * @throws \Exception
      * @param \Exception $exception
      */
-    private function debugConnectionError(Exception $exception) : void
+    private function debugConnectionError(Exception $exception): void
     {
         $this->debugSection(
             self::NAMESPACE,

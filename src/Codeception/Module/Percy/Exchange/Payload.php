@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
@@ -13,47 +14,47 @@ class Payload
     /**
      * Name key
      */
-    const NAME = 'name';
+    public const NAME = 'name';
 
     /**
      * Url key
      */
-    const URL = 'url';
+    public const URL = 'url';
 
     /**
      * Percy CSS key
      */
-    const PERCY_CSS = 'percyCSS';
+    public const PERCY_CSS = 'percyCSS';
 
     /**
      * Min height key
      */
-    const MIN_HEIGHT = 'minHeight';
+    public const MIN_HEIGHT = 'minHeight';
 
     /**
      * DOM snapshot key
      */
-    const DOM_SNAPSHOT = 'domSnapshot';
+    public const DOM_SNAPSHOT = 'domSnapshot';
 
     /**
      * Client info key
      */
-    const CLIENT_INFO = 'clientInfo';
+    public const CLIENT_INFO = 'clientInfo';
 
     /**
      * Enable JavaScript key
      */
-    const ENABLE_JAVASCRIPT = 'enableJavaScript';
+    public const ENABLE_JAVASCRIPT = 'enableJavaScript';
 
     /**
      * Environment info key
      */
-    const ENVIRONMENT_INFO = 'environmentInfo';
+    public const ENVIRONMENT_INFO = 'environmentInfo';
 
     /**
      * Widths key
      */
-    const WIDTHS = 'widths';
+    public const WIDTHS = 'widths';
 
     /**
      * @var array<string, mixed>
@@ -74,7 +75,7 @@ class Payload
      * @param array<string, mixed> $publicConfig
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public static function from(array $publicConfig) : Payload
+    public static function from(array $publicConfig): Payload
     {
         return array_reduce(
             array_keys($publicConfig),
@@ -83,7 +84,7 @@ class Payload
 
                 return self::withValue($payload, $configKey, $publicConfig[$configKey]);
             },
-            new self
+            new self()
         );
     }
 
@@ -93,7 +94,7 @@ class Payload
      * @param string $name
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withName(string $name) : Payload
+    public function withName(string $name): Payload
     {
         return self::withValue(clone $this, self::NAME, $name);
     }
@@ -104,7 +105,7 @@ class Payload
      * @param string $url
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withUrl(string $url) : Payload
+    public function withUrl(string $url): Payload
     {
         return self::withValue(clone $this, self::URL, $url);
     }
@@ -115,7 +116,7 @@ class Payload
      * @param string|null $percyCss
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withPercyCss(?string $percyCss) : Payload
+    public function withPercyCss(?string $percyCss): Payload
     {
         return self::withValue(clone $this, self::PERCY_CSS, $percyCss);
     }
@@ -126,7 +127,7 @@ class Payload
      * @param int|null $minHeight
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withMinHeight(?int $minHeight) : Payload
+    public function withMinHeight(?int $minHeight): Payload
     {
         return self::withValue(clone $this, self::MIN_HEIGHT, $minHeight);
     }
@@ -138,7 +139,7 @@ class Payload
      * @param string $domSnapshot
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withDomSnapshot(string $domSnapshot) : Payload
+    public function withDomSnapshot(string $domSnapshot): Payload
     {
         return self::withValue(clone $this, self::DOM_SNAPSHOT, SnapshotStorage::save($domSnapshot));
     }
@@ -149,7 +150,7 @@ class Payload
      * @param string $clientInfo
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withClientInfo(string $clientInfo) : Payload
+    public function withClientInfo(string $clientInfo): Payload
     {
         return self::withValue(clone $this, self::CLIENT_INFO, $clientInfo);
     }
@@ -160,7 +161,7 @@ class Payload
      * @param bool $enableJavaScript
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withEnableJavaScript(bool $enableJavaScript) : Payload
+    public function withEnableJavaScript(bool $enableJavaScript): Payload
     {
         return self::withValue(clone $this, self::ENABLE_JAVASCRIPT, $enableJavaScript);
     }
@@ -171,7 +172,7 @@ class Payload
      * @param string $environmentInfo
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withEnvironmentInfo(string $environmentInfo) : Payload
+    public function withEnvironmentInfo(string $environmentInfo): Payload
     {
         return self::withValue(clone $this, self::ENVIRONMENT_INFO, $environmentInfo);
     }
@@ -182,7 +183,7 @@ class Payload
      * @param int[] $widths
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withWidths(array $widths) : Payload
+    public function withWidths(array $widths): Payload
     {
         return self::withValue(clone $this, self::WIDTHS, $widths);
     }
@@ -196,7 +197,7 @@ class Payload
      * @param mixed                                      $value
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    private static function withValue(Payload $payload, string $key, $value) : Payload
+    private static function withValue(Payload $payload, string $key, $value): Payload
     {
         $payload->config[$key] = $value;
 
@@ -208,7 +209,7 @@ class Payload
      *
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->config[self::NAME] ?? '';
     }
@@ -218,7 +219,7 @@ class Payload
      *
      * @return \Codeception\Module\Percy\Exchange\Snapshot|null
      */
-    public function getDomSnapshot() : ?Snapshot
+    public function getDomSnapshot(): ?Snapshot
     {
         return $this->config[self::DOM_SNAPSHOT] ?? null;
     }
@@ -228,7 +229,7 @@ class Payload
      *
      * @return string
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         return json_encode($this->config) ?: '';
     }
