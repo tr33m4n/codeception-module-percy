@@ -2,7 +2,6 @@
     "name": "tr33m4n/codeception-module-percy",
     "description": "Percy https://percy.io module for Codeception",
     "license": "MIT",
-    "version": "v1.0.0",
     "authors": [
         {
             "name": "Daniel Doyle",
