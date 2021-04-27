@@ -60,7 +60,7 @@ final class InfoProvider
 
         return self::$clientInfo = sprintf(
             '%s/%s',
-            strstr(self::PACKAGE_NAME, '/'),
+            ltrim(strstr(self::PACKAGE_NAME, '/') ?: '', '/'),
             strstr(Versions::getVersion(self::PACKAGE_NAME), '@', true)
         );
     }
