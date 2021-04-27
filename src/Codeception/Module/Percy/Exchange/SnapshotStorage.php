@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy\Exchange;
 
 use Codeception\Module\Percy\Exception\StorageException;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Class SnapshotStorage
@@ -27,7 +28,7 @@ class SnapshotStorage
             throw new StorageException('`codecept_output_dir` function is not available!');
         }
 
-        $filePath = codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, crc32($domString)));
+        $filePath = codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, Uuid::uuid4()->toString()));
 
         $fileDirectory = dirname($filePath);
         if (!file_exists($fileDirectory)) {
