@@ -16,7 +16,7 @@
         "codeception/codeception": "^4.0.0",
         "codeception/module-webdriver": "^1.2",
         "ocramius/package-versions": "^1.4",
-        "ramsey/uuid": "^3.7"
+        "ramsey/uuid": "^4.1"
     },
     "autoload": {
         "psr-4": {
