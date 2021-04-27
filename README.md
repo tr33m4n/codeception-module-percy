@@ -35,6 +35,8 @@ modules:
 | `snapshotConfig.enableJavaScript` | bool   | `false`                               | Enable JavaScript in the Percy rendering environment                                              |
 | `snapshotConfig.widths`           | array  | `null`                                | An array of integers representing the browser widths at which you want to take snapshots          |
 | `throwOnAdapterError`             | bool   | `false`                               | Throw exception on adapter error
+| `cleanSnapshotStorageOnFail`      | bool   | `false`                               | Clean stored snapshot HTML after failure
+| `cleanSnapshotStorageOnSuccess`   | bool   | `false`                               | Clean stored snapshot HTML after success
 
 ## Running
 For Percy snapshot collection to work, Codeception needs to be wrapped in the Percy agent `exec` command, for example:

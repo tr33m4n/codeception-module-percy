@@ -50,11 +50,15 @@ class PayloadCache
 
     /**
      * Clear payload cache
+     *
+     * @param bool $cleanSnapshotStorage
      */
-    public function clear() : void
+    public function clear(bool $cleanSnapshotStorage = false) : void
     {
         $this->payloads = [];
 
-        SnapshotStorage::clean();
+        if ($cleanSnapshotStorage) {
+            SnapshotStorage::clean();
+        }
     }
 }

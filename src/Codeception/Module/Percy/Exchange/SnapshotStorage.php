@@ -19,6 +19,7 @@ class SnapshotStorage
      * Save DOM snapshot to file
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
+     * @throws \Exception
      * @param string $domString
      * @return \Codeception\Module\Percy\Exchange\Snapshot
      */

@@ -33,7 +33,9 @@ class Percy extends Module
         'agentConfig' => [
             'handleAgentCommunication' => false
         ],
-        'throwOnAdapterError' => false
+        'throwOnAdapterError' => false,
+        'cleanSnapshotStorageOnFail' => false,
+        'cleanSnapshotStorageOnSuccess' => false
     ];
 
     /**
@@ -129,7 +131,7 @@ class Percy extends Module
             }
         }
 
-        $this->payloadCache->clear();
+        $this->payloadCache->clear((bool) $this->_getConfig('cleanSnapshotStorageOnSuccess'));
     }
 
     /**
@@ -143,7 +145,7 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail) : void
     {
-        $this->payloadCache->clear();
+        $this->payloadCache->clear((bool) $this->_getConfig('cleanSnapshotStorageOnFail'));
 
         try {
             $this->client->post($this->_getConfig('agentStopPath'));

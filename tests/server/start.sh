@@ -11,7 +11,7 @@ $DIR_BASE/stop.sh
 
 printf "\033[92mLaunching PHP server\n\033[0m";
 
-exec -a PHPServer php -S localhost:8081 ./ &> $LOGFILE &
+exec -a PHPServer php -S localhost:8081 "$DIR_BASE/index.php" &> $LOGFILE &
 
 printf "\033[92mPHP server running at http://localhost:8081\n\033[0m";
 
