@@ -32,7 +32,6 @@ class Percy extends Module
         'driver' => 'WebDriver',
         'agentEndpoint' => 'http://localhost:5338',
         'agentSnapshotPath' => 'percy/snapshot',
-        'agentStopPath' => 'percy/stop',
         'agentConfig' => [
             'handleAgentCommunication' => false
         ],
