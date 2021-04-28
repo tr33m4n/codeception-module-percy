@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Codeception\Module;
 
 use Codeception\Module;
-use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
-use Codeception\Module\Percy\Exchange\Client;
-use Codeception\Module\Percy\Exchange\Payload;
-use Codeception\Module\Percy\Exchange\PayloadCache;
+use Codeception\Module\Percy\Payload;
+use Codeception\Module\Percy\PayloadManagement;
+use Codeception\Module\Percy\FilepathResolver;
 use Codeception\Module\Percy\InfoProvider;
+use Codeception\Module\Percy\ProcessManagement;
+use Codeception\Module\Percy\ConfigProvider;
 use Codeception\TestInterface;
 use Exception;
+use Symfony\Component\Process\Exception\RuntimeException;
 
 /**
  * Class Percy
@@ -29,31 +31,20 @@ class Percy extends Module
     protected $config = [
         'driver' => 'WebDriver',
         'agentEndpoint' => 'http://localhost:5338',
-        'agentJsPath' => 'percy-agent.js',
         'agentSnapshotPath' => 'percy/snapshot',
         'agentStopPath' => 'percy/stop',
         'agentConfig' => [
             'handleAgentCommunication' => false
         ],
+        'percyAgentTimeout' => 120,
         'throwOnAdapterError' => false,
-        'cleanSnapshotStorageOnFail' => false,
-        'cleanSnapshotStorageOnSuccess' => false
+        'cleanSnapshotStorage' => false
     ];
 
     /**
      * @var \Codeception\Module\WebDriver
      */
     private $webDriver;
-
-    /**
-     * @var \Codeception\Module\Percy\Exchange\ClientInterface
-     */
-    private $client;
-
-    /**
-     * @var \Codeception\Module\Percy\Exchange\PayloadCache
-     */
-    private $payloadCache;
 
     /**
      * @var string|null
@@ -67,16 +58,10 @@ class Percy extends Module
      */
     public function _initialize(): void
     {
-        $this->webDriver = $this->getModule($this->_getConfig('driver'));
-        // Init cURL client with default adapter
-        $this->client = Client::create(CurlAdapter::create($this->_getConfig('agentEndpoint')));
-        $this->payloadCache = PayloadCache::create();
+        ConfigProvider::set($this->_getConfig());
 
-        try {
-            $this->percyAgentJs = $this->client->get($this->_getConfig('agentJsPath'));
-        } catch (Exception $exception) {
-            $this->debugConnectionError($exception);
-        }
+        $this->webDriver = $this->getModule($this->_getConfig('driver'));
+        $this->percyAgentJs = file_get_contents(FilepathResolver::percyAgentBrowserJs()) ?: null;
     }
 
     /**
@@ -98,7 +83,7 @@ class Percy extends Module
         // Add Percy agent JS to page
         $this->webDriver->executeJS($this->percyAgentJs);
 
-        $this->payloadCache->add(
+        PayloadManagement::add(
             Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
@@ -120,26 +105,21 @@ class Percy extends Module
      */
     public function _afterSuite(): void
     {
-        foreach ($this->payloadCache->all() as $payload) {
-            $this->debugSection(
-                self::NAMESPACE,
-                sprintf('Sending Percy snapshot "%s"', $payload->getName())
-            );
+        $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots..');
 
-            try {
-                $this->client->post($this->_getConfig('agentSnapshotPath'), $payload);
-            } catch (Exception $exception) {
-                $this->debugConnectionError($exception);
-            }
+        try {
+            PayloadManagement::send();
+        } catch (Exception $exception) {
+            $this->debugConnectionError($exception);
         }
 
-        $this->payloadCache->clear((bool) $this->_getConfig('cleanSnapshotStorageOnSuccess'));
+        $this->debugSection(self::NAMESPACE, 'All snapshots sent!');
     }
 
     /**
      * {@inheritdoc}
      *
-     * Stop agent without sending on failure
+     * Clear payload cache on failure
      *
      * @throws \Exception
      * @param \Codeception\TestInterface $test
@@ -147,13 +127,7 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail): void
     {
-        $this->payloadCache->clear((bool) $this->_getConfig('cleanSnapshotStorageOnFail'));
-
-        try {
-            $this->client->post($this->_getConfig('agentStopPath'));
-        } catch (Exception $exception) {
-            $this->debugConnectionError($exception);
-        }
+        PayloadManagement::clear();
     }
 
     /**
@@ -167,7 +141,7 @@ class Percy extends Module
         $this->debugSection(
             self::NAMESPACE,
             [
-                'Cannot contact the Percy agent endpoint. Has Codeception been launched with `npx percy exec`?',
+                'Cannot contact the Percy agent endpoint. Is the Percy agent running? Has the `PERCY_TOKEN` been set?',
                 $exception->getMessage(),
                 $exception->getTraceAsString()
             ]
@@ -175,6 +149,12 @@ class Percy extends Module
 
         if (!$this->_getConfig('throwOnAdapterError')) {
             return;
+        }
+
+        try {
+            ProcessManagement::stopPercyAgent();
+        } catch (RuntimeException $exception) {
+            // Fail silently if the process is not running
         }
 
         throw $exception;

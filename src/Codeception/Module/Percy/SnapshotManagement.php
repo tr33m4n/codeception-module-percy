@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Exchange;
+namespace Codeception\Module\Percy;
 
 use Codeception\Module\Percy\Exception\StorageException;
 use Ramsey\Uuid\Uuid;
 
 /**
- * Class SnapshotStorage
+ * Class SnapshotManagement
  *
- * @package Codeception\Module\Percy\Exchange
+ * @package Codeception\Module\Percy
  */
-class SnapshotStorage
+class SnapshotManagement
 {
     public const OUTPUT_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s.html';
 
@@ -22,7 +22,7 @@ class SnapshotStorage
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \Exception
      * @param string $domString
-     * @return \Codeception\Module\Percy\Exchange\Snapshot
+     * @return \Codeception\Module\Percy\Snapshot
      */
     public static function save(string $domString): Snapshot
     {
@@ -41,8 +41,6 @@ class SnapshotStorage
             chmod($fileDirectory, 0777);
         }
 
-        codecept_debug(sprintf('Writing snapshot to: "%s"', $filePath));
-
         file_put_contents($filePath, $domString);
 
         return Snapshot::from($filePath);
@@ -51,13 +49,11 @@ class SnapshotStorage
     /**
      * Load DOM snapshot from file
      *
-     * @param \Codeception\Module\Percy\Exchange\Snapshot $snapshot
+     * @param \Codeception\Module\Percy\Snapshot $snapshot
      * @return string
      */
     public static function load(Snapshot $snapshot): string
     {
-        codecept_debug(sprintf('Loading snapshot from: "%s"', $snapshot->getFilePath()));
-
         return file_get_contents($snapshot->getFilePath()) ?: '';
     }
 
@@ -67,8 +63,6 @@ class SnapshotStorage
     public static function clean(): void
     {
         foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $snapshotFile) {
-            codecept_debug(sprintf('Deleting snapshot from: "%s"', $snapshotFile));
-
             unlink($snapshotFile);
         }
     }

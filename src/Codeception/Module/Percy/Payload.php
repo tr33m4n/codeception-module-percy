@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Exchange;
+namespace Codeception\Module\Percy;
 
 /**
  * Class Payload
  *
- * @package Codeception\Module\Percy\Exchange
+ * @package Codeception\Module\Percy
  */
 class Payload
 {
@@ -73,7 +73,7 @@ class Payload
      * From config
      *
      * @param array<string, mixed> $publicConfig
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @return \Codeception\Module\Percy\Payload
      */
     public static function from(array $publicConfig): Payload
     {
@@ -92,7 +92,7 @@ class Payload
      * With name
      *
      * @param string $name
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @return \Codeception\Module\Percy\Payload
      */
     public function withName(string $name): Payload
     {
@@ -103,7 +103,7 @@ class Payload
      * With URL
      *
      * @param string $url
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @return \Codeception\Module\Percy\Payload
      */
     public function withUrl(string $url): Payload
     {
@@ -114,7 +114,7 @@ class Payload
      * With Percy CSS
      *
      * @param string|null $percyCss
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @return \Codeception\Module\Percy\Payload
      */
     public function withPercyCss(?string $percyCss): Payload
     {
@@ -125,7 +125,7 @@ class Payload
      * With min height
      *
      * @param int|null $minHeight
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @return \Codeception\Module\Percy\Payload
      */
     public function withMinHeight(?int $minHeight): Payload
     {
@@ -137,18 +137,18 @@ class Payload
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @param string $domSnapshot
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @return \Codeception\Module\Percy\Payload
      */
     public function withDomSnapshot(string $domSnapshot): Payload
     {
-        return self::withValue(clone $this, self::DOM_SNAPSHOT, SnapshotStorage::save($domSnapshot));
+        return self::withValue(clone $this, self::DOM_SNAPSHOT, SnapshotManagement::save($domSnapshot));
     }
 
     /**
      * With client info
      *
      * @param string $clientInfo
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @return \Codeception\Module\Percy\Payload
      */
     public function withClientInfo(string $clientInfo): Payload
     {
@@ -159,7 +159,7 @@ class Payload
      * With enable JavaScript
      *
      * @param bool $enableJavaScript
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @return \Codeception\Module\Percy\Payload
      */
     public function withEnableJavaScript(bool $enableJavaScript): Payload
     {
@@ -170,7 +170,7 @@ class Payload
      * With environment info
      *
      * @param string $environmentInfo
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @return \Codeception\Module\Percy\Payload
      */
     public function withEnvironmentInfo(string $environmentInfo): Payload
     {
@@ -181,7 +181,7 @@ class Payload
      * With widths
      *
      * @param int[] $widths
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @return \Codeception\Module\Percy\Payload
      */
     public function withWidths(array $widths): Payload
     {
@@ -192,10 +192,10 @@ class Payload
      * With value
      *
      * @throws \InvalidArgumentException
-     * @param \Codeception\Module\Percy\Exchange\Payload $payload
-     * @param string                                     $key
-     * @param mixed                                      $value
-     * @return \Codeception\Module\Percy\Exchange\Payload
+     * @param \Codeception\Module\Percy\Payload $payload
+     * @param string                            $key
+     * @param mixed                             $value
+     * @return \Codeception\Module\Percy\Payload
      */
     private static function withValue(Payload $payload, string $key, $value): Payload
     {
@@ -217,7 +217,7 @@ class Payload
     /**
      * Get DOM snapshot
      *
-     * @return \Codeception\Module\Percy\Exchange\Snapshot|null
+     * @return \Codeception\Module\Percy\Snapshot|null
      */
     public function getDomSnapshot(): ?Snapshot
     {

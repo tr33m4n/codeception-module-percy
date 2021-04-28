@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Exchange;
+namespace Codeception\Module\Percy;
 
 use InvalidArgumentException;
 
 /**
  * Class ValidatePublicConfig
  *
- * @package Codeception\Module\Percy\Exchange
+ * @package Codeception\Module\Percy
  */
 class ValidatePublicConfig
 {

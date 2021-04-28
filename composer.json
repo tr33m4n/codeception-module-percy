@@ -15,8 +15,10 @@
         "ext-json": "*",
         "codeception/codeception": "^4.0.0",
         "codeception/module-webdriver": "^1.2",
+        "eloquent/composer-npm-bridge": "^4.1",
         "ocramius/package-versions": "^1.4",
-        "ramsey/uuid": "^3.7"
+        "ramsey/uuid": "^4.1",
+        "symfony/process": "^5.2"
     },
     "autoload": {
         "psr-4": {
@@ -43,7 +45,7 @@
         "test:unit": "php vendor/bin/codecept run unit",
         "test:start-server": "./tests/server/start.sh",
         "test:start-browser": "./tests/geckodriver/start.sh",
-        "test:acceptance": "npx percy exec -- php vendor/bin/codecept run acceptance -vvv",
+        "test:acceptance": "php vendor/bin/codecept run acceptance -vvv",
         "test": [
             "@test:lint",
             "@test:static",

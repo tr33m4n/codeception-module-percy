@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
 
+use Codeception\Module\Percy\Payload;
+
 /**
  * Interface ClientInterface
  *
@@ -24,8 +26,8 @@ interface ClientInterface
      * Post
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string                                          $path
-     * @param \Codeception\Module\Percy\Exchange\Payload|null $payload
+     * @param string                                 $path
+     * @param \Codeception\Module\Percy\Payload|null $payload
      * @return string
      */
     public function post(string $path, Payload $payload = null): string;
