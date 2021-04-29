@@ -28,13 +28,6 @@ interface AdapterInterface
     public function setPath(string $path): AdapterInterface;
 
     /**
-     * Set is POST
-     *
-     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
-     */
-    public function setIsPost(): AdapterInterface;
-
-    /**
      * Set payload
      *
      * @param string $payload

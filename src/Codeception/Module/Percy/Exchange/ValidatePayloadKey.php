@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy;
+namespace Codeception\Module\Percy\Exchange;
 
 use InvalidArgumentException;
 
 /**
- * Class ValidatePublicConfig
+ * Class ValidatePayloadKey
  *
- * @package Codeception\Module\Percy
+ * @package Codeception\Module\Percy\Exchange
  */
-class ValidatePublicConfig
+class ValidatePayloadKey
 {
     /**
      * Array of keys that can be set from config

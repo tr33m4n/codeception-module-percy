@@ -6,25 +6,26 @@ namespace Codeception\Module\Percy;
 
 use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
 use Codeception\Module\Percy\Exchange\Client;
+use Codeception\Module\Percy\Exchange\Payload;
 
 /**
- * Class PayloadManagement
+ * Class RequestManagement
  *
  * @package Codeception\Module\Percy
  */
-class PayloadManagement
+class RequestManagement
 {
     /**
-     * @var \Codeception\Module\Percy\Payload[]
+     * @var \Codeception\Module\Percy\Exchange\Payload[]
      */
     private static $payloads = [];
 
     /**
      * Add a payload
      *
-     * @param \Codeception\Module\Percy\Payload $payload
+     * @param \Codeception\Module\Percy\Exchange\Payload $payload
      */
-    public static function add(Payload $payload): void
+    public static function addPayload(Payload $payload): void
     {
         self::$payloads[] = $payload;
     }
@@ -34,7 +35,7 @@ class PayloadManagement
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      */
-    public static function send(): void
+    public static function sendRequest(): void
     {
         if (empty(self::$payloads)) {
             return;
@@ -51,13 +52,13 @@ class PayloadManagement
 
         ProcessManagement::stopPercyAgent();
 
-        self::clear();
+        self::resetRequest();
     }
 
     /**
-     * Clear payloads
+     * Reset payloads
      */
-    public static function clear(): void
+    public static function resetRequest(): void
     {
         self::$payloads = [];
 

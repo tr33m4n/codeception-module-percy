@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy;
+namespace Codeception\Module\Percy\Exchange;
+
+use Codeception\Module\Percy\Snapshot;
+use Codeception\Module\Percy\SnapshotManagement;
 
 /**
  * Class Payload
  *
- * @package Codeception\Module\Percy
+ * @package Codeception\Module\Percy\Exchange
  */
 class Payload
 {
@@ -70,19 +73,19 @@ class Payload
     }
 
     /**
-     * From config
+     * From array
      *
-     * @param array<string, mixed> $publicConfig
-     * @return \Codeception\Module\Percy\Payload
+     * @param array<string, mixed> $payloadArray
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public static function from(array $publicConfig): Payload
+    public static function from(array $payloadArray): Payload
     {
         return array_reduce(
-            array_keys($publicConfig),
-            function (Payload $payload, string $configKey) use ($publicConfig) {
-                ValidatePublicConfig::execute($configKey);
+            array_keys($payloadArray),
+            function (Payload $payload, string $configKey) use ($payloadArray) {
+                ValidatePayloadKey::execute($configKey);
 
-                return self::withValue($payload, $configKey, $publicConfig[$configKey]);
+                return self::withValue($payload, $configKey, $payloadArray[$configKey]);
             },
             new self()
         );
@@ -92,7 +95,7 @@ class Payload
      * With name
      *
      * @param string $name
-     * @return \Codeception\Module\Percy\Payload
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withName(string $name): Payload
     {
@@ -103,7 +106,7 @@ class Payload
      * With URL
      *
      * @param string $url
-     * @return \Codeception\Module\Percy\Payload
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withUrl(string $url): Payload
     {
@@ -114,7 +117,7 @@ class Payload
      * With Percy CSS
      *
      * @param string|null $percyCss
-     * @return \Codeception\Module\Percy\Payload
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withPercyCss(?string $percyCss): Payload
     {
@@ -125,7 +128,7 @@ class Payload
      * With min height
      *
      * @param int|null $minHeight
-     * @return \Codeception\Module\Percy\Payload
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withMinHeight(?int $minHeight): Payload
     {
@@ -137,7 +140,7 @@ class Payload
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @param string $domSnapshot
-     * @return \Codeception\Module\Percy\Payload
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withDomSnapshot(string $domSnapshot): Payload
     {
@@ -148,7 +151,7 @@ class Payload
      * With client info
      *
      * @param string $clientInfo
-     * @return \Codeception\Module\Percy\Payload
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withClientInfo(string $clientInfo): Payload
     {
@@ -159,7 +162,7 @@ class Payload
      * With enable JavaScript
      *
      * @param bool $enableJavaScript
-     * @return \Codeception\Module\Percy\Payload
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withEnableJavaScript(bool $enableJavaScript): Payload
     {
@@ -170,7 +173,7 @@ class Payload
      * With environment info
      *
      * @param string $environmentInfo
-     * @return \Codeception\Module\Percy\Payload
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withEnvironmentInfo(string $environmentInfo): Payload
     {
@@ -181,7 +184,7 @@ class Payload
      * With widths
      *
      * @param int[] $widths
-     * @return \Codeception\Module\Percy\Payload
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
     public function withWidths(array $widths): Payload
     {
@@ -192,10 +195,10 @@ class Payload
      * With value
      *
      * @throws \InvalidArgumentException
-     * @param \Codeception\Module\Percy\Payload $payload
-     * @param string                            $key
-     * @param mixed                             $value
-     * @return \Codeception\Module\Percy\Payload
+     * @param \Codeception\Module\Percy\Exchange\Payload $payload
+     * @param string                                     $key
+     * @param mixed                                      $value
+     * @return \Codeception\Module\Percy\Exchange\Payload
      */
     private static function withValue(Payload $payload, string $key, $value): Payload
     {

@@ -68,7 +68,7 @@ class FirstCest
 `$I->takeAPercySnapshot` can optionally be passed an array of additional arguments to override the global settings for `percyCSS`, `minHeight`, `enableJavaScript` and `widths` on the fly, for example:
 ```php
 
-use Codeception\Module\Percy\Payload;
+use Codeception\Module\Percy\Exchange\Payload;
 
 $I->takeAPercySnapshot('My snapshot name', [
     Payload::WIDTHS => [1024, 768, 320], // Browser breakpoint widths

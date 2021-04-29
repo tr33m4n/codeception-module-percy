@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Codeception\Module;
 
 use Codeception\Module;
-use Codeception\Module\Percy\Payload;
-use Codeception\Module\Percy\PayloadManagement;
+use Codeception\Module\Percy\Exchange\Payload;
+use Codeception\Module\Percy\RequestManagement;
 use Codeception\Module\Percy\FilepathResolver;
 use Codeception\Module\Percy\InfoProvider;
 use Codeception\Module\Percy\ProcessManagement;
@@ -82,7 +82,7 @@ class Percy extends Module
         // Add Percy agent JS to page
         $this->webDriver->executeJS($this->percyAgentJs);
 
-        PayloadManagement::add(
+        RequestManagement::addPayload(
             Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
@@ -107,7 +107,7 @@ class Percy extends Module
         $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots..');
 
         try {
-            PayloadManagement::send();
+            RequestManagement::sendRequest();
         } catch (Exception $exception) {
             $this->debugConnectionError($exception);
         }
@@ -126,7 +126,7 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail): void
     {
-        PayloadManagement::clear();
+        RequestManagement::resetRequest();
     }
 
     /**
