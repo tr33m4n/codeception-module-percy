@@ -139,11 +139,7 @@ class Percy extends Module
     {
         $this->debugSection(
             self::NAMESPACE,
-            [
-                'Cannot contact the Percy agent endpoint. Is the Percy agent running? Has the `PERCY_TOKEN` been set?',
-                $exception->getMessage(),
-                $exception->getTraceAsString()
-            ]
+            [$exception->getMessage(), $exception->getTraceAsString()]
         );
 
         if (!$this->_getConfig('throwOnAdapterError')) {

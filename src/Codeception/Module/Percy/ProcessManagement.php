@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy;
 
 use Symfony\Component\Process\Exception\RuntimeException;
-use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -51,12 +50,12 @@ class ProcessManagement
     }
 
     /**
-     * If `command -v npx` throws an error, presume the `npx` command is not callable
+     * If `type node` throws an error, presume the `node` is not available
      *
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      */
     private static function checkEnvironment(): void
     {
-        (new Process([(new ExecutableFinder())->find('command'), '-v', 'node']))->mustRun();
+        (new Process(['type', 'node']))->mustRun();
     }
 }
