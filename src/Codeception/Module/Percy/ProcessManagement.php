@@ -26,8 +26,6 @@ class ProcessManagement
      */
     public static function startPercyAgent(): void
     {
-        self::checkEnvironment();
-
         self::$process = new Process(['node', FilepathResolver::percyAgentExecutable(), 'start']);
         self::$process->setTimeout(ConfigProvider::get('percyAgentTimeout') ?? null);
         self::$process->start();
@@ -47,15 +45,5 @@ class ProcessManagement
         }
 
         self::$process->stop();
-    }
-
-    /**
-     * If `type node` throws an error, presume the `node` is not available
-     *
-     * @throws \Symfony\Component\Process\Exception\ProcessFailedException
-     */
-    private static function checkEnvironment(): void
-    {
-        (new Process(['type', 'node']))->mustRun();
     }
 }
