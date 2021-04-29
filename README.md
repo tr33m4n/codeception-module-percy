@@ -1,10 +1,16 @@
 # codeception-module-percy
 Percy https://percy.io module for Codeception
 
+## Requirements
+- Node.js `>=10.0.0`
+- PHP `>= 7.2`
+- Composer `v1`
+
 ## Installation
 ```shell script
 composer require --dev tr33m4n/codeception-module-percy
 ```
+
 ## Example Configuration
 The following example configuration assumes the `WebDriver` module has been configured correctly for your test suite
 ```yaml
@@ -21,6 +27,7 @@ modules:
             - 320
           minHeight: 1080
 ```
+
 ### Configuration Options
 | Parameter                         | Type   | Default                               | Description                                                                                       |
 | --------------------------------- | ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -44,6 +51,7 @@ For Percy snapshot collection to work, Codeception needs to be wrapped in the Pe
 npx percy exec -- php vendor/bin/codecept run --steps
 ```
 This will require your `PERCY_TOKEN` to be set before running. For more information, see https://docs.percy.io/docs/environment-variables#section-required
+
 ### Example Test
 ```php
 <?php
