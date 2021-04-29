@@ -1,0 +1,14 @@
+{
+    "name": "@tr33m4n/codeception-module-percy",
+    "version": "1.0.1",
+    "description": "Percy https://percy.io module for Codeception",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tr33m4n/codeception-module-percy"
+    },
+    "license": "MIT",
+    "author": "Daniel Doyle <tr33m4n@googlemail.com>",
+    "dependencies": {
+        "@percy/agent": "^0.28.6"
+    }
+}

@@ -12,15 +12,6 @@ namespace Codeception\Module\Percy\Exchange;
 interface ClientInterface
 {
     /**
-     * Get
-     *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $path
-     * @return string
-     */
-    public function get(string $path): string;
-
-    /**
      * Post
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException

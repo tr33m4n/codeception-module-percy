@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Exchange;
+namespace Codeception\Module\Percy;
 
 use JsonSerializable;
 
 /**
  * Class Snapshot
  *
- * @package Codeception\Module\Percy\Exchange
+ * @package Codeception\Module\Percy
  */
 class Snapshot implements JsonSerializable
 {
@@ -30,7 +30,7 @@ class Snapshot implements JsonSerializable
      * From file path
      *
      * @param string $filePath
-     * @return \Codeception\Module\Percy\Exchange\Snapshot
+     * @return \Codeception\Module\Percy\Snapshot
      */
     public static function from(string $filePath): Snapshot
     {
@@ -55,6 +55,6 @@ class Snapshot implements JsonSerializable
      */
     public function jsonSerialize(): string
     {
-        return SnapshotStorage::load($this);
+        return SnapshotManagement::load($this);
     }
 }

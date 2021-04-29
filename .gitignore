@@ -5,3 +5,4 @@
 /.node-version
 /tests/geckodriver/geckodriver.log
 /tests/server/server.log
+/node_modules

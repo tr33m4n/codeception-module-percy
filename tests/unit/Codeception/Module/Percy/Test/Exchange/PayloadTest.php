@@ -14,7 +14,7 @@ class PayloadTest extends Unit
     /**
      * Test that an invalid key cannot be set against the payload object
      */
-    public function testCannotAddAnInvalidKey() : void
+    public function testCannotAddAnInvalidKey(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -24,7 +24,7 @@ class PayloadTest extends Unit
     /**
      * Test that the payload can be cast to a JSON string
      */
-    public function testCanBeCastToJson() : void
+    public function testCanBeCastToJson(): void
     {
         $this->assertEquals(
             '{"enableJavaScript":true,"name":"Test","url":"https:\/\/example.com"}',

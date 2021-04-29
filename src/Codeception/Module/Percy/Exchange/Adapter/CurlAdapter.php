@@ -83,21 +83,9 @@ class CurlAdapter implements AdapterInterface
     {
         curl_setopt_array($this->getResource(), [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FAILONERROR => true
+            CURLOPT_FAILONERROR => true,
+            CURLOPT_POST => true
         ]);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
-     */
-    public function setIsPost(): AdapterInterface
-    {
-        curl_setopt($this->getResource(), CURLOPT_POST, true);
 
         return $this;
     }

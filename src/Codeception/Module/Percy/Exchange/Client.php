@@ -43,20 +43,11 @@ class Client implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function get(string $path): string
-    {
-        return $this->adapter->setPath($path)->execute();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function post(string $path, Payload $payload = null): string
     {
         $payloadAsString = (string) $payload;
 
         return $this->adapter->setPath($path)
-            ->setIsPost()
             ->setPayload($payloadAsString)
             ->setHeaders([
                 'Content-Type: application/json',

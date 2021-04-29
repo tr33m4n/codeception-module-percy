@@ -11,6 +11,9 @@ Percy https://percy.io module for Codeception
 composer require --dev tr33m4n/codeception-module-percy
 ```
 
+## Upgrading from v1.0.x to v1.1.x
+The way in which the Percy agent is started and stopped in `v1.1.x` changes significantly from `v1.0.x`. You no longer need to prefix your Codeception run command with `npx percy exec --` :tada:
+
 ## Example Configuration
 The following example configuration assumes the `WebDriver` module has been configured correctly for your test suite
 ```yaml
@@ -29,29 +32,23 @@ modules:
 ```
 
 ### Configuration Options
-| Parameter                         | Type   | Default                               | Description                                                                                       |
-| --------------------------------- | ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `driver`                          | string | `WebDriver`                           | Set an alternative driver                                                                         |
-| `agentEndpoint`                   | string | `http://localhost:5338`               | The endpoint used for operations within the Percy agent                                           |
-| `agentJsPath`                     | string | `percy-agent.js`                      | The path relative to the agent endpoint to retrieve the agent JS                                  |
-| `agentPostPath`                   | string | `percy/snapshot`                      | The path relative to the agent endpoint to post a snapshot to                                     |
-| `agentConfig`                     | object | `{"handleAgentCommunication": false}` | Additional configuration to pass the the `PercyAgent` class when initialised within Chrome driver |
-| `snapshotConfig`                  | object | `{}`                                  | Additional configuration to pass to the "snapshot" functionality                                  |
-| `snapshotConfig.percyCSS`         | string | `null`                                | Percy specific CSS to apply to the "snapshot"                                                     |
-| `snapshotConfig.minHeight`        | int    | `null`                                | Minimum height of the resulting "snapshot" in pixels                                              |
-| `snapshotConfig.enableJavaScript` | bool   | `false`                               | Enable JavaScript in the Percy rendering environment                                              |
-| `snapshotConfig.widths`           | array  | `null`                                | An array of integers representing the browser widths at which you want to take snapshots          |
-| `throwOnAdapterError`             | bool   | `false`                               | [debug] Throw exception on adapter error
-| `cleanSnapshotStorageOnFail`      | bool   | `false`                               | [debug] Clean stored snapshot HTML after failure
-| `cleanSnapshotStorageOnSuccess`   | bool   | `false`                               | [debug] Clean stored snapshot HTML after success
+| Parameter                         | Type     | Default                               | Description                                                                                                                                                                                                                 |
+| --------------------------------- | -------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `driver`                          | string   | `WebDriver`                           | Set an alternative driver                                                                                                                                                                                                   |
+| `agentEndpoint`                   | string   | `http://localhost:5338`               | The endpoint used for operations within the Percy agent                                                                                                                                                                     |
+| `agentPostPath`                   | string   | `percy/snapshot`                      | The path relative to the agent endpoint to post a snapshot to                                                                                                                                                               |
+| `agentConfig`                     | object   | `{"handleAgentCommunication": false}` | Additional configuration to pass the the `PercyAgent` class when initialised within Chrome driver                                                                                                                           |
+| `snapshotConfig`                  | object   | `{}`                                  | Additional configuration to pass to the "snapshot" functionality                                                                                                                                                            |
+| `snapshotConfig.percyCSS`         | string   | `null`                                | Percy specific CSS to apply to the "snapshot"                                                                                                                                                                               |
+| `snapshotConfig.minHeight`        | int      | `null`                                | Minimum height of the resulting "snapshot" in pixels                                                                                                                                                                        |
+| `snapshotConfig.enableJavaScript` | bool     | `false`                               | Enable JavaScript in the Percy rendering environment                                                                                                                                                                        |
+| `snapshotConfig.widths`           | array    | `null`                                | An array of integers representing the browser widths at which you want to take snapshots                                                                                                                                    |
+| `percyAgentTimeout`               | int|null | `null`                                | [debug] The length of the time the Percy agent will listen for incoming snapshots and send on to Percy.io (the amount of time needed to send all snapshots after a successful test suite run). No timeout is set by default |
+| `throwOnAdapterError`             | bool     | `false`                               | [debug] Throw exception on adapter error                                                                                                                                                                                    |
+| `cleanSnapshotStorage`            | bool     | `false`                               | [debug] Clean stored snapshot HTML after run                                                                                                                                                                                |
 
 ## Running
-For Percy snapshot collection to work, Codeception needs to be wrapped in the Percy agent `exec` command, for example:
-```shell script
-npx percy exec -- php vendor/bin/codecept run --steps
-```
-This will require your `PERCY_TOKEN` to be set before running. For more information, see https://docs.percy.io/docs/environment-variables#section-required
-
+The Percy integration runs automatically with the test suite but will need your `PERCY_TOKEN` to be set to successfully send snapshots. For more information, see https://docs.percy.io/docs/environment-variables#section-required
 ### Example Test
 ```php
 <?php

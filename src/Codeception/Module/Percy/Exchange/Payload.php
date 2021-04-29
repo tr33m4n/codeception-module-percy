@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
 
+use Codeception\Module\Percy\Snapshot;
+use Codeception\Module\Percy\SnapshotManagement;
+
 /**
  * Class Payload
  *
@@ -70,19 +73,19 @@ class Payload
     }
 
     /**
-     * From config
+     * From array
      *
-     * @param array<string, mixed> $publicConfig
+     * @param array<string, mixed> $payloadArray
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public static function from(array $publicConfig): Payload
+    public static function from(array $payloadArray): Payload
     {
         return array_reduce(
-            array_keys($publicConfig),
-            function (Payload $payload, string $configKey) use ($publicConfig) {
-                ValidatePublicConfig::execute($configKey);
+            array_keys($payloadArray),
+            function (Payload $payload, string $configKey) use ($payloadArray) {
+                ValidatePayloadKey::execute($configKey);
 
-                return self::withValue($payload, $configKey, $publicConfig[$configKey]);
+                return self::withValue($payload, $configKey, $payloadArray[$configKey]);
             },
             new self()
         );
@@ -141,7 +144,7 @@ class Payload
      */
     public function withDomSnapshot(string $domSnapshot): Payload
     {
-        return self::withValue(clone $this, self::DOM_SNAPSHOT, SnapshotStorage::save($domSnapshot));
+        return self::withValue(clone $this, self::DOM_SNAPSHOT, SnapshotManagement::save($domSnapshot));
     }
 
     /**
@@ -217,7 +220,7 @@ class Payload
     /**
      * Get DOM snapshot
      *
-     * @return \Codeception\Module\Percy\Exchange\Snapshot|null
+     * @return \Codeception\Module\Percy\Snapshot|null
      */
     public function getDomSnapshot(): ?Snapshot
     {
