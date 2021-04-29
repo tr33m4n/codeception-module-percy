@@ -35,7 +35,7 @@ class Percy extends Module
         'agentConfig' => [
             'handleAgentCommunication' => false
         ],
-        'percyAgentTimeout' => 120,
+        'percyAgentTimeout' => null,
         'throwOnAdapterError' => false,
         'cleanSnapshotStorage' => false
     ];

@@ -29,7 +29,7 @@ class ProcessManagement
         self::checkEnvironment();
 
         self::$process = new Process(['node', FilepathResolver::percyAgentExecutable(), 'start']);
-        self::$process->setTimeout(ConfigProvider::get('percyAgentTimeout') ?? 120);
+        self::$process->setTimeout(ConfigProvider::get('percyAgentTimeout') ?? null);
         self::$process->start();
 
         sleep(5);
