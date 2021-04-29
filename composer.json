@@ -15,6 +15,7 @@
         "ext-json": "*",
         "codeception/codeception": "^4.0.0",
         "codeception/module-webdriver": "^1.2",
+        "composer-plugin-api": "^1",
         "ocramius/package-versions": "^1.4",
         "ramsey/uuid": "^3.7"
     },
