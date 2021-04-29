@@ -1,6 +1,6 @@
 <?php
 
-namespace Codeception\Module\Percy\Test;
+namespace Codeception\Module\Percy\Test\Exchange;
 
 use Codeception\Module\Percy\Exchange\Payload;
 use Codeception\Test\Unit;
