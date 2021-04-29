@@ -3,19 +3,13 @@ Percy https://percy.io module for Codeception
 
 ## Requirements
 - Node.js `>=10.0.0`
-- PHP `>= 7.2` for `v1.0.x`, `>= 7.3` for `v1.1.x`
-- Composer `v1` for `>= v1.0.x`, `v2` for `v1.1.x`
-
-### Difference between versions
-The difference between `v1.0.x` and `v1.1.x` is `v1.1.x` does not launch the Percy agent until after a successful test suite run. This means that on failure, nothing is sent to Percy. Due to the EOL of PHP 7.2 however and some limitations of supporting modules, `v1.0.x` sends an empty Percy job to the Percy dashboard which is listed as failed.
+- PHP `>= 7.2`
+- Composer `v1`
 
 ## Installation
 ```shell script
 composer require --dev tr33m4n/codeception-module-percy
 ```
-
-## Upgrading from v1.0.x to v1.1.x
-The way in which the Percy agent is started and stopped in `v1.1.x` changes significantly from `v1.0.x`. You no longer need to prefix your Codeception run command with `npx percy exec --` :tada:
 
 ## Example Configuration
 The following example configuration assumes the `WebDriver` module has been configured correctly for your test suite
