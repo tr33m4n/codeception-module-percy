@@ -2,7 +2,7 @@
 
 namespace Codeception\Module\Percy\Test;
 
-use Codeception\Module\Percy\Payload;
+use Codeception\Module\Percy\Exchange\Payload;
 use Codeception\Test\Unit;
 use InvalidArgumentException;
 
