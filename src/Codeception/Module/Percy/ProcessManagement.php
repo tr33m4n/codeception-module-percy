@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy;
 
 use Symfony\Component\Process\Exception\RuntimeException;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -56,6 +57,6 @@ class ProcessManagement
      */
     private static function checkEnvironment(): void
     {
-        (new Process(['command', '-v', 'node']))->mustRun();
+        (new Process([(new ExecutableFinder())->find('command'), '-v', 'node']))->mustRun();
     }
 }
