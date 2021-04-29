@@ -10,13 +10,14 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": "^7.3",
+        "php": "^7.2",
         "ext-curl": "*",
         "ext-json": "*",
         "codeception/codeception": "^4.0.0",
         "codeception/module-webdriver": "^1.2",
-        "composer-plugin-api": "^2",
+        "composer-plugin-api": "^1",
         "eloquent/composer-npm-bridge": "^5.0",
+        "ocramius/package-versions": "^1.4",
         "ramsey/uuid": "^4.1",
         "symfony/process": "^5.2"
     },
