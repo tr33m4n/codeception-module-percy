@@ -6,9 +6,6 @@ Percy https://percy.io module for Codeception
 - PHP `>= 7.2`
 - Composer `v1`
 
-### Difference between versions
-The difference between `v1.0.x` and `v1.1.x` is `v1.1.x` does not launch the Percy agent until after a successful test suite run. This means that on failure, nothing is sent to Percy. Due to the EOL of PHP 7.2 however and some limitations of supporting modules, `v1.0.x` sends an empty Percy job to the Percy dashboard which is listed as failed.
-
 ## Installation
 ```shell script
 composer require --dev tr33m4n/codeception-module-percy
