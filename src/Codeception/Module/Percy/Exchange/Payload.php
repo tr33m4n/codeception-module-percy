@@ -82,7 +82,7 @@ class Payload
     {
         return array_reduce(
             array_keys($payloadArray),
-            function (Payload $payload, string $configKey) use ($payloadArray) {
+            static function (Payload $payload, string $configKey) use ($payloadArray): Payload {
                 ValidatePayloadKey::execute($configKey);
 
                 return self::withValue($payload, $configKey, $payloadArray[$configKey]);
@@ -230,10 +230,11 @@ class Payload
     /**
      * Encode config as JSON when casting to string
      *
+     * @throws \JsonException
      * @return string
      */
     public function __toString(): string
     {
-        return json_encode($this->config) ?: '';
+        return json_encode($this->config, JSON_THROW_ON_ERROR) ?: '';
     }
 }

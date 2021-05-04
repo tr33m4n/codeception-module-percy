@@ -67,6 +67,7 @@ class Percy extends Module
      * Take snapshot of DOM and send to https://percy.io
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
+     * @throws \JsonException
      * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
@@ -88,7 +89,7 @@ class Percy extends Module
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
                 ->withDomSnapshot($this->webDriver->executeJS(sprintf(
                     'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
-                    json_encode($this->_getConfig('agentConfig'))
+                    json_encode($this->_getConfig('agentConfig'), JSON_THROW_ON_ERROR)
                 )))
                 ->withClientInfo(InfoProvider::getClientInfo())
                 ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver))
