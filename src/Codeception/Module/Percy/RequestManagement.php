@@ -31,13 +31,23 @@ class RequestManagement
     }
 
     /**
+     * Check if request has payloads
+     *
+     * @return bool
+     */
+    public static function hasPayloads() : bool
+    {
+        return self::$payloads !== [];
+    }
+
+    /**
      * Send payloads to Percy
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      */
     public static function sendRequest(): void
     {
-        if (empty(self::$payloads)) {
+        if (!self::hasPayloads()) {
             return;
         }
 
