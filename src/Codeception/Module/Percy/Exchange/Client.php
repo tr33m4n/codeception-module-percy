@@ -33,9 +33,9 @@ class Client implements ClientInterface
      * Create new instance
      *
      * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
-     * @return ClientInterface
+     * @return \Codeception\Module\Percy\Exchange\Client
      */
-    public static function create(AdapterInterface $adapter): ClientInterface
+    public static function create(AdapterInterface $adapter): Client
     {
         return new self($adapter);
     }
