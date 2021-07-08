@@ -105,6 +105,10 @@ class Percy extends Module
      */
     public function _afterSuite(): void
     {
+        if (!RequestManagement::hasPayloads()) {
+            return;
+        }
+
         $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots..');
 
         try {

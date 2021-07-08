@@ -42,9 +42,9 @@ class CurlAdapter implements AdapterInterface
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @param string $baseUrl
-     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
+     * @return \Codeception\Module\Percy\Exchange\Adapter\CurlAdapter
      */
-    public static function create(string $baseUrl): AdapterInterface
+    public static function create(string $baseUrl): CurlAdapter
     {
         return new self($baseUrl);
     }
