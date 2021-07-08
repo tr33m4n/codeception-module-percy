@@ -35,7 +35,7 @@ class RequestManagement
      *
      * @return bool
      */
-    public static function hasPayloads() : bool
+    public static function hasPayloads(): bool
     {
         return self::$payloads !== [];
     }
