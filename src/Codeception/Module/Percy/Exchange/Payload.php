@@ -82,7 +82,7 @@ class Payload
     {
         return array_reduce(
             array_keys($payloadArray),
-            function (Payload $payload, string $configKey) use ($payloadArray) {
+            function (Payload $payload, string $configKey) use ($payloadArray): Payload {
                 ValidatePayloadKey::execute($configKey);
 
                 return self::withValue($payload, $configKey, $payloadArray[$configKey]);

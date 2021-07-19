@@ -4,7 +4,7 @@ parameters:
     excludes_analyse:
         - *Test*
         - *tests*
-    level: 8
+    level: max
     bootstrapFiles:
         - vendor/codeception/codeception/autoload.php
     ignoreErrors:
