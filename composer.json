@@ -18,6 +18,8 @@
         "codeception/module-webdriver": "^1.2",
         "composer/package-versions-deprecated": "^1.11.99",
         "eloquent/composer-npm-bridge": "^5.0",
+        "guzzlehttp/guzzle": "^7.3",
+        "myclabs/php-enum": "^1.8",
         "ramsey/uuid": "^4.1",
         "symfony/process": "^5.2"
     },
