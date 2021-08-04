@@ -21,7 +21,7 @@ class CommitDataProvider
         );
 
         $get = function (string $key) use ($rawData) {
-            return preg_match_all(sprintf('/%s:(.*)/m', $key), $rawData)
+            return preg_match_all(sprintf('/%s:(.*)/m', $key), $rawData);
         };
     }
 }
