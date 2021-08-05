@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Config\Environment\CiType;
 
-interface CiTypeInterface
+use OndraM\CiDetector\Ci\CiInterface;
+
+interface CiTypeInterface extends CiInterface
 {
     /**
      * Get pull request
@@ -14,30 +16,9 @@ interface CiTypeInterface
     public function getPullRequest(): ?string;
 
     /**
-     * Get branch
-     *
-     * @return string|null
-     */
-    public function getBranch(): ?string;
-
-    /**
-     * Get commit
-     *
-     * @return string|null
-     */
-    public function getCommit(): ?string;
-
-    /**
-     * Get info
+     * Get slug
      *
      * @return string
      */
-    public function getInfo(): string;
-
-    /**
-     * Detect CI type
-     *
-     * @return bool
-     */
-    public function detect(): bool;
+    public function getSlug(): string;
 }

@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy\Config\Environment\CiType;
 
 use Codeception\Module\Percy\Config\Environment\CiType;
-use OndraM\CiDetector\Ci\AppVeyor as CiDetectorAppVeyor;
+use OndraM\CiDetector\Ci\AzurePipelines as CiDetectorAzurePipelines;
 
-class AppVeyor extends CiDetectorAppVeyor implements CiTypeInterface
+class AzurePipelines extends CiDetectorAzurePipelines implements CiTypeInterface
 {
     /**
      * @inheritDoc
      */
     public function getPullRequest(): ?string
     {
-        return $_ENV['APPVEYOR_PULL_REQUEST_NUMBER'] ?? null;
+        return $_ENV['SYSTEM_PULLREQUEST_PULLREQUESTID'] ?? $_ENV['SYSTEM_PULLREQUEST_PULLREQUESTNUMBER'] ?? null;
     }
 
     /**
@@ -22,6 +22,6 @@ class AppVeyor extends CiDetectorAppVeyor implements CiTypeInterface
      */
     public function getSlug(): string
     {
-        return (string) CiType::APPVEYOR();
+        return (string) CiType::AZURE_PIPELINES();
     }
 }

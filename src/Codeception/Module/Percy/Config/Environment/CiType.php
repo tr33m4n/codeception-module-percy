@@ -12,35 +12,37 @@ final class CiType extends Enum
 
     const JENKINS = 'jenkins';
 
-    const JENKINS_PULL_REQUEST_BUILDER = 'jenkins-prb';
-
     const CIRCLE = 'circle';
 
     const CODESHIP = 'codeship';
 
     const DRONE = 'drone';
 
-    const SEMAPHORE = 'semaphore';
-
-    const BUILDKITE = 'buildkite';
-
-    const HEROKU = 'heroku';
-
     const GITLAB = 'gitlab';
 
-    const AZURE = 'azure';
+    const AZURE_PIPELINES = 'azure';
 
     const APPVEYOR = 'appveyor';
 
-    const PROBO = 'probo';
+    const BITBUCKET_PIPELINES = 'bitbucket';
 
-    const BITBUCKET = 'bitbucket';
+    const GITHUB_ACTIONS = 'github';
 
-    const GITHUB = 'github';
+    const AWS_CODEBUILD = 'aws-codebuild';
 
-    const NETLIFY = 'netlify';
+    const BAMBOO = 'bamboo';
 
-    const UNKNOWN = 'CI/unknown';
+    const BUDDY = 'buddy';
+
+    const CONTINUOUSPHP = 'continuousphp';
+
+    const SOURCEHUT = 'sourcehut';
+
+    const TEAMCITY = 'teamcity';
+
+    const WERCKER = 'wercker';
+
+    const UNKNOWN = 'CI/Unknown';
 
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
@@ -61,9 +63,9 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function JENKINS_PULL_REQUEST_BUILDER() : CiType
+    public static function AWS_CODEBUILD() : CiType
     {
-        return self::from(self::JENKINS_PULL_REQUEST_BUILDER);
+        return self::from(self::AWS_CODEBUILD);
     }
 
     /**
@@ -93,25 +95,25 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function SEMAPHORE() : CiType
+    public static function BAMBOO() : CiType
     {
-        return self::from(self::SEMAPHORE);
+        return self::from(self::BAMBOO);
     }
 
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function BUILDKITE() : CiType
+    public static function BUDDY() : CiType
     {
-        return self::from(self::BUILDKITE);
+        return self::from(self::BUDDY);
     }
 
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function HEROKU() : CiType
+    public static function CONTINUOUSPHP() : CiType
     {
-        return self::from(self::HEROKU);
+        return self::from(self::CONTINUOUSPHP);
     }
 
     /**
@@ -125,9 +127,9 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function AZURE() : CiType
+    public static function AZURE_PIPELINES() : CiType
     {
-        return self::from(self::AZURE);
+        return self::from(self::AZURE_PIPELINES);
     }
 
     /**
@@ -141,33 +143,41 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function PROBO() : CiType
+    public static function SOURCEHUT() : CiType
     {
-        return self::from(self::PROBO);
+        return self::from(self::SOURCEHUT);
     }
 
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function BITBUCKET() : CiType
+    public static function BITBUCKET_PIPELINES() : CiType
     {
-        return self::from(self::BITBUCKET);
+        return self::from(self::BITBUCKET_PIPELINES);
     }
 
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function GITHUB() : CiType
+    public static function GITHUB_ACTIONS() : CiType
     {
-        return self::from(self::GITHUB);
+        return self::from(self::GITHUB_ACTIONS);
     }
 
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function NETLIFY() : CiType
+    public static function TEAMCITY() : CiType
     {
-        return self::from(self::NETLIFY);
+        return self::from(self::TEAMCITY);
+    }
+
+    /**
+     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     */
+    public static function WERCKER() : CiType
+    {
+        return self::from(self::WERCKER);
     }
 
     /**

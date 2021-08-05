@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Config\Environment;
 
-use Codeception\Module\Percy\Config\Environment\CiType\CiTypeInterface;
-
 class CiEnvironment
 {
     /**
@@ -16,12 +14,12 @@ class CiEnvironment
     /**
      * CiEnvironment constructor.
      *
-     * @param \Codeception\Module\Percy\Config\Environment\CiType\CiTypeInterface $ciType
+     * @param \Codeception\Module\Percy\Config\Environment\CiTypeResolver $ciTypeResolver
      */
     public function __construct(
-        CiTypeInterface $ciType
+        CiTypeResolver $ciTypeResolver
     ) {
-        $this->ciType = $ciType;
+        $this->ciType = $ciTypeResolver->resolve();
     }
 
     /**
@@ -31,6 +29,10 @@ class CiEnvironment
      */
     public function getPullRequest() : ?string
     {
+        if (isset($_ENV['PERCY_PULL_REQUEST'])) {
+            return $_ENV['PERCY_PULL_REQUEST'];
+        }
+
         return $this->ciType->getPullRequest();
     }
 
@@ -41,7 +43,11 @@ class CiEnvironment
      */
     public function getBranch() : ?string
     {
-        return preg_replace('/^refs\/\w+?\//', '', $this->ciType->getBranch() ?? '');
+        if (isset($_ENV['PERCY_BRANCH'])) {
+            return $_ENV['PERCY_BRANCH'];
+        }
+
+        return $this->ciType->getBranch();
     }
 
     /**
@@ -51,16 +57,20 @@ class CiEnvironment
      */
     public function getCommit() : ?string
     {
+        if (isset($_ENV['PERCY_COMMIT'])) {
+            return $_ENV['PERCY_COMMIT'];
+        }
+
         return $this->ciType->getCommit();
     }
 
     /**
-     * Get info
+     * Get slug
      *
      * @return string
      */
-    public function getInfo() : string
+    public function getSlug() : string
     {
-        return $this->ciType->getInfo();
+        return $this->ciType->getSlug();
     }
 }
