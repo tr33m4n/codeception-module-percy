@@ -10,10 +10,11 @@ use Codeception\Module\Percy\RequestManagement;
 use Codeception\Module\Percy\FilepathResolver;
 use Codeception\Module\Percy\InfoProvider;
 use Codeception\Module\Percy\ProcessManagement;
-use Codeception\Module\Percy\ConfigProvider;
 use Codeception\TestInterface;
 use Exception;
 use Symfony\Component\Process\Exception\RuntimeException;
+use tr33m4n\Utilities\Config\Container;
+use tr33m4n\Utilities\Config\ConfigProvider;
 
 /**
  * Class Percy
@@ -46,6 +47,16 @@ class Percy extends Module
     private $webDriver;
 
     /**
+     * @var \Codeception\Module\Percy\RequestManagement
+     */
+    private $requestManagement;
+
+    /**
+     * @var \Codeception\Module\Percy\ProcessManagement
+     */
+    private $processManagement;
+
+    /**
      * @var string|null
      */
     private $percyAgentJs;
@@ -57,10 +68,21 @@ class Percy extends Module
      */
     public function _initialize(): void
     {
-        ConfigProvider::set($this->_getConfig());
+        $configProvider = new ConfigProvider([
+            __DIR__ . '/../../../config'
+        ]);
+
+        $configProvider->set('percy', $this->_getConfig());
+
+        Container::setConfigProvider($configProvider);
 
         $this->webDriver = $this->getModule($this->_getConfig('driver'));
-        $this->percyAgentJs = file_get_contents(FilepathResolver::percyAgentBrowserJs()) ?: null;
+        $this->requestManagement = container()->get(RequestManagement::class);
+        $this->processManagement = container()->get(ProcessManagement::class);
+
+        /** @var \Codeception\Module\Percy\FilepathResolver $filepathResolver */
+        $filepathResolver = container()->get(FilepathResolver::class);
+        $this->percyAgentJs = file_get_contents($filepathResolver->percyAgentBrowserJs()) ?: null;
     }
 
     /**
@@ -68,6 +90,10 @@ class Percy extends Module
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
+     * @throws \ReflectionException
+     * @throws \tr33m4n\Di\Exception\MissingClassException
+     * @throws \tr33m4n\Utilities\Exception\AdapterException
+     * @throws \tr33m4n\Utilities\Exception\ConfigException
      * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
@@ -83,7 +109,10 @@ class Percy extends Module
         // Add Percy agent JS to page
         $this->webDriver->executeJS($this->percyAgentJs);
 
-        RequestManagement::addPayload(
+        /** @var \Codeception\Module\Percy\InfoProvider $infoProvider */
+        $infoProvider = container()->get(InfoProvider::class);
+
+        $this->requestManagement->addPayload(
             Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
@@ -91,8 +120,8 @@ class Percy extends Module
                     'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
                     json_encode($this->_getConfig('agentConfig'), JSON_THROW_ON_ERROR)
                 )))
-                ->withClientInfo(InfoProvider::getClientInfo())
-                ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver))
+                ->withClientInfo($infoProvider->getClientInfo())
+                ->withEnvironmentInfo($infoProvider->getEnvironmentInfo($this->webDriver))
         );
     }
 
@@ -102,17 +131,18 @@ class Percy extends Module
      * Iterate all payloads and send
      *
      * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function _afterSuite(): void
     {
-        if (!RequestManagement::hasPayloads()) {
+        if (!$this->requestManagement->hasPayloads()) {
             return;
         }
 
         $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots..');
 
         try {
-            RequestManagement::sendRequest();
+            $this->requestManagement->sendRequest();
         } catch (Exception $exception) {
             $this->debugConnectionError($exception);
         }
@@ -131,7 +161,7 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail): void
     {
-        RequestManagement::resetRequest();
+        $this->requestManagement->resetRequest();
     }
 
     /**
@@ -152,7 +182,7 @@ class Percy extends Module
         }
 
         try {
-            ProcessManagement::stopPercyAgent();
+            $this->processManagement->stopPercyAgent();
         } catch (RuntimeException $exception) {
             // Fail silently if the process is not running
         }

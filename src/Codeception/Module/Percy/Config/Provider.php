@@ -29,7 +29,7 @@ class Provider
      *
      * @return \Codeception\Module\Percy\Config\Environment\CiEnvironment
      */
-    public function getCiEnvironment() : CiEnvironment
+    public function getCiEnvironment(): CiEnvironment
     {
         return $this->ciEnvironment;
     }

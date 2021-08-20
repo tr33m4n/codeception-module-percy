@@ -27,7 +27,7 @@ class CiEnvironment
      *
      * @return string|null
      */
-    public function getPullRequest() : ?string
+    public function getPullRequest(): ?string
     {
         if (isset($_ENV['PERCY_PULL_REQUEST'])) {
             return $_ENV['PERCY_PULL_REQUEST'];
@@ -41,7 +41,7 @@ class CiEnvironment
      *
      * @return string|null
      */
-    public function getBranch() : ?string
+    public function getBranch(): ?string
     {
         if (isset($_ENV['PERCY_BRANCH'])) {
             return $_ENV['PERCY_BRANCH'];
@@ -55,7 +55,7 @@ class CiEnvironment
      *
      * @return string|null
      */
-    public function getCommit() : ?string
+    public function getCommit(): ?string
     {
         if (isset($_ENV['PERCY_COMMIT'])) {
             return $_ENV['PERCY_COMMIT'];
@@ -69,7 +69,7 @@ class CiEnvironment
      *
      * @return string
      */
-    public function getSlug() : string
+    public function getSlug(): string
     {
         return $this->ciType->getSlug();
     }

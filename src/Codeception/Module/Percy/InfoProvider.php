@@ -19,12 +19,12 @@ final class InfoProvider
     /**
      * @var string|null
      */
-    private static $environmentInfo;
+    private $environmentInfo;
 
     /**
      * @var string|null
      */
-    private static $clientInfo;
+    private $clientInfo;
 
     /**
      * Get environment info
@@ -32,15 +32,15 @@ final class InfoProvider
      * @param \Codeception\Module\WebDriver $webDriver
      * @return string
      */
-    public static function getEnvironmentInfo(WebDriver $webDriver): string
+    public function getEnvironmentInfo(WebDriver $webDriver): string
     {
-        if (null !== self::$environmentInfo) {
-            return self::$environmentInfo;
+        if (null !== $this->environmentInfo) {
+            return $this->environmentInfo;
         }
 
         $webDriverCapabilities = $webDriver->webDriver->getCapabilities();
 
-        return self::$environmentInfo = sprintf(
+        return $this->environmentInfo = sprintf(
             'codeception-php; %s; %s/%s',
             $webDriverCapabilities->getPlatform(),
             $webDriverCapabilities->getBrowserName(),
@@ -53,13 +53,13 @@ final class InfoProvider
      *
      * @return string
      */
-    public static function getClientInfo(): string
+    public function getClientInfo(): string
     {
-        if (null !== self::$clientInfo) {
-            return self::$clientInfo;
+        if (null !== $this->clientInfo) {
+            return $this->clientInfo;
         }
 
-        return self::$clientInfo = sprintf(
+        return $this->clientInfo = sprintf(
             '%s/%s',
             ltrim(strstr(self::PACKAGE_NAME, '/') ?: '', '/'),
             strstr(Versions::getVersion(self::PACKAGE_NAME), '@', true)

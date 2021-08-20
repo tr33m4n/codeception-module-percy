@@ -32,7 +32,7 @@ class CiTypePool
      * @param \Codeception\Module\Percy\Config\Environment\CiType $ciType
      * @return \Codeception\Module\Percy\Config\Environment\CiType\CiTypeInterface
      */
-    public function getCiType(CiType $ciType) : CiTypeInterface
+    public function getCiType(CiType $ciType): CiTypeInterface
     {
         if (!array_key_exists((string) $ciType, $this->ciTypes)) {
             throw new InvalidCiException(sprintf('"%s" is not a valid CI type', (string) $ciType));
@@ -46,7 +46,7 @@ class CiTypePool
      *
      * @return array<string, \Codeception\Module\Percy\Config\Environment\CiType\CiTypeInterface>
      */
-    public function getCiTypes() : array
+    public function getCiTypes(): array
     {
         return $this->ciTypes;
     }

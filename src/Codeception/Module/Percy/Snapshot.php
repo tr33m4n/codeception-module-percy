@@ -55,6 +55,6 @@ class Snapshot implements JsonSerializable
      */
     public function jsonSerialize(): string
     {
-        return SnapshotManagement::load($this);
+        return file_get_contents($this->getFilePath()) ?: '';
     }
 }

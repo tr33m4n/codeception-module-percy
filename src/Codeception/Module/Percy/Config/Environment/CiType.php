@@ -47,7 +47,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function TRAVIS() : CiType
+    public static function TRAVIS(): CiType
     {
         return self::from(self::TRAVIS);
     }
@@ -55,7 +55,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function JENKINS() : CiType
+    public static function JENKINS(): CiType
     {
         return self::from(self::JENKINS);
     }
@@ -63,7 +63,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function AWS_CODEBUILD() : CiType
+    public static function AWS_CODEBUILD(): CiType
     {
         return self::from(self::AWS_CODEBUILD);
     }
@@ -71,7 +71,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function CIRCLE() : CiType
+    public static function CIRCLE(): CiType
     {
         return self::from(self::CIRCLE);
     }
@@ -79,7 +79,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function CODESHIP() : CiType
+    public static function CODESHIP(): CiType
     {
         return self::from(self::CODESHIP);
     }
@@ -87,7 +87,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function DRONE() : CiType
+    public static function DRONE(): CiType
     {
         return self::from(self::DRONE);
     }
@@ -95,7 +95,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function BAMBOO() : CiType
+    public static function BAMBOO(): CiType
     {
         return self::from(self::BAMBOO);
     }
@@ -103,7 +103,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function BUDDY() : CiType
+    public static function BUDDY(): CiType
     {
         return self::from(self::BUDDY);
     }
@@ -111,7 +111,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function CONTINUOUSPHP() : CiType
+    public static function CONTINUOUSPHP(): CiType
     {
         return self::from(self::CONTINUOUSPHP);
     }
@@ -119,7 +119,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function GITLAB() : CiType
+    public static function GITLAB(): CiType
     {
         return self::from(self::GITLAB);
     }
@@ -127,7 +127,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function AZURE_PIPELINES() : CiType
+    public static function AZURE_PIPELINES(): CiType
     {
         return self::from(self::AZURE_PIPELINES);
     }
@@ -135,7 +135,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function APPVEYOR() : CiType
+    public static function APPVEYOR(): CiType
     {
         return self::from(self::APPVEYOR);
     }
@@ -143,7 +143,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function SOURCEHUT() : CiType
+    public static function SOURCEHUT(): CiType
     {
         return self::from(self::SOURCEHUT);
     }
@@ -151,7 +151,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function BITBUCKET_PIPELINES() : CiType
+    public static function BITBUCKET_PIPELINES(): CiType
     {
         return self::from(self::BITBUCKET_PIPELINES);
     }
@@ -159,7 +159,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function GITHUB_ACTIONS() : CiType
+    public static function GITHUB_ACTIONS(): CiType
     {
         return self::from(self::GITHUB_ACTIONS);
     }
@@ -167,7 +167,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function TEAMCITY() : CiType
+    public static function TEAMCITY(): CiType
     {
         return self::from(self::TEAMCITY);
     }
@@ -175,7 +175,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function WERCKER() : CiType
+    public static function WERCKER(): CiType
     {
         return self::from(self::WERCKER);
     }
@@ -183,7 +183,7 @@ final class CiType extends Enum
     /**
      * @return \Codeception\Module\Percy\Config\Environment\CiType
      */
-    public static function UNKNOWN() : CiType
+    public static function UNKNOWN(): CiType
     {
         return self::from(self::UNKNOWN);
     }

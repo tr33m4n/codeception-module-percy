@@ -24,7 +24,7 @@ class SnapshotManagement
      * @param string $domString
      * @return \Codeception\Module\Percy\Snapshot
      */
-    public static function save(string $domString): Snapshot
+    public function save(string $domString): Snapshot
     {
         if (!function_exists('codecept_output_dir')) {
             throw new StorageException('`codecept_output_dir` function is not available!');
@@ -47,20 +47,9 @@ class SnapshotManagement
     }
 
     /**
-     * Load DOM snapshot from file
-     *
-     * @param \Codeception\Module\Percy\Snapshot $snapshot
-     * @return string
-     */
-    public static function load(Snapshot $snapshot): string
-    {
-        return file_get_contents($snapshot->getFilePath()) ?: '';
-    }
-
-    /**
      * Clean snapshot directory
      */
-    public static function clean(): void
+    public function clean(): void
     {
         foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $snapshotFile) {
             unlink($snapshotFile);

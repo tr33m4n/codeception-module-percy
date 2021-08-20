@@ -16,7 +16,7 @@ final class FilepathResolver
      *
      * @return string
      */
-    public static function percyAgentBrowserJs(): string
+    public function percyAgentBrowserJs(): string
     {
         return __DIR__ . '/../../../../node_modules/@percy/agent/dist/public/percy-agent.js';
     }
@@ -26,7 +26,7 @@ final class FilepathResolver
      *
      * @return string
      */
-    public static function percyAgentExecutable(): string
+    public function percyAgentExecutable(): string
     {
         return __DIR__ . '/../../../../node_modules/.bin/percy';
     }

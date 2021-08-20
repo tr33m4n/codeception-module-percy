@@ -17,18 +17,18 @@ class ProcessManagement
     /**
      * @var \Symfony\Component\Process\Process<string, mixed>|null
      */
-    private static $process;
+    private $process;
 
     /**
      * Start Percy agent
      *
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      */
-    public static function startPercyAgent(): void
+    public function startPercyAgent(): void
     {
-        self::$process = new Process(['node', FilepathResolver::percyAgentExecutable(), 'start']);
-        self::$process->setTimeout(ConfigProvider::get('percyAgentTimeout') ?? null);
-        self::$process->start();
+        $this->process = new Process(['node', FilepathResolver::percyAgentExecutable(), 'start']);
+        $this->process->setTimeout(ConfigProvider::get('percyAgentTimeout') ?? null);
+        $this->process->start();
 
         sleep(5);
     }
@@ -38,12 +38,12 @@ class ProcessManagement
      *
      * @throws \Symfony\Component\Process\Exception\RuntimeException
      */
-    public static function stopPercyAgent(): void
+    public function stopPercyAgent(): void
     {
-        if (!self::$process instanceof Process || !self::$process->isRunning()) {
+        if (!$this->process instanceof Process || !$this->process->isRunning()) {
             throw new RuntimeException('Percy agent is not running');
         }
 
-        self::$process->stop();
+        $this->process->stop();
     }
 }
