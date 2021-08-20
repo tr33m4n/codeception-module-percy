@@ -44,7 +44,7 @@ class EventDataProvider
     /**
      * Populate event data
      */
-    private function populateEventData() : void
+    private function populateEventData(): void
     {
         if (null !== $this->gitHubEventData) {
             return;
@@ -58,7 +58,7 @@ class EventDataProvider
 
         try {
             $this->gitHubEventData = json_decode(
-                file_get_contents($_ENV['GITHUB_EVENT_PATH'])?: '[]',
+                file_get_contents($_ENV['GITHUB_EVENT_PATH']) ?: '[]',
                 true,
                 512,
                 JSON_THROW_ON_ERROR
