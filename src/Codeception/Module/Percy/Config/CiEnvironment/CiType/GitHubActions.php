@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Config\Environment\CiType;
+namespace Codeception\Module\Percy\Config\CiEnvironment\CiType;
 
-use Codeception\Module\Percy\Config\Environment\CiType;
-use Codeception\Module\Percy\Config\Environment\CiType\GitHub\EventDataProvider;
+use Codeception\Module\Percy\Config\CiEnvironment\CiType;
+use Codeception\Module\Percy\Config\CiEnvironment\CiType\GitHub\EventDataProvider;
 use OndraM\CiDetector\Ci\GitHubActions as CiDetectorGitHubActions;
 use OndraM\CiDetector\Env;
 
 class GitHubActions extends CiDetectorGitHubActions implements CiTypeInterface
 {
     /**
-     * @var \Codeception\Module\Percy\Config\Environment\CiType\GitHub\EventDataProvider
+     * @var \Codeception\Module\Percy\Config\CiEnvironment\CiType\GitHub\EventDataProvider
      */
     private $eventDataProvider;
 
     /**
      * GitHub constructor.
      *
-     * @param \Codeception\Module\Percy\Config\Environment\CiType\GitHub\EventDataProvider $eventDataProvider
-     * @param \OndraM\CiDetector\Env                                                       $env
+     * @param \Codeception\Module\Percy\Config\CiEnvironment\CiType\GitHub\EventDataProvider $eventDataProvider
+     * @param \OndraM\CiDetector\Env                                                         $env
      */
     public function __construct(
         EventDataProvider $eventDataProvider,

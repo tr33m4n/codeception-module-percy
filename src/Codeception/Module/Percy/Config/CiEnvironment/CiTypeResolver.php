@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Config\Environment;
+namespace Codeception\Module\Percy\Config\CiEnvironment;
 
-use Codeception\Module\Percy\Config\Environment\CiType\CiTypeInterface;
-use Codeception\Module\Percy\Config\Environment\CiType\Unknown;
+use Codeception\Module\Percy\Config\CiEnvironment\CiType\CiTypeInterface;
+use Codeception\Module\Percy\Config\CiEnvironment\CiType\Unknown;
 use OndraM\CiDetector\Env as CiDetectorEnv;
 
 class CiTypeResolver
 {
     /**
-     * @var \Codeception\Module\Percy\Config\Environment\CiTypePool
+     * @var \Codeception\Module\Percy\Config\CiEnvironment\CiTypePool
      */
     private $ciTypePool;
 
@@ -23,8 +23,8 @@ class CiTypeResolver
     /**
      * CiTypeResolver constructor.
      *
-     * @param \Codeception\Module\Percy\Config\Environment\CiTypePool $ciTypePool
-     * @param \OndraM\CiDetector\Env                                  $ciDetectorEnv
+     * @param \Codeception\Module\Percy\Config\CiEnvironment\CiTypePool $ciTypePool
+     * @param \OndraM\CiDetector\Env                                    $ciDetectorEnv
      */
     public function __construct(
         CiTypePool $ciTypePool,
@@ -37,7 +37,7 @@ class CiTypeResolver
     /**
      * Resolve CI type
      *
-     * @return \Codeception\Module\Percy\Config\Environment\CiType\CiTypeInterface
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType\CiTypeInterface
      */
     public function resolve(): CiTypeInterface
     {

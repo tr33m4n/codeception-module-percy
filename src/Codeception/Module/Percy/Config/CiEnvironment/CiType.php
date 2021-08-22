@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Config\Environment;
+namespace Codeception\Module\Percy\Config\CiEnvironment;
 
 use MyCLabs\Enum\Enum;
 
@@ -45,7 +45,7 @@ final class CiType extends Enum
     const UNKNOWN = 'CI/Unknown';
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function TRAVIS(): CiType
     {
@@ -53,7 +53,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function JENKINS(): CiType
     {
@@ -61,7 +61,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function AWS_CODEBUILD(): CiType
     {
@@ -69,7 +69,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function CIRCLE(): CiType
     {
@@ -77,7 +77,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function CODESHIP(): CiType
     {
@@ -85,7 +85,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function DRONE(): CiType
     {
@@ -93,7 +93,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function BAMBOO(): CiType
     {
@@ -101,7 +101,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function BUDDY(): CiType
     {
@@ -109,7 +109,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function CONTINUOUSPHP(): CiType
     {
@@ -117,7 +117,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function GITLAB(): CiType
     {
@@ -125,7 +125,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function AZURE_PIPELINES(): CiType
     {
@@ -133,7 +133,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function APPVEYOR(): CiType
     {
@@ -141,7 +141,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function SOURCEHUT(): CiType
     {
@@ -149,7 +149,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function BITBUCKET_PIPELINES(): CiType
     {
@@ -157,7 +157,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function GITHUB_ACTIONS(): CiType
     {
@@ -165,7 +165,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function TEAMCITY(): CiType
     {
@@ -173,7 +173,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function WERCKER(): CiType
     {
@@ -181,7 +181,7 @@ final class CiType extends Enum
     }
 
     /**
-     * @return \Codeception\Module\Percy\Config\Environment\CiType
+     * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType
      */
     public static function UNKNOWN(): CiType
     {

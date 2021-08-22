@@ -6,5 +6,5 @@ namespace Codeception\Module\Percy\Config;
 
 final class Url
 {
-    const API_BASE_URL = 'https://percy.io/api/v1';
+    public const BASE_API_URL = 'https://percy.io/api/v1';
 }

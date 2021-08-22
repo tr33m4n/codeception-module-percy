@@ -8,6 +8,12 @@ use Codeception\Module\Percy\Exchange\ClientFactory;
 
 class CreateBuild
 {
+    public function __construct(
+
+    ) {
+
+    }
+
     public function execute()
     {
         return ClientFactory::create()

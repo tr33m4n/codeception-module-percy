@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Config\Environment\CiType;
+namespace Codeception\Module\Percy\Config\CiEnvironment\CiType;
 
-use Codeception\Module\Percy\Config\Environment\CiType;
+use Codeception\Module\Percy\Config\CiEnvironment\CiType;
 use OndraM\CiDetector\Ci\AwsCodeBuild as CiDetectorAwsCodeBuild;
 
 class AwsCodeBuild extends CiDetectorAwsCodeBuild implements CiTypeInterface

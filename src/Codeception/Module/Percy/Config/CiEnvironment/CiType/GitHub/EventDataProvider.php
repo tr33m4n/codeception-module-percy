@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Config\Environment\CiType\GitHub;
+namespace Codeception\Module\Percy\Config\CiEnvironment\CiType\GitHub;
 
 use JsonException;
 

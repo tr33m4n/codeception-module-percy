@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Config\Environment\Exception;
+namespace Codeception\Module\Percy\Config\CiEnvironment\Exception;
 
 use Codeception\Module\Percy\Exception\AbstractException;
 

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy\Config\Environment;
+namespace Codeception\Module\Percy\Config\CiEnvironment;
 
 class CiEnvironment
 {
     /**
-     * @var \Codeception\Module\Percy\Config\Environment\CiType\CiTypeInterface
+     * @var \Codeception\Module\Percy\Config\CiEnvironment\CiType\CiTypeInterface
      */
     private $ciType;
 
     /**
      * CiEnvironment constructor.
      *
-     * @param \Codeception\Module\Percy\Config\Environment\CiTypeResolver $ciTypeResolver
+     * @param \Codeception\Module\Percy\Config\CiEnvironment\CiTypeResolver $ciTypeResolver
      */
     public function __construct(
         CiTypeResolver $ciTypeResolver

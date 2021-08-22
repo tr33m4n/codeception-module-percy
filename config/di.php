@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Codeception\Module\Percy\Config\Environment\CiType;
-use Codeception\Module\Percy\Config\Environment\CiTypePool;
+use Codeception\Module\Percy\Config\CiEnvironment\CiType;
+use Codeception\Module\Percy\Config\CiEnvironment\CiTypePool;
 use Codeception\Module\Percy\Config\Url;
 use GuzzleHttp\Client;
 use tr33m4n\Di\Container\GetParameters;
@@ -34,7 +34,7 @@ return [
             ]
         ],
         Client::class => [
-            'base_uri' => Url::API_BASE_URL,
+            'base_uri' => Url::BASE_API_URL,
             'headers' => [
                 'Authorization' => sprintf('Token token=%s', $_ENV['PERCY_TOKEN'] ?? ''),
                 'User-Agent' => 'TODO: see https://github.com/percy/cli/blob/4b2a4da4acafd6fd7f5e3084af0642a7eba433db/packages/client/src/client.js#L69',
