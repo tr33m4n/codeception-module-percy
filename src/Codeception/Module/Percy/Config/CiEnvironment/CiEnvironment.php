@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Config\CiEnvironment;
 
+use Codeception\Module\Percy\Config\PercyEnvironment\PercyEnvironment;
+
 class CiEnvironment
 {
     /**
@@ -12,14 +14,22 @@ class CiEnvironment
     private $ciType;
 
     /**
+     * @var \Codeception\Module\Percy\Config\PercyEnvironment\PercyEnvironment
+     */
+    private $percyEnvironment;
+
+    /**
      * CiEnvironment constructor.
      *
-     * @param \Codeception\Module\Percy\Config\CiEnvironment\CiTypeResolver $ciTypeResolver
+     * @param \Codeception\Module\Percy\Config\CiEnvironment\CiTypeResolver      $ciTypeResolver
+     * @param \Codeception\Module\Percy\Config\PercyEnvironment\PercyEnvironment $percyEnvironment
      */
     public function __construct(
-        CiTypeResolver $ciTypeResolver
+        CiTypeResolver $ciTypeResolver,
+        PercyEnvironment $percyEnvironment
     ) {
         $this->ciType = $ciTypeResolver->resolve();
+        $this->percyEnvironment = $percyEnvironment;
     }
 
     /**
@@ -29,11 +39,7 @@ class CiEnvironment
      */
     public function getPullRequest(): ?string
     {
-        if (isset($_ENV['PERCY_PULL_REQUEST'])) {
-            return $_ENV['PERCY_PULL_REQUEST'];
-        }
-
-        return $this->ciType->getPullRequest();
+        return $this->percyEnvironment->getPullRequest() ?? $this->ciType->getPullRequest();
     }
 
     /**
@@ -43,11 +49,7 @@ class CiEnvironment
      */
     public function getBranch(): ?string
     {
-        if (isset($_ENV['PERCY_BRANCH'])) {
-            return $_ENV['PERCY_BRANCH'];
-        }
-
-        return $this->ciType->getBranch();
+        return $this->percyEnvironment->getBranch() ?? $this->ciType->getBranch();
     }
 
     /**
@@ -57,11 +59,7 @@ class CiEnvironment
      */
     public function getCommit(): ?string
     {
-        if (isset($_ENV['PERCY_COMMIT'])) {
-            return $_ENV['PERCY_COMMIT'];
-        }
-
-        return $this->ciType->getCommit();
+        return $this->percyEnvironment->getCommit() ?? $this->ciType->getCommit();
     }
 
     /**

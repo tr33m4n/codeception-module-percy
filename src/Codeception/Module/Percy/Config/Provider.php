@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy\Config;
 
 use Codeception\Module\Percy\Config\CiEnvironment\CiEnvironment;
+use Codeception\Module\Percy\Config\GitEnvironment\GitEnvironment;
 use Codeception\Module\WebDriver;
 use PackageVersions\Versions;
 
@@ -18,24 +19,22 @@ class Provider
     private $ciEnvironment;
 
     /**
-     * @var string|null
+     * @var \Codeception\Module\Percy\Config\GitEnvironment\GitEnvironment
      */
-    private $environmentInfo;
-
-    /**
-     * @var string|null
-     */
-    private $clientInfo;
+    private $gitEnvironment;
 
     /**
      * Provider constructor.
      *
-     * @param \Codeception\Module\Percy\Config\CiEnvironment\CiEnvironment $ciEnvironment
+     * @param \Codeception\Module\Percy\Config\CiEnvironment\CiEnvironment   $ciEnvironment
+     * @param \Codeception\Module\Percy\Config\GitEnvironment\GitEnvironment $gitEnvironment
      */
     public function __construct(
-        CiEnvironment $ciEnvironment
+        CiEnvironment $ciEnvironment,
+        GitEnvironment $gitEnvironment
     ) {
         $this->ciEnvironment = $ciEnvironment;
+        $this->gitEnvironment = $gitEnvironment;
     }
 
     /**
@@ -49,6 +48,16 @@ class Provider
     }
 
     /**
+     * Get Git environment
+     *
+     * @return \Codeception\Module\Percy\Config\GitEnvironment\GitEnvironment
+     */
+    public function getGitEnvironment(): GitEnvironment
+    {
+        return $this->gitEnvironment;
+    }
+
+    /**
      * Get environment info
      *
      * @param \Codeception\Module\WebDriver|null $webDriver
@@ -56,10 +65,6 @@ class Provider
      */
     public function getEnvironmentInfo(WebDriver $webDriver = null): string
     {
-        if (null !== $this->environmentInfo) {
-            return $this->environmentInfo;
-        }
-
         if (null !== $webDriver) {
             $webDriverCapabilities = $webDriver->webDriver->getCapabilities();
 
@@ -74,7 +79,7 @@ class Provider
         $environmentInfo[] = sprintf('php/%s', phpversion());
         $environmentInfo[] = $this->getCiEnvironment()->getSlug();
 
-        return $this->environmentInfo = implode('; ', $environmentInfo);
+        return implode('; ', $environmentInfo);
     }
 
     /**
@@ -84,11 +89,7 @@ class Provider
      */
     public function getClientInfo(): string
     {
-        if (null !== $this->clientInfo) {
-            return $this->clientInfo;
-        }
-
-        return $this->clientInfo = sprintf(
+        return sprintf(
             '%s/%s',
             ltrim(strstr(self::PACKAGE_NAME, '/') ?: '', '/'),
             strstr(Versions::getVersion(self::PACKAGE_NAME), '@', true)

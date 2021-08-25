@@ -6,11 +6,14 @@ use Codeception\Module\Percy\Config\CiEnvironment\CiType;
 use Codeception\Module\Percy\Config\CiEnvironment\CiTypePool;
 use Codeception\Module\Percy\Config\Url;
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use tr33m4n\Di\Container\GetParameters;
 use tr33m4n\Di\Container\GetPreference;
 
 return [
-    GetPreference::CONFIG_KEY => [],
+    GetPreference::CONFIG_KEY => [
+        ClientInterface::class => Client::class
+    ],
     GetParameters::CONFIG_KEY => [
         CiTypePool::class => [
             'ciTypes' => [
@@ -37,7 +40,6 @@ return [
             'base_uri' => Url::BASE_API_URL,
             'headers' => [
                 'Authorization' => sprintf('Token token=%s', $_ENV['PERCY_TOKEN'] ?? ''),
-                'User-Agent' => 'TODO: see https://github.com/percy/cli/blob/4b2a4da4acafd6fd7f5e3084af0642a7eba433db/packages/client/src/client.js#L69',
                 'Content-Type' => 'application/vnd.api+json'
             ]
         ]
