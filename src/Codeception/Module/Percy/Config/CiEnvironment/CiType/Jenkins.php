@@ -24,4 +24,12 @@ class Jenkins extends CiDetectorJenkins implements CiTypeInterface
     {
         return (string) CiType::JENKINS();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['BUILD_NUMBER'] ?? null;
+    }
 }

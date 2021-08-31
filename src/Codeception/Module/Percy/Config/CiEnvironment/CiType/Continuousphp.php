@@ -24,4 +24,12 @@ class Continuousphp extends CiDetectorContinuousphp implements CiTypeInterface
     {
         return (string) CiType::CONTINUOUSPHP();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['CPHP_BUILD_ID'] ?? null;
+    }
 }

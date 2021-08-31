@@ -26,4 +26,12 @@ class Travis extends CiDetectorTravis implements CiTypeInterface
     {
         return (string) CiType::TRAVIS();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['TRAVIS_BUILD_NUMBER'] ?? null;
+    }
 }

@@ -24,4 +24,12 @@ class SourceHut extends CiDetectorSourceHut implements CiTypeInterface
     {
         return (string) CiType::SOURCEHUT();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['JOB_ID'] ?? null;
+    }
 }

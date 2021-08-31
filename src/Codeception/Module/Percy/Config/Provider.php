@@ -6,6 +6,7 @@ namespace Codeception\Module\Percy\Config;
 
 use Codeception\Module\Percy\Config\CiEnvironment\CiEnvironment;
 use Codeception\Module\Percy\Config\GitEnvironment\GitEnvironment;
+use Codeception\Module\Percy\Config\PercyEnvironment\PercyEnvironment;
 use Codeception\Module\WebDriver;
 use PackageVersions\Versions;
 
@@ -24,17 +25,25 @@ class Provider
     private $gitEnvironment;
 
     /**
+     * @var \Codeception\Module\Percy\Config\PercyEnvironment\PercyEnvironment
+     */
+    private $percyEnvironment;
+
+    /**
      * Provider constructor.
      *
-     * @param \Codeception\Module\Percy\Config\CiEnvironment\CiEnvironment   $ciEnvironment
-     * @param \Codeception\Module\Percy\Config\GitEnvironment\GitEnvironment $gitEnvironment
+     * @param \Codeception\Module\Percy\Config\CiEnvironment\CiEnvironment       $ciEnvironment
+     * @param \Codeception\Module\Percy\Config\GitEnvironment\GitEnvironment     $gitEnvironment
+     * @param \Codeception\Module\Percy\Config\PercyEnvironment\PercyEnvironment $percyEnvironment
      */
     public function __construct(
         CiEnvironment $ciEnvironment,
-        GitEnvironment $gitEnvironment
+        GitEnvironment $gitEnvironment,
+        PercyEnvironment $percyEnvironment
     ) {
         $this->ciEnvironment = $ciEnvironment;
         $this->gitEnvironment = $gitEnvironment;
+        $this->percyEnvironment = $percyEnvironment;
     }
 
     /**
@@ -55,6 +64,16 @@ class Provider
     public function getGitEnvironment(): GitEnvironment
     {
         return $this->gitEnvironment;
+    }
+
+    /**
+     * Get percy environment
+     *
+     * @return \Codeception\Module\Percy\Config\PercyEnvironment\PercyEnvironment
+     */
+    public function getPercyEnvironment(): PercyEnvironment
+    {
+        return $this->percyEnvironment;
     }
 
     /**

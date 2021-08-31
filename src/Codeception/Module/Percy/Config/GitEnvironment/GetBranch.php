@@ -42,8 +42,6 @@ class GetBranch
             ]
         );
 
-        $process->mustRun();
-
-        return $this->branch = $process->getOutput();
+        return $this->branch = $process->mustRun()->getOutput();
     }
 }

@@ -24,4 +24,12 @@ class GitLab extends CiDetectorGitLab implements CiTypeInterface
     {
         return sprintf('%s/%s', (string) CiType::GITLAB(), $_ENV['CI_SERVER_VERSION'] ?? '');
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['CI_PIPELINE_ID'] ?? null;
+    }
 }

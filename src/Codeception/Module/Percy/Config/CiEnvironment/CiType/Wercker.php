@@ -24,4 +24,12 @@ class Wercker extends CiDetectorWercker implements CiTypeInterface
     {
         return (string) CiType::WERCKER();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['WERCKER_MAIN_PIPELINE_STARTED'] ?? null;
+    }
 }

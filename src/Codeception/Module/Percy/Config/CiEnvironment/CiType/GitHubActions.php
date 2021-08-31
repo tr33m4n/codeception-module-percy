@@ -48,4 +48,12 @@ class GitHubActions extends CiDetectorGitHubActions implements CiTypeInterface
             ? sprintf('%s/%s', (string) CiType::GITHUB_ACTIONS(), $_ENV['PERCY_GITHUB_ACTION'] ?? '')
             : (string) CiType::GITHUB_ACTIONS();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['GITHUB_RUN_ID'] ?? null;
+    }
 }

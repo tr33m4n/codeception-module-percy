@@ -24,4 +24,12 @@ class BitbucketPipelines extends CiDetectorBitbucketPipelines implements CiTypeI
     {
         return (string) CiType::BITBUCKET_PIPELINES();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['BITBUCKET_BUILD_NUMBER'] ?? null;
+    }
 }

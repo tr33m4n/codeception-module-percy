@@ -29,4 +29,12 @@ class Circle extends CiDetectorCircle implements CiTypeInterface
     {
         return (string) CiType::CIRCLE();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['CIRCLE_WORKFLOW_ID'] ?? $_ENV['CIRCLE_BUILD_NUM'] ?? null;
+    }
 }

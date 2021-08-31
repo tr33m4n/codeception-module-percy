@@ -71,4 +71,14 @@ class CiEnvironment
     {
         return $this->ciType->getSlug();
     }
+
+    /**
+     * Get nonce
+     *
+     * @return string|null
+     */
+    public function getNonce(): ?string
+    {
+        return $this->ciType->getNonce();
+    }
 }

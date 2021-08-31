@@ -24,4 +24,12 @@ class AppVeyor extends CiDetectorAppVeyor implements CiTypeInterface
     {
         return (string) CiType::APPVEYOR();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['APPVEYOR_BUILD_ID'] ?? null;
+    }
 }

@@ -53,8 +53,6 @@ class GetRawCommitData
             ]
         );
 
-        $process->mustRun();
-
-        return $this->rawCommitData = $process->getOutput();
+        return $this->rawCommitData = $process->mustRun()->getOutput();
     }
 }

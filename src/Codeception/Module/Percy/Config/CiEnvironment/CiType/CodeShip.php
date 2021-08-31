@@ -24,4 +24,12 @@ class CodeShip extends CiDetectorCodeship implements CiTypeInterface
     {
         return (string) CiType::CODESHIP();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['CI_BUILD_NUMBER'] ?? $_ENV['CI_BUILD_ID'] ?? null;
+    }
 }

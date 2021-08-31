@@ -113,4 +113,12 @@ class Unknown implements CiTypeInterface
     {
         return TrinaryLogic::createFromBoolean(false);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return null;
+    }
 }

@@ -21,4 +21,11 @@ interface CiTypeInterface extends CiInterface
      * @return string
      */
     public function getSlug(): string;
+
+    /**
+     * Get nonce
+     *
+     * @return string|null
+     */
+    public function getNonce(): ?string;
 }

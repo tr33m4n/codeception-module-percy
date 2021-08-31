@@ -24,4 +24,12 @@ class Drone extends CiDetectorDrone implements CiTypeInterface
     {
         return (string) CiType::DRONE();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['DRONE_BUILD_NUMBER'] ?? null;
+    }
 }

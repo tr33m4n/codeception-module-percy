@@ -24,4 +24,12 @@ class AzurePipelines extends CiDetectorAzurePipelines implements CiTypeInterface
     {
         return (string) CiType::AZURE_PIPELINES();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['SYSTEM_JOBID'] ?? null;
+    }
 }

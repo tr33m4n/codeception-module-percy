@@ -28,4 +28,12 @@ class AwsCodeBuild extends CiDetectorAwsCodeBuild implements CiTypeInterface
     {
         return (string) CiType::AWS_CODEBUILD();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['CODEBUILD_BUILD_ID'] ?? null;
+    }
 }

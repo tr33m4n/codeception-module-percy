@@ -24,4 +24,12 @@ class TeamCity extends CiDetectorTeamCity implements CiTypeInterface
     {
         return (string) CiType::TEAMCITY();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['BUILD_NUMBER'] ?? null;
+    }
 }

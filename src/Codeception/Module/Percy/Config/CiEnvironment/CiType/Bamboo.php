@@ -24,4 +24,12 @@ class Bamboo extends CiDetectorBamboo implements CiTypeInterface
     {
         return (string) CiType::BAMBOO();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['bamboo_buildNumber'] ?? null;
+    }
 }

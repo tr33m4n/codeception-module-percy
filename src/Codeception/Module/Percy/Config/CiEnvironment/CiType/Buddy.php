@@ -24,4 +24,12 @@ class Buddy extends CiDetectorBuddy implements CiTypeInterface
     {
         return (string) CiType::BUDDY();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNonce(): ?string
+    {
+        return $_ENV['BUDDY_EXECUTION_ID'] ?? null;
+    }
 }
