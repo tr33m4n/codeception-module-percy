@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy\Exchange\Action;
 
 use Codeception\Module\Percy\Config\Provider;
+use Codeception\Module\Percy\Exchange\Resource;
 use GuzzleHttp\ClientInterface;
 
 class CreateBuild
@@ -41,14 +42,19 @@ class CreateBuild
      * @throws \tr33m4n\Di\Exception\MissingClassException
      * @throws \tr33m4n\Utilities\Exception\AdapterException
      * @throws \tr33m4n\Utilities\Exception\ConfigException
+     * @param \Codeception\Module\Percy\Exchange\Resource[] $resources
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function execute()
+    public function execute(array $resources = [])
     {
         $request = $this->client->request(
             'POST',
             'build',
             [
+                'headers' => [
+                    'Content-Type' => 'application/vnd.api+json',
+                    'User-Agent' => $this->configProvider->getUserAgent()
+                ],
                 'type' => 'builds',
                 'attributes' => [
                     'branch' => $this->configProvider->getGitEnvironment()->getBranch(),
@@ -64,10 +70,23 @@ class CreateBuild
                     'pull-request-number' => $this->configProvider->getCiEnvironment()->getPullRequest(),
                     'parallel-nonce' => $this->configProvider->getPercyEnvironment()->getParallelNonce(),
                     'parallel-total-shards' => $this->configProvider->getPercyEnvironment()->getParallelTotal(),
-                    'partial' => ''
+                    'partial' => $this->configProvider->getPercyEnvironment()->getPartial()
                 ],
                 'relationships' => [
-                    'resources' => []
+                    'resources' => [
+                        // TODO: SHA content, see https://github.com/percy/cli/blob/4b2a4da4acafd6fd7f5e3084af0642a7eba433db/packages/client/src/client.js#L146
+                        'data' => array_map(function (Resource $resource) {
+                            return [
+                                'type' => 'resources',
+                                'id' => $resource->getSha(),
+                                'attributes' => [
+                                    'resource-url' => $resource->getUrl(),
+                                    'is-root' => $resource->getRoot(),
+                                    'mimetype' => $resource->getMimeType()
+                                ]
+                            ];
+                        }, $resources)
+                    ]
                 ]
             ]
         );

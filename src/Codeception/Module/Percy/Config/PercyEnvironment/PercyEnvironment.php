@@ -97,4 +97,14 @@ class PercyEnvironment
 
         return 0;
     }
+
+    /**
+     * Get partial
+     *
+     * @return bool
+     */
+    public function getPartial(): bool
+    {
+        return !!$_ENV['PERCY_PARTIAL_BUILD'] && $_ENV['PERCY_PARTIAL_BUILD'] !== '0';
+    }
 }

@@ -39,8 +39,7 @@ return [
         Client::class => [
             'base_uri' => Url::BASE_API_URL,
             'headers' => [
-                'Authorization' => sprintf('Token token=%s', $_ENV['PERCY_TOKEN'] ?? ''),
-                'Content-Type' => 'application/vnd.api+json'
+                'Authorization' => sprintf('Token token=%s', $_ENV['PERCY_TOKEN'] ?? '')
             ]
         ]
     ]
