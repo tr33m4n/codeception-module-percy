@@ -74,11 +74,10 @@ class CreateBuild
                 ],
                 'relationships' => [
                     'resources' => [
-                        // TODO: SHA content, see https://github.com/percy/cli/blob/4b2a4da4acafd6fd7f5e3084af0642a7eba433db/packages/client/src/client.js#L146
                         'data' => array_map(function (Resource $resource) {
                             return [
                                 'type' => 'resources',
-                                'id' => $resource->getSha(),
+                                'id' => $resource->getSha() ?? hash('sha256', $resource->getContent() ?? ''),
                                 'attributes' => [
                                     'resource-url' => $resource->getUrl(),
                                     'is-root' => $resource->getRoot(),

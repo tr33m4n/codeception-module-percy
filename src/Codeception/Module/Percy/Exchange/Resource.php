@@ -14,6 +14,8 @@ class Resource
 
     const MIME_TYPE_FIELD = 'mime_type';
 
+    const CONTENT_FIELD = 'content';
+
     /**
      * @var string|null
      */
@@ -33,6 +35,11 @@ class Resource
      * @var string|null
      */
     private $mimeType;
+
+    /**
+     * @var string|null
+     */
+    private $content;
 
     /**
      * Resource constructor.
@@ -55,6 +62,7 @@ class Resource
         $resource->url = $resourceData[self::URL_FIELD] ?? null;
         $resource->root = $resourceData[self::ROOT_FIELD] ?? null;
         $resource->mimeType = $resourceData[self::MIME_TYPE_FIELD] ?? null;
+        $resource->content = $resourceData[self::CONTENT_FIELD] ?? null;
 
         return $resource;
     }
@@ -97,5 +105,15 @@ class Resource
     public function getMimeType(): ?string
     {
         return $this->mimeType;
+    }
+
+    /**
+     * Get content
+     *
+     * @return string|null
+     */
+    public function getContent(): ?string
+    {
+        return $this->content;
     }
 }
