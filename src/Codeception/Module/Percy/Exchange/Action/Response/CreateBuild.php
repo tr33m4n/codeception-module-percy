@@ -6,9 +6,9 @@ namespace Codeception\Module\Percy\Exchange\Action\Response;
 
 class CreateBuild
 {
-    const ID_FIELD = 'id';
+    public const ID_FIELD = 'id';
 
-    const ATTRIBUTES_FIELD = 'attributes';
+    public const ATTRIBUTES_FIELD = 'attributes';
 
     /**
      * @var int|null

@@ -3,7 +3,10 @@
 use Rector\Core\Configuration\Option;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUselessParamTagRector;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUselessReturnTagRector;
+use Rector\EarlyReturn\Rector\If_\ChangeAndIfToEarlyReturnRector;
+use Rector\EarlyReturn\Rector\If_\ChangeOrIfReturnToEarlyReturnRector;
 use Rector\Set\ValueObject\SetList;
+use Rector\TypeDeclaration\Rector\ClassMethod\AddArrayParamDocTypeRector;
 use Rector\TypeDeclaration\Rector\FunctionLike\ReturnTypeDeclarationRector;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -21,8 +24,11 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $parameters->set(Option::SKIP, [
         RemoveUselessParamTagRector::class,
         RemoveUselessReturnTagRector::class,
-        ReturnTypeDeclarationRector::class => [
-            __DIR__ . '/src/Codeception/Module/Percy/Exchange/Adapter/CurlAdapter.php'
+        ReturnTypeDeclarationRector::class,
+        ChangeAndIfToEarlyReturnRector::class,
+        ChangeOrIfReturnToEarlyReturnRector::class,
+        AddArrayParamDocTypeRector::class => [
+            __DIR__ . '/src/Codeception/Module/Percy/Config/CiEnvironment/CiType/GitHub/EventDataProvider.php'
         ]
     ]);
 };

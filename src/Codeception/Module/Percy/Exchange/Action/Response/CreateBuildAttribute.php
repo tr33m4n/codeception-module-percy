@@ -12,7 +12,7 @@ class CreateBuildAttribute
     private $key;
 
     /**
-     * @var mixed
+     * @var mixed|null
      */
     private $value;
 
@@ -53,7 +53,7 @@ class CreateBuildAttribute
     /**
      * Get value
      *
-     * @return mixed
+     * @return mixed|null
      */
     public function getValue()
     {

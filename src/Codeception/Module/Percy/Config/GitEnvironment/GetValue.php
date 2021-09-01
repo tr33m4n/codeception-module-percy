@@ -32,7 +32,7 @@ class GetValue
      * @param string $value
      * @return string|null
      */
-    public function execute(string $value) : ?string
+    public function execute(string $value): ?string
     {
         if (!preg_match(sprintf('/%s:(.*)/m', $value), $this->getRawCommitData->execute(), $result)) {
             return null;

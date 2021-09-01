@@ -6,15 +6,15 @@ namespace Codeception\Module\Percy\Exchange;
 
 class Resource
 {
-    const SHA_FIELD = 'sha';
+    public const SHA_FIELD = 'sha';
 
-    const URL_FIELD = 'url';
+    public const URL_FIELD = 'url';
 
-    const ROOT_FIELD = 'root';
+    public const ROOT_FIELD = 'root';
 
-    const MIME_TYPE_FIELD = 'mime_type';
+    public const MIME_TYPE_FIELD = 'mime_type';
 
-    const CONTENT_FIELD = 'content';
+    public const CONTENT_FIELD = 'content';
 
     /**
      * @var string|null

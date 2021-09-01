@@ -8,41 +8,41 @@ use MyCLabs\Enum\Enum;
 
 final class CiType extends Enum
 {
-    const TRAVIS = 'travis';
+    public const TRAVIS = 'travis';
 
-    const JENKINS = 'jenkins';
+    public const JENKINS = 'jenkins';
 
-    const CIRCLE = 'circle';
+    public const CIRCLE = 'circle';
 
-    const CODESHIP = 'codeship';
+    public const CODESHIP = 'codeship';
 
-    const DRONE = 'drone';
+    public const DRONE = 'drone';
 
-    const GITLAB = 'gitlab';
+    public const GITLAB = 'gitlab';
 
-    const AZURE_PIPELINES = 'azure';
+    public const AZURE_PIPELINES = 'azure';
 
-    const APPVEYOR = 'appveyor';
+    public const APPVEYOR = 'appveyor';
 
-    const BITBUCKET_PIPELINES = 'bitbucket';
+    public const BITBUCKET_PIPELINES = 'bitbucket';
 
-    const GITHUB_ACTIONS = 'github';
+    public const GITHUB_ACTIONS = 'github';
 
-    const AWS_CODEBUILD = 'aws-codebuild';
+    public const AWS_CODEBUILD = 'aws-codebuild';
 
-    const BAMBOO = 'bamboo';
+    public const BAMBOO = 'bamboo';
 
-    const BUDDY = 'buddy';
+    public const BUDDY = 'buddy';
 
-    const CONTINUOUSPHP = 'continuousphp';
+    public const CONTINUOUSPHP = 'continuousphp';
 
-    const SOURCEHUT = 'sourcehut';
+    public const SOURCEHUT = 'sourcehut';
 
-    const TEAMCITY = 'teamcity';
+    public const TEAMCITY = 'teamcity';
 
-    const WERCKER = 'wercker';
+    public const WERCKER = 'wercker';
 
-    const UNKNOWN = 'CI/Unknown';
+    public const UNKNOWN = 'CI/Unknown';
 
     /**
      * @return \Codeception\Module\Percy\Config\CiEnvironment\CiType

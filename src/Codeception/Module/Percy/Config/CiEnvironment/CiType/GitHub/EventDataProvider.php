@@ -11,13 +11,13 @@ class EventDataProvider
     /**
      * @var null|array<string, mixed>
      */
-    private $gitHubEventData = null;
+    private $gitHubEventData;
 
     /**
      * Get event data
      *
      * @param string $path
-     * @return mixed
+     * @return mixed|null|mixed[]
      */
     public function get(string $path)
     {
