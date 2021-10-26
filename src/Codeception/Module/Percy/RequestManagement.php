@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
-use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
-use Codeception\Module\Percy\Exchange\Client;
+use Codeception\Module\Percy\Exchange\ClientFactory;
 use Codeception\Module\Percy\Exchange\Payload;
 
 /**
@@ -52,7 +51,7 @@ class RequestManagement
         }
 
         ProcessManagement::startPercySnapshotServer();
-        $client = Client::create(CurlAdapter::create(ConfigProvider::get('snapshotEndpoint')));
+        $client = ClientFactory::create();
 
         foreach (self::$payloads as $payload) {
             codecept_debug(sprintf('[Percy] Sending snapshot "%s"', $payload->getName()));
