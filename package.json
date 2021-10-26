@@ -9,6 +9,6 @@
     "license": "MIT",
     "author": "Daniel Doyle <tr33m4n@googlemail.com>",
     "dependencies": {
-        "@percy/agent": "^0.28.6"
+        "@percy/cli": "^1.0.0-beta.70"
     }
 }

@@ -51,16 +51,16 @@ class RequestManagement
             return;
         }
 
-        ProcessManagement::startPercyAgent();
-        $client = Client::create(CurlAdapter::create(ConfigProvider::get('agentEndpoint')));
+        ProcessManagement::startPercySnapshotServer();
+        $client = Client::create(CurlAdapter::create(ConfigProvider::get('snapshotEndpoint')));
 
         foreach (self::$payloads as $payload) {
             codecept_debug(sprintf('[Percy] Sending snapshot "%s"', $payload->getName()));
 
-            $client->post(ConfigProvider::get('agentSnapshotPath'), $payload);
+            $client->post(ConfigProvider::get('snapshotPath'), $payload);
         }
 
-        ProcessManagement::stopPercyAgent();
+        ProcessManagement::stopPercySnapshotServer();
 
         self::resetRequest();
     }

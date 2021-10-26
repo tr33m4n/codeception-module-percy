@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Codeception\Module;
 
 use Codeception\Module;
+use Codeception\Module\Percy\ConfigProvider;
 use Codeception\Module\Percy\Exchange\Payload;
-use Codeception\Module\Percy\RequestManagement;
 use Codeception\Module\Percy\FilepathResolver;
 use Codeception\Module\Percy\InfoProvider;
 use Codeception\Module\Percy\ProcessManagement;
-use Codeception\Module\Percy\ConfigProvider;
+use Codeception\Module\Percy\RequestManagement;
 use Codeception\TestInterface;
 use Exception;
 use Symfony\Component\Process\Exception\RuntimeException;
@@ -19,6 +19,7 @@ use Symfony\Component\Process\Exception\RuntimeException;
  * Class Percy
  *
  * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+ *
  * @package Codeception\Module
  */
 class Percy extends Module
@@ -30,12 +31,12 @@ class Percy extends Module
      */
     protected $config = [
         'driver' => 'WebDriver',
-        'agentEndpoint' => 'http://localhost:5338',
-        'agentSnapshotPath' => 'percy/snapshot',
-        'agentConfig' => [
-            'handleAgentCommunication' => false
+        'snapshotEndpoint' => 'http://localhost:5338',
+        'snapshotPath' => 'percy/snapshot',
+        'serializeConfig' => [
+            'enableJavaScript' => true
         ],
-        'percyAgentTimeout' => null,
+        'snapshotServerTimeout' => null,
         'throwOnAdapterError' => false,
         'cleanSnapshotStorage' => false
     ];
@@ -48,7 +49,7 @@ class Percy extends Module
     /**
      * @var string|null
      */
-    private $percyAgentJs;
+    private $percyCliJs;
 
     /**
      * {@inheritdoc}
@@ -60,7 +61,7 @@ class Percy extends Module
         ConfigProvider::set($this->_getConfig());
 
         $this->webDriver = $this->getModule($this->_getConfig('driver'));
-        $this->percyAgentJs = file_get_contents(FilepathResolver::percyAgentBrowserJs()) ?: null;
+        $this->percyCliJs = file_get_contents(FilepathResolver::percyCliBrowserJs()) ?: null;
     }
 
     /**
@@ -75,22 +76,24 @@ class Percy extends Module
         string $name,
         array $snapshotConfig = []
     ): void {
-        // If we cannot access the agent JS, return silently
-        if (!$this->percyAgentJs) {
+        // If we cannot access the CLI JS, return silently
+        if (!$this->percyCliJs) {
             return;
         }
 
-        // Add Percy agent JS to page
-        $this->webDriver->executeJS($this->percyAgentJs);
+        // Add Percy CLI JS to page
+        $this->webDriver->executeJS($this->percyCliJs);
 
         RequestManagement::addPayload(
             Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
-                ->withDomSnapshot($this->webDriver->executeJS(sprintf(
-                    'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
-                    json_encode($this->_getConfig('agentConfig'), JSON_THROW_ON_ERROR)
-                )))
+                ->withDomSnapshot($this->webDriver->executeJS(
+                    sprintf(
+                        'return PercyDOM.serialize(%s)',
+                        json_encode($this->_getConfig('serializeConfig'), JSON_THROW_ON_ERROR)
+                    )
+                ))
                 ->withClientInfo(InfoProvider::getClientInfo())
                 ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver))
         );
@@ -152,7 +155,7 @@ class Percy extends Module
         }
 
         try {
-            ProcessManagement::stopPercyAgent();
+            ProcessManagement::stopPercySnapshotServer();
         } catch (RuntimeException $exception) {
             // Fail silently if the process is not running
         }
