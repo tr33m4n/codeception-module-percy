@@ -8,7 +8,7 @@ Percy https://percy.io module for Codeception
 - Composer `v1`
 
 ### `v2.0.x`
-- Node.js `>=10.0.0`
+- Node.js `>=12.0.0`
 - PHP `>= 7.3`
 - Composer `v2`
 
