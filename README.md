@@ -30,7 +30,7 @@ The way in which the Percy agent is started and stopped in `v1.1.x` changes sign
 `v2.0.x` only supports PHP `7.3` and composer `v2` or later, however the base functionality is the same as `v1.1.x`
 
 ### `v2.0.x` to `v3.0.x`
-`v3.0.x` only supports Node `12` or later, however the base functionality is the same as `v2.0.x`
+`v3.0.x` only supports Node `12` or later, however the base functionality is the same as `v2.0.x`. Configuration settings will need to be migrated however due to the change in naming convention. Most notable is `agentConfig` becoming `serializeConfig` and the removal of the `handleAgentCommunication` option.
 
 ## Example Configuration
 The following example configuration assumes the `WebDriver` module has been configured correctly for your test suite
