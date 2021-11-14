@@ -2,16 +2,6 @@
 Percy https://percy.io module for Codeception
 
 ## Requirements
-### `v1.1.x`
-- Node.js `>=10.0.0`
-- PHP `>= 7.2`
-- Composer `v1`
-
-### `v2.0.x`
-- Node.js `>=10.0.0`
-- PHP `>= 7.3`
-- Composer `v2`
-
 ### `v3.0.x`
 - Node.js `>=12.0.0`
 - PHP `>= 7.3`
@@ -21,16 +11,6 @@ Percy https://percy.io module for Codeception
 ```shell script
 composer require --dev tr33m4n/codeception-module-percy
 ```
-
-## Upgrading
-### `v1.0.x` to `v1.1.x`
-The way in which the Percy agent is started and stopped in `v1.1.x` changes significantly from `v1.0.x`. You no longer need to prefix your Codeception run command with `npx percy exec --` :tada:
-
-### `v1.1.x` to `v2.0.x`
-`v2.0.x` only supports PHP `7.3` and composer `v2` or later, however the base functionality is the same as `v1.1.x`
-
-### `v2.0.x` to `v3.0.x`
-`v3.0.x` only supports Node `12` or later, however the base functionality is the same as `v2.0.x`. Configuration settings will need to be migrated however due to the change in naming convention. Most notable is `agentConfig` becoming `serializeConfig` and the removal of the `handleAgentCommunication` option.
 
 ## Example Configuration
 The following example configuration assumes the `WebDriver` module has been configured correctly for your test suite
