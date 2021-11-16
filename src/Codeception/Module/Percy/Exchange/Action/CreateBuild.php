@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange\Action;
 
-use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider;
 use Codeception\Module\Percy\Exchange\Action\Response\CreateBuild as CreateBuildResponse;
-use GuzzleHttp\ClientInterface;
+use Codeception\Module\Percy\Exchange\Client;
+use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider;
 
-class CreateBuild extends AbstractAction
+class CreateBuild
 {
+    /**
+     * @var \Codeception\Module\Percy\Exchange\Client
+     */
+    private $client;
+
     /**
      * @var \tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider
      */
@@ -18,20 +23,19 @@ class CreateBuild extends AbstractAction
     /**
      * CreateBuild constructor.
      *
-     * @param \GuzzleHttp\ClientInterface                                    $client
+     * @param \Codeception\Module\Percy\Exchange\Client                      $client
      * @param \tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider $environmentProvider
      */
     public function __construct(
-        ClientInterface $client,
+        Client $client,
         EnvironmentProvider $environmentProvider
     ) {
+        $this->client = $client;
         $this->environmentProvider = $environmentProvider;
-
-        parent::__construct($client);
     }
 
     /**
-     * {@inheritdoc}
+     * Create build action
      *
      * @throws \CzProject\GitPhp\GitException
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -40,13 +44,9 @@ class CreateBuild extends AbstractAction
     public function execute(): CreateBuildResponse
     {
         return CreateBuildResponse::create(
-            $this->post(
+            $this->client->post(
                 'build',
                 [
-                    'headers' => [
-                        'Content-Type' => 'application/vnd.api+json',
-                        'User-Agent' => $this->environmentProvider->getUserAgent()
-                    ],
                     'type' => 'builds',
                     'attributes' => [
                         'branch' => $this->environmentProvider->getGitEnvironment()->getBranch(),

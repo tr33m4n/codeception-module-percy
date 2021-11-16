@@ -2,17 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy;
+namespace Codeception\Module\Percy\Persistence;
 
 use Codeception\Module\Percy\Exception\StorageException;
 use Ramsey\Uuid\Uuid;
+use Codeception\Module\Percy\Exchange\Action\Request\Snapshot;
 
-/**
- * Class SnapshotManagement
- *
- * @package Codeception\Module\Percy
- */
-class SnapshotManagement
+class DomStorage
 {
     public const OUTPUT_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s.html';
 
@@ -22,9 +18,9 @@ class SnapshotManagement
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \Exception
      * @param string $domString
-     * @return \Codeception\Module\Percy\Snapshot
+     * @return \Codeception\Module\Percy\Persistence\Dom
      */
-    public function save(string $domString): Snapshot
+    public function save(Snapshot $snapshot, string $domString): Dom
     {
         if (!function_exists('codecept_output_dir')) {
             throw new StorageException('`codecept_output_dir` function is not available!');
@@ -43,7 +39,7 @@ class SnapshotManagement
 
         file_put_contents($filePath, $domString);
 
-        return Snapshot::from($filePath);
+        return Dom::from($filePath);
     }
 
     /**
@@ -51,8 +47,8 @@ class SnapshotManagement
      */
     public function clean(): void
     {
-        foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $snapshotFile) {
-            unlink($snapshotFile);
+        foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $domFile) {
+            unlink($domFile);
         }
     }
 }

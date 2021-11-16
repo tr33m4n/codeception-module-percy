@@ -18,7 +18,9 @@ curl_setopt_array($curl, [
 
 $response = curl_exec($curl);
 if (curl_errno($curl)) {
-    throw new Exception('Something went wrong when attempting to retrieve package info');
+    throw new Exception(
+        sprintf('Something went wrong when attempting to retrieve package info: %s', curl_error($curl))
+    );
 }
 
 curl_close($curl);

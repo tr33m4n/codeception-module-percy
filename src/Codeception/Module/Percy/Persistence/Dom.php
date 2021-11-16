@@ -2,16 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Codeception\Module\Percy;
+namespace Codeception\Module\Percy\Persistence;
 
 use JsonSerializable;
 
-/**
- * Class Snapshot
- *
- * @package Codeception\Module\Percy
- */
-class Snapshot implements JsonSerializable
+class Dom implements JsonSerializable
 {
     /**
      * @var string
@@ -19,7 +14,7 @@ class Snapshot implements JsonSerializable
     private $filePath;
 
     /**
-     * Snapshot constructor.
+     * Dom constructor.
      */
     private function __construct()
     {
@@ -30,9 +25,9 @@ class Snapshot implements JsonSerializable
      * From file path
      *
      * @param string $filePath
-     * @return \Codeception\Module\Percy\Snapshot
+     * @return \Codeception\Module\Percy\Persistence\Dom
      */
-    public static function from(string $filePath): Snapshot
+    public static function from(string $filePath): Dom
     {
         $snapshot = new self();
         $snapshot->filePath = $filePath;

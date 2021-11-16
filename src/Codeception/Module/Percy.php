@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Codeception\Module;
 
 use Codeception\Module;
-use Codeception\Module\Percy\Exchange\Payload;
-use Codeception\Module\Percy\RequestManagement;
+use Codeception\Module\Percy\Exchange\Action\Request\Snapshot;
+use Codeception\Module\Percy\Exchange\RequestManagement;
 use Codeception\TestInterface;
 use Exception;
 use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider;
@@ -46,7 +46,7 @@ class Percy extends Module
     private $webDriver;
 
     /**
-     * @var \Codeception\Module\Percy\RequestManagement
+     * @var \Codeception\Module\Percy\Exchange\RequestManagement
      */
     private $requestManagement;
 
@@ -73,7 +73,7 @@ class Percy extends Module
 
         $this->webDriver = $configProvider->get('webDriver');
 
-        /** @var \Codeception\Module\Percy\RequestManagement $requestManagementInstance */
+        /** @var \Codeception\Module\Percy\Exchange\RequestManagement $requestManagementInstance */
         $requestManagementInstance = container()->get(RequestManagement::class);
         $this->requestManagement = $requestManagementInstance;
 
@@ -107,8 +107,8 @@ class Percy extends Module
         /** @var \tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider $environmentProvider */
         $environmentProvider = container()->get(EnvironmentProvider::class);
 
-        $this->requestManagement->addPayload(
-            Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
+        $this->requestManagement->addSnapshot(
+            Snapshot::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
                 ->withDomSnapshot($this->webDriver->executeJS(
@@ -132,7 +132,7 @@ class Percy extends Module
      */
     public function _afterSuite(): void
     {
-        if (!$this->requestManagement->hasPayloads()) {
+        if (!$this->requestManagement->hasSnapshots()) {
             return;
         }
 

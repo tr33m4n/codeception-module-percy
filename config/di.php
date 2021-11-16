@@ -38,10 +38,7 @@ return [
             ]
         ],
         Client::class => [
-            'base_uri' => 'https://percy.io/api/v1',
-            'headers' => [
-                'Authorization' => sprintf('Token token=%s', $_ENV['PERCY_TOKEN'] ?? '')
-            ]
+            'base_uri' => 'https://percy.io/api/v1'
         ],
         GitEnvironment::class => [
             'gitRepoPath' => codecept_root_dir()
