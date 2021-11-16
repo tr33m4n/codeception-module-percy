@@ -16,13 +16,9 @@
         "composer-plugin-api": "^2",
         "codeception/codeception": "^4.1.22",
         "codeception/module-webdriver": "^1.2",
-        "composer/package-versions-deprecated": "^1.11.99",
-        "eloquent/composer-npm-bridge": "^5.0",
         "guzzlehttp/guzzle": "^7.3",
-        "myclabs/php-enum": "^1.8",
-        "ondram/ci-detector": "^4.1",
         "ramsey/uuid": "^4.1",
-        "symfony/process": "^5.2",
+        "tr33m4n/codeception-module-percy-environment": "^1.0",
         "tr33m4n/di": "^1.1"
     },
     "autoload": {
@@ -44,6 +40,7 @@
         "sort-packages": true
     },
     "scripts": {
+        "update-percy-dom": "php scripts/update-percy-dom.php",
         "fix": "vendor/bin/rector process && vendor/bin/php-cs-fixer fix --diff",
         "test:lint": "vendor/bin/rector process --dry-run && vendor/bin/php-cs-fixer fix --dry-run --diff",
         "test:static": "vendor/bin/phpstan analyse --no-interaction --no-progress && vendor/bin/phpcs --standard=PSR12 ./src",

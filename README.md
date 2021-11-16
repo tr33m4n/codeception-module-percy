@@ -2,8 +2,7 @@
 Percy https://percy.io module for Codeception
 
 ## Requirements
-### `v3.0.x`
-- Node.js `>=12.0.0`
+### `v4.0.x`
 - PHP `>= 7.3`
 - Composer `v2`
 

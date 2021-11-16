@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
 
-use Codeception\Module\Percy\Snapshot;
 use Codeception\Module\Percy\SnapshotManagement;
 use InvalidArgumentException;
 

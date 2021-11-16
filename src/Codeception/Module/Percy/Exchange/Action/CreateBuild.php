@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange\Action;
 
-use Codeception\Module\Percy\Config\Provider;
+use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider;
 use Codeception\Module\Percy\Exchange\Action\Response\CreateBuild as CreateBuildResponse;
 use GuzzleHttp\ClientInterface;
 
 class CreateBuild extends AbstractAction
 {
     /**
-     * @var \Codeception\Module\Percy\Config\Provider
+     * @var \tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider
      */
-    private $configProvider;
+    private $environmentProvider;
 
     /**
      * CreateBuild constructor.
      *
-     * @param \GuzzleHttp\ClientInterface               $client
-     * @param \Codeception\Module\Percy\Config\Provider $configProvider
+     * @param \GuzzleHttp\ClientInterface                                    $client
+     * @param \tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider $environmentProvider
      */
     public function __construct(
         ClientInterface $client,
-        Provider $configProvider
+        EnvironmentProvider $environmentProvider
     ) {
-        $this->configProvider = $configProvider;
+        $this->environmentProvider = $environmentProvider;
 
         parent::__construct($client);
     }
@@ -33,11 +33,8 @@ class CreateBuild extends AbstractAction
     /**
      * {@inheritdoc}
      *
+     * @throws \CzProject\GitPhp\GitException
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \ReflectionException
-     * @throws \tr33m4n\Di\Exception\MissingClassException
-     * @throws \tr33m4n\Utilities\Exception\AdapterException
-     * @throws \tr33m4n\Utilities\Exception\ConfigException
      * @return \Codeception\Module\Percy\Exchange\Action\Response\CreateBuild
      */
     public function execute(): CreateBuildResponse
@@ -48,24 +45,24 @@ class CreateBuild extends AbstractAction
                 [
                     'headers' => [
                         'Content-Type' => 'application/vnd.api+json',
-                        'User-Agent' => $this->configProvider->getUserAgent()
+                        'User-Agent' => $this->environmentProvider->getUserAgent()
                     ],
                     'type' => 'builds',
                     'attributes' => [
-                        'branch' => $this->configProvider->getGitEnvironment()->getBranch(),
-                        'target-branch' => $this->configProvider->getPercyEnvironment()->getTargetBranch(),
-                        'target-commit-sha' => $this->configProvider->getPercyEnvironment()->getTargetCommit(),
-                        'commit-sha' => $this->configProvider->getGitEnvironment()->getSha(),
-                        'commit-committed-at' => $this->configProvider->getGitEnvironment()->getCommittedAt(),
-                        'commit-author-name' => $this->configProvider->getGitEnvironment()->getAuthorName(),
-                        'commit-author-email' => $this->configProvider->getGitEnvironment()->getAuthorEmail(),
-                        'commit-committer-name' => $this->configProvider->getGitEnvironment()->getCommitterName(),
-                        'commit-committer-email' => $this->configProvider->getGitEnvironment()->getCommitterEmail(),
-                        'commit-message' => $this->configProvider->getGitEnvironment()->getMessage(),
-                        'pull-request-number' => $this->configProvider->getCiEnvironment()->getPullRequest(),
-                        'parallel-nonce' => $this->configProvider->getPercyEnvironment()->getParallelNonce(),
-                        'parallel-total-shards' => $this->configProvider->getPercyEnvironment()->getParallelTotal(),
-                        'partial' => $this->configProvider->getPercyEnvironment()->getPartial()
+                        'branch' => $this->environmentProvider->getGitEnvironment()->getBranch(),
+                        'target-branch' => $this->environmentProvider->getPercyEnvironment()->getTargetBranch(),
+                        'target-commit-sha' => $this->environmentProvider->getPercyEnvironment()->getTargetCommit(),
+                        'commit-sha' => $this->environmentProvider->getGitEnvironment()->getSha(),
+                        'commit-committed-at' => $this->environmentProvider->getGitEnvironment()->getCommittedAt(),
+                        'commit-author-name' => $this->environmentProvider->getGitEnvironment()->getAuthorName(),
+                        'commit-author-email' => $this->environmentProvider->getGitEnvironment()->getAuthorEmail(),
+                        'commit-committer-name' => $this->environmentProvider->getGitEnvironment()->getCommitterName(),
+                        'commit-committer-email' => $this->environmentProvider->getGitEnvironment()->getCommitterEmail(),
+                        'commit-message' => $this->environmentProvider->getGitEnvironment()->getMessage(),
+                        'pull-request-number' => $this->environmentProvider->getCiEnvironment()->getPullRequest(),
+                        'parallel-nonce' => $this->environmentProvider->getPercyEnvironment()->getParallelNonce(),
+                        'parallel-total-shards' => $this->environmentProvider->getPercyEnvironment()->getParallelTotal(),
+                        'partial' => $this->environmentProvider->getPercyEnvironment()->getPartial()
                     ]
                 ]
             )

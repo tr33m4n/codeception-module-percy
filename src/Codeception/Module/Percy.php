@@ -6,13 +6,10 @@ namespace Codeception\Module;
 
 use Codeception\Module;
 use Codeception\Module\Percy\Exchange\Payload;
-use Codeception\Module\Percy\FilepathResolver;
-use Codeception\Module\Percy\InfoProvider;
-use Codeception\Module\Percy\ProcessManagement;
 use Codeception\Module\Percy\RequestManagement;
 use Codeception\TestInterface;
 use Exception;
-use Symfony\Component\Process\Exception\RuntimeException;
+use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider;
 use tr33m4n\Utilities\Config\ConfigCollection;
 use tr33m4n\Utilities\Config\ConfigProvider;
 use tr33m4n\Utilities\Config\Container;
@@ -54,11 +51,6 @@ class Percy extends Module
     private $requestManagement;
 
     /**
-     * @var \Codeception\Module\Percy\ProcessManagement
-     */
-    private $processManagement;
-
-    /**
      * @var string|null
      */
     private $percyCliJs;
@@ -83,15 +75,9 @@ class Percy extends Module
 
         /** @var \Codeception\Module\Percy\RequestManagement $requestManagementInstance */
         $requestManagementInstance = container()->get(RequestManagement::class);
-        /** @var \Codeception\Module\Percy\ProcessManagement $processManagementInstance */
-        $processManagementInstance = container()->get(ProcessManagement::class);
-
         $this->requestManagement = $requestManagementInstance;
-        $this->processManagement = $processManagementInstance;
 
-        /** @var \Codeception\Module\Percy\FilepathResolver $filepathResolver */
-        $filepathResolver = container()->get(FilepathResolver::class);
-        $this->percyCliJs = file_get_contents($filepathResolver->percyCliBrowserJs()) ?: null;
+        $this->percyCliJs = file_get_contents(__DIR__ . '/../../../resources/bundle.js') ?: null;
     }
 
     /**
@@ -103,7 +89,6 @@ class Percy extends Module
      * @throws \tr33m4n\Di\Exception\MissingClassException
      * @throws \tr33m4n\Utilities\Exception\AdapterException
      * @throws \tr33m4n\Utilities\Exception\ConfigException
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
@@ -119,8 +104,8 @@ class Percy extends Module
         // Add Percy CLI JS to page
         $this->webDriver->executeJS($this->percyCliJs);
 
-        /** @var \Codeception\Module\Percy\InfoProvider $infoProvider */
-        $infoProvider = container()->get(InfoProvider::class);
+        /** @var \tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider $environmentProvider */
+        $environmentProvider = container()->get(EnvironmentProvider::class);
 
         $this->requestManagement->addPayload(
             Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
@@ -132,8 +117,8 @@ class Percy extends Module
                         json_encode($this->_getConfig('serializeConfig'), JSON_THROW_ON_ERROR)
                     )
                 ))
-                ->withClientInfo($infoProvider->getClientInfo())
-                ->withEnvironmentInfo($infoProvider->getEnvironmentInfo())
+                ->withClientInfo($environmentProvider->getClientInfo())
+                ->withEnvironmentInfo($environmentProvider->getEnvironmentInfo())
         );
     }
 
@@ -191,12 +176,6 @@ class Percy extends Module
 
         if (!$this->_getConfig('throwOnAdapterError')) {
             return;
-        }
-
-        try {
-            $this->processManagement->stopPercySnapshotServer();
-        } catch (RuntimeException $exception) {
-            // Fail silently if the process is not running
         }
 
         throw $exception;

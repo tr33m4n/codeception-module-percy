@@ -15,11 +15,6 @@ use GuzzleHttp\Client;
 class RequestManagement
 {
     /**
-     * @var \Codeception\Module\Percy\ProcessManagement
-     */
-    private $processManagement;
-
-    /**
      * @var \Codeception\Module\Percy\SnapshotManagement
      */
     private $snapshotManagement;
@@ -37,16 +32,13 @@ class RequestManagement
     /**
      * RequestManagement constructor.
      *
-     * @param \Codeception\Module\Percy\ProcessManagement  $processManagement
      * @param \Codeception\Module\Percy\SnapshotManagement $snapshotManagement
      * @param \GuzzleHttp\Client                           $client
      */
     public function __construct(
-        ProcessManagement $processManagement,
         SnapshotManagement $snapshotManagement,
         Client $client
     ) {
-        $this->processManagement = $processManagement;
         $this->snapshotManagement = $snapshotManagement;
         $this->client = $client;
     }
@@ -86,15 +78,11 @@ class RequestManagement
             return;
         }
 
-        $this->processManagement->startPercySnapshotServer();
-
         foreach ($this->payloads as $payload) {
             codecept_debug(sprintf('[Percy] Sending snapshot "%s"', $payload->getName()));
 
             $this->client->post(config('percy')->get('snapshotPath'), (array) $payload);
         }
-
-        $this->processManagement->stopPercySnapshotServer();
 
         $this->resetRequest();
     }

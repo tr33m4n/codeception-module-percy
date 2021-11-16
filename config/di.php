@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-use Codeception\Module\Percy\Config\CiEnvironment\CiType;
-use Codeception\Module\Percy\Config\CiEnvironment\CiTypePool;
-use Codeception\Module\Percy\Config\Url;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
+use tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment\CiType;
+use tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment\CiTypePool;
+use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProvider;
+use tr33m4n\CodeceptionModulePercyEnvironment\GitEnvironment;
 use tr33m4n\Di\Container\GetParameters;
 use tr33m4n\Di\Container\GetPreference;
 
@@ -37,10 +38,17 @@ return [
             ]
         ],
         Client::class => [
-            'base_uri' => Url::BASE_API_URL,
+            'base_uri' => 'https://percy.io/api/v1',
             'headers' => [
                 'Authorization' => sprintf('Token token=%s', $_ENV['PERCY_TOKEN'] ?? '')
             ]
+        ],
+        GitEnvironment::class => [
+            'gitRepoPath' => codecept_root_dir()
+        ],
+        EnvironmentProvider::class => [
+            'webDriver' => config('webDriver'),
+            'packageName' => 'tr33m4n/codeception-module-percy'
         ]
     ]
 ];
