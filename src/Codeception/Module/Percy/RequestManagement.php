@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
-use Codeception\Module\Percy\Exchange\ClientFactory;
+use Codeception\Module\Percy\Exchange\ClientInterface;
 use Codeception\Module\Percy\Exchange\Payload;
 
 /**
@@ -25,6 +25,11 @@ class RequestManagement
     private $snapshotManagement;
 
     /**
+     * @var \Codeception\Module\Percy\Exchange\ClientInterface
+     */
+    private $client;
+
+    /**
      * @var \Codeception\Module\Percy\Exchange\Payload[]
      */
     private $payloads = [];
@@ -32,15 +37,18 @@ class RequestManagement
     /**
      * RequestManagement constructor.
      *
-     * @param \Codeception\Module\Percy\ProcessManagement  $processManagement
-     * @param \Codeception\Module\Percy\SnapshotManagement $snapshotManagement
+     * @param \Codeception\Module\Percy\ProcessManagement        $processManagement
+     * @param \Codeception\Module\Percy\SnapshotManagement       $snapshotManagement
+     * @param \Codeception\Module\Percy\Exchange\ClientInterface $client
      */
     public function __construct(
         ProcessManagement $processManagement,
-        SnapshotManagement $snapshotManagement
+        SnapshotManagement $snapshotManagement,
+        ClientInterface $client
     ) {
         $this->processManagement = $processManagement;
         $this->snapshotManagement = $snapshotManagement;
+        $this->client = $client;
     }
 
     /**
@@ -79,13 +87,11 @@ class RequestManagement
         }
 
         $this->processManagement->startPercySnapshotServer();
-        // TODO: Refactor client factory
-        $client = ClientFactory::create();
 
         foreach ($this->payloads as $payload) {
             codecept_debug(sprintf('[Percy] Sending snapshot "%s"', $payload->getName()));
 
-            $client->post(config('percy')->get('snapshotPath'), $payload);
+            $this->client->post(config('percy')->get('snapshotPath'), $payload);
         }
 
         $this->processManagement->stopPercySnapshotServer();
