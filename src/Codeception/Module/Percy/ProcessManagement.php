@@ -15,33 +15,53 @@ use Symfony\Component\Process\Process;
 class ProcessManagement
 {
     /**
+     * @var \Codeception\Module\Percy\FilepathResolver
+     */
+    private $filepathResolver;
+
+    /**
      * @var \Symfony\Component\Process\Process<string, mixed>|null
      */
     private $process;
 
     /**
-     * Start Percy agent
+     * ProcessManagement constructor.
      *
-     * @throws \Symfony\Component\Process\Exception\ProcessFailedException
+     * @param \Codeception\Module\Percy\FilepathResolver $filepathResolver
      */
-    public function startPercyAgent(): void
-    {
-        $this->process = new Process(['node', FilepathResolver::percyAgentExecutable(), 'start']);
-        $this->process->setTimeout(ConfigProvider::get('percyAgentTimeout') ?? null);
-        $this->process->start();
-
-        sleep(5);
+    public function __construct(
+        FilepathResolver $filepathResolver
+    ) {
+        $this->filepathResolver = $filepathResolver;
     }
 
     /**
-     * Stop Percy agent
+     * Start Percy snapshot server
+     *
+     * @throws \Symfony\Component\Process\Exception\ProcessFailedException
+     * @throws \tr33m4n\Utilities\Exception\AdapterException
+     */
+    public function startPercySnapshotServer(): void
+    {
+        $this->process = new Process(['node', $this->filepathResolver->percyCliExecutable(), 'exec:start']);
+        $this->process->setTimeout(config('percy')->get('snapshotServerTimeout') ?? null);
+        $this->process->start();
+
+        // Wait until server is ready
+        $this->process->waitUntil(static function (string $type, string $output): bool {
+            return strpos($output, 'Percy has started!') !== false;
+        });
+    }
+
+    /**
+     * Stop Percy snapshot server
      *
      * @throws \Symfony\Component\Process\Exception\RuntimeException
      */
-    public function stopPercyAgent(): void
+    public function stopPercySnapshotServer(): void
     {
         if (!$this->process instanceof Process || !$this->process->isRunning()) {
-            throw new RuntimeException('Percy agent is not running');
+            throw new RuntimeException('Percy snapshot server is not running');
         }
 
         $this->process->stop();

@@ -6,20 +6,22 @@ namespace Codeception\Module;
 
 use Codeception\Module;
 use Codeception\Module\Percy\Exchange\Payload;
-use Codeception\Module\Percy\RequestManagement;
 use Codeception\Module\Percy\FilepathResolver;
 use Codeception\Module\Percy\InfoProvider;
 use Codeception\Module\Percy\ProcessManagement;
+use Codeception\Module\Percy\RequestManagement;
 use Codeception\TestInterface;
 use Exception;
 use Symfony\Component\Process\Exception\RuntimeException;
-use tr33m4n\Utilities\Config\Container;
+use tr33m4n\Utilities\Config\ConfigCollection;
 use tr33m4n\Utilities\Config\ConfigProvider;
+use tr33m4n\Utilities\Config\Container;
 
 /**
  * Class Percy
  *
  * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+ *
  * @package Codeception\Module
  */
 class Percy extends Module
@@ -31,12 +33,12 @@ class Percy extends Module
      */
     protected $config = [
         'driver' => 'WebDriver',
-        'agentEndpoint' => 'http://localhost:5338',
-        'agentSnapshotPath' => 'percy/snapshot',
-        'agentConfig' => [
-            'handleAgentCommunication' => false
+        'snapshotBaseUrl' => 'http://localhost:5338',
+        'snapshotPath' => 'percy/snapshot',
+        'serializeConfig' => [
+            'enableJavaScript' => true
         ],
-        'percyAgentTimeout' => null,
+        'snapshotServerTimeout' => null,
         'throwOnAdapterError' => false,
         'cleanSnapshotStorage' => false
     ];
@@ -59,7 +61,7 @@ class Percy extends Module
     /**
      * @var string|null
      */
-    private $percyAgentJs;
+    private $percyCliJs;
 
     /**
      * {@inheritdoc}
@@ -72,17 +74,24 @@ class Percy extends Module
             __DIR__ . '/../../../config'
         ]);
 
-        $configProvider->set('percy', $this->_getConfig());
+        $configProvider->set('percy', ConfigCollection::from($this->_getConfig()))
+            ->set('webDriver', $this->getModule($this->_getConfig('driver')));
 
         Container::setConfigProvider($configProvider);
 
-        $this->webDriver = $this->getModule($this->_getConfig('driver'));
-        $this->requestManagement = container()->get(RequestManagement::class);
-        $this->processManagement = container()->get(ProcessManagement::class);
+        $this->webDriver = $configProvider->get('webDriver');
+
+        /** @var \Codeception\Module\Percy\RequestManagement $requestManagementInstance */
+        $requestManagementInstance = container()->get(RequestManagement::class);
+        /** @var \Codeception\Module\Percy\ProcessManagement $processManagementInstance */
+        $processManagementInstance = container()->get(ProcessManagement::class);
+
+        $this->requestManagement = $requestManagementInstance;
+        $this->processManagement = $processManagementInstance;
 
         /** @var \Codeception\Module\Percy\FilepathResolver $filepathResolver */
         $filepathResolver = container()->get(FilepathResolver::class);
-        $this->percyAgentJs = file_get_contents($filepathResolver->percyAgentBrowserJs()) ?: null;
+        $this->percyCliJs = file_get_contents($filepathResolver->percyCliBrowserJs()) ?: null;
     }
 
     /**
@@ -94,6 +103,7 @@ class Percy extends Module
      * @throws \tr33m4n\Di\Exception\MissingClassException
      * @throws \tr33m4n\Utilities\Exception\AdapterException
      * @throws \tr33m4n\Utilities\Exception\ConfigException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
@@ -101,13 +111,13 @@ class Percy extends Module
         string $name,
         array $snapshotConfig = []
     ): void {
-        // If we cannot access the agent JS, return silently
-        if (!$this->percyAgentJs) {
+        // If we cannot access the CLI JS, return silently
+        if (!$this->percyCliJs) {
             return;
         }
 
-        // Add Percy agent JS to page
-        $this->webDriver->executeJS($this->percyAgentJs);
+        // Add Percy CLI JS to page
+        $this->webDriver->executeJS($this->percyCliJs);
 
         /** @var \Codeception\Module\Percy\InfoProvider $infoProvider */
         $infoProvider = container()->get(InfoProvider::class);
@@ -116,12 +126,14 @@ class Percy extends Module
             Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
-                ->withDomSnapshot($this->webDriver->executeJS(sprintf(
-                    'var percyAgentClient = new PercyAgent(%s); return percyAgentClient.snapshot(\'not used\')',
-                    json_encode($this->_getConfig('agentConfig'), JSON_THROW_ON_ERROR)
-                )))
+                ->withDomSnapshot($this->webDriver->executeJS(
+                    sprintf(
+                        'return PercyDOM.serialize(%s)',
+                        json_encode($this->_getConfig('serializeConfig'), JSON_THROW_ON_ERROR)
+                    )
+                ))
                 ->withClientInfo($infoProvider->getClientInfo())
-                ->withEnvironmentInfo($infoProvider->getEnvironmentInfo($this->webDriver))
+                ->withEnvironmentInfo($infoProvider->getEnvironmentInfo())
         );
     }
 
@@ -182,7 +194,7 @@ class Percy extends Module
         }
 
         try {
-            $this->processManagement->stopPercyAgent();
+            $this->processManagement->stopPercySnapshotServer();
         } catch (RuntimeException $exception) {
             // Fail silently if the process is not running
         }

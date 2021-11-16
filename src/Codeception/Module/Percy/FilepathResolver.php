@@ -12,21 +12,21 @@ namespace Codeception\Module\Percy;
 final class FilepathResolver
 {
     /**
-     * Get Percy agent browser JS
+     * Get Percy CLI browser JS
      *
      * @return string
      */
-    public function percyAgentBrowserJs(): string
+    public function percyCliBrowserJs(): string
     {
-        return __DIR__ . '/../../../../node_modules/@percy/agent/dist/public/percy-agent.js';
+        return __DIR__ . '/../../../../node_modules/@percy/dom/dist/bundle.js';
     }
 
     /**
-     * Get Percy agent executable
+     * Get Percy CLI executable
      *
      * @return string
      */
-    public function percyAgentExecutable(): string
+    public function percyCliExecutable(): string
     {
         return __DIR__ . '/../../../../node_modules/.bin/percy';
     }

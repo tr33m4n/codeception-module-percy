@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
+use Codeception\Module\Percy\Exception\ConfigException;
 use Codeception\Module\WebDriver;
 use PackageVersions\Versions;
 
@@ -29,13 +30,19 @@ final class InfoProvider
     /**
      * Get environment info
      *
-     * @param \Codeception\Module\WebDriver $webDriver
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @throws \tr33m4n\Utilities\Exception\AdapterException
      * @return string
      */
-    public function getEnvironmentInfo(WebDriver $webDriver): string
+    public function getEnvironmentInfo(): string
     {
         if (null !== $this->environmentInfo) {
             return $this->environmentInfo;
+        }
+
+        $webDriver = config('webDriver');
+        if (!$webDriver instanceof WebDriver) {
+            throw new ConfigException('Web driver has not been configured');
         }
 
         $webDriverCapabilities = $webDriver->webDriver->getCapabilities();

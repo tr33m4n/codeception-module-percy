@@ -14,7 +14,7 @@
         "ext-curl": "*",
         "ext-json": "*",
         "composer-plugin-api": "^2",
-        "codeception/codeception": "^4.0.0",
+        "codeception/codeception": "^4.1.22",
         "codeception/module-webdriver": "^1.2",
         "composer/package-versions-deprecated": "^1.11.99",
         "eloquent/composer-npm-bridge": "^5.0",

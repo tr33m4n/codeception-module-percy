@@ -86,15 +86,15 @@ class RequestManagement
             return;
         }
 
-        $this->processManagement->startPercyAgent();
+        $this->processManagement->startPercySnapshotServer();
 
         foreach ($this->payloads as $payload) {
             codecept_debug(sprintf('[Percy] Sending snapshot "%s"', $payload->getName()));
 
-            $this->client->post(config('percy')->get('agentSnapshotPath'), (array) $payload);
+            $this->client->post(config('percy')->get('snapshotPath'), (array) $payload);
         }
 
-        $this->processManagement->stopPercyAgent();
+        $this->processManagement->stopPercySnapshotServer();
 
         $this->resetRequest();
     }
