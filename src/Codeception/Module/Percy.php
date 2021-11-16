@@ -13,6 +13,7 @@ use Codeception\Module\Percy\RequestManagement;
 use Codeception\TestInterface;
 use Exception;
 use Symfony\Component\Process\Exception\RuntimeException;
+use tr33m4n\Utilities\Config\ConfigCollection;
 use tr33m4n\Utilities\Config\ConfigProvider;
 use tr33m4n\Utilities\Config\Container;
 
@@ -73,7 +74,7 @@ class Percy extends Module
             __DIR__ . '/../../../config'
         ]);
 
-        $configProvider->set('percy', $this->_getConfig())
+        $configProvider->set('percy', ConfigCollection::from($this->_getConfig()))
             ->set('webDriver', $this->getModule($this->_getConfig('driver')));
 
         Container::setConfigProvider($configProvider);
