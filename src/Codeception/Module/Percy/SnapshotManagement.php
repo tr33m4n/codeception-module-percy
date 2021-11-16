@@ -60,7 +60,7 @@ class SnapshotManagement
     /**
      * Clean snapshot directory
      */
-    public static function clean(): void
+    public function clean(): void
     {
         foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $snapshotFile) {
             unlink($snapshotFile);

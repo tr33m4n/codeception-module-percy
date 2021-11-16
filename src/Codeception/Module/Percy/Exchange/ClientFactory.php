@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
 
-use Codeception\Module\Percy\ConfigProvider;
 use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
 
 /**
@@ -18,10 +17,11 @@ class ClientFactory
      * Create new client
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @throws \tr33m4n\Utilities\Exception\AdapterException
      * @return \Codeception\Module\Percy\Exchange\Client
      */
     public static function create(): Client
     {
-        return Client::create(CurlAdapter::create(ConfigProvider::get('snapshotEndpoint')));
+        return Client::create(CurlAdapter::create(config('percy')->get('snapshotEndpoint')));
     }
 }

@@ -16,7 +16,7 @@ final class FilepathResolver
      *
      * @return string
      */
-    public static function percyCliBrowserJs(): string
+    public function percyCliBrowserJs(): string
     {
         return __DIR__ . '/../../../../node_modules/@percy/dom/dist/bundle.js';
     }
@@ -26,7 +26,7 @@ final class FilepathResolver
      *
      * @return string
      */
-    public static function percyCliExecutable(): string
+    public function percyCliExecutable(): string
     {
         return __DIR__ . '/../../../../node_modules/.bin/percy';
     }

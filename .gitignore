@@ -6,3 +6,5 @@
 /tests/geckodriver/geckodriver.log
 /tests/server/server.log
 /node_modules
+/Makefile
+/Brewfile

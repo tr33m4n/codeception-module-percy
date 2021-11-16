@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Codeception\Module;
 
 use Codeception\Module;
-use Codeception\Module\Percy\ConfigProvider;
 use Codeception\Module\Percy\Exchange\Payload;
 use Codeception\Module\Percy\FilepathResolver;
 use Codeception\Module\Percy\InfoProvider;
@@ -14,6 +13,8 @@ use Codeception\Module\Percy\RequestManagement;
 use Codeception\TestInterface;
 use Exception;
 use Symfony\Component\Process\Exception\RuntimeException;
+use tr33m4n\Utilities\Config\ConfigProvider;
+use tr33m4n\Utilities\Config\Container;
 
 /**
  * Class Percy
@@ -47,6 +48,16 @@ class Percy extends Module
     private $webDriver;
 
     /**
+     * @var \Codeception\Module\Percy\RequestManagement
+     */
+    private $requestManagement;
+
+    /**
+     * @var \Codeception\Module\Percy\ProcessManagement
+     */
+    private $processManagement;
+
+    /**
      * @var string|null
      */
     private $percyCliJs;
@@ -58,10 +69,28 @@ class Percy extends Module
      */
     public function _initialize(): void
     {
-        ConfigProvider::set($this->_getConfig());
+        $configProvider = new ConfigProvider([
+            __DIR__ . '/../../../config'
+        ]);
 
-        $this->webDriver = $this->getModule($this->_getConfig('driver'));
-        $this->percyCliJs = file_get_contents(FilepathResolver::percyCliBrowserJs()) ?: null;
+        $configProvider->set('percy', $this->_getConfig())
+            ->set('webDriver', $this->getModule($this->_getConfig('driver')));
+
+        Container::setConfigProvider($configProvider);
+
+        $this->webDriver = $configProvider->get('webDriver');
+
+        /** @var \Codeception\Module\Percy\RequestManagement $requestManagementInstance */
+        $requestManagementInstance = container()->get(RequestManagement::class);
+        /** @var \Codeception\Module\Percy\ProcessManagement $processManagementInstance */
+        $processManagementInstance = container()->get(ProcessManagement::class);
+
+        $this->requestManagement = $requestManagementInstance;
+        $this->processManagement = $processManagementInstance;
+
+        /** @var \Codeception\Module\Percy\FilepathResolver $filepathResolver */
+        $filepathResolver = container()->get(FilepathResolver::class);
+        $this->percyCliJs = file_get_contents($filepathResolver->percyCliBrowserJs()) ?: null;
     }
 
     /**
@@ -69,6 +98,11 @@ class Percy extends Module
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
+     * @throws \ReflectionException
+     * @throws \tr33m4n\Di\Exception\MissingClassException
+     * @throws \tr33m4n\Utilities\Exception\AdapterException
+     * @throws \tr33m4n\Utilities\Exception\ConfigException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
@@ -84,7 +118,10 @@ class Percy extends Module
         // Add Percy CLI JS to page
         $this->webDriver->executeJS($this->percyCliJs);
 
-        RequestManagement::addPayload(
+        /** @var \Codeception\Module\Percy\InfoProvider $infoProvider */
+        $infoProvider = container()->get(InfoProvider::class);
+
+        $this->requestManagement->addPayload(
             Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
@@ -94,8 +131,8 @@ class Percy extends Module
                         json_encode($this->_getConfig('serializeConfig'), JSON_THROW_ON_ERROR)
                     )
                 ))
-                ->withClientInfo(InfoProvider::getClientInfo())
-                ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver))
+                ->withClientInfo($infoProvider->getClientInfo())
+                ->withEnvironmentInfo($infoProvider->getEnvironmentInfo())
         );
     }
 
@@ -108,14 +145,14 @@ class Percy extends Module
      */
     public function _afterSuite(): void
     {
-        if (!RequestManagement::hasPayloads()) {
+        if (!$this->requestManagement->hasPayloads()) {
             return;
         }
 
         $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots..');
 
         try {
-            RequestManagement::sendRequest();
+            $this->requestManagement->sendRequest();
         } catch (Exception $exception) {
             $this->debugConnectionError($exception);
         }
@@ -134,7 +171,7 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail): void
     {
-        RequestManagement::resetRequest();
+        $this->requestManagement->resetRequest();
     }
 
     /**
@@ -155,7 +192,7 @@ class Percy extends Module
         }
 
         try {
-            ProcessManagement::stopPercySnapshotServer();
+            $this->processManagement->stopPercySnapshotServer();
         } catch (RuntimeException $exception) {
             // Fail silently if the process is not running
         }

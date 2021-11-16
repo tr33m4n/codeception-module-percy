@@ -6,6 +6,7 @@ namespace Codeception\Module\Percy\Exchange;
 
 use Codeception\Module\Percy\Snapshot;
 use Codeception\Module\Percy\SnapshotManagement;
+use InvalidArgumentException;
 
 /**
  * Class Payload
@@ -60,6 +61,16 @@ class Payload
     public const WIDTHS = 'widths';
 
     /**
+     * Array of keys that can be set from config
+     */
+    public const PUBLIC_KEYS = [
+        self::PERCY_CSS,
+        self::MIN_HEIGHT,
+        self::ENABLE_JAVASCRIPT,
+        self::WIDTHS
+    ];
+
+    /**
      * @var array<string, mixed>
      */
     private $config = [];
@@ -83,7 +94,11 @@ class Payload
         return array_reduce(
             array_keys($payloadArray),
             static function (Payload $payload, string $configKey) use ($payloadArray): Payload {
-                ValidatePayloadKey::execute($configKey);
+                if (!in_array($configKey, self::PUBLIC_KEYS)) {
+                    throw new InvalidArgumentException(
+                        sprintf('"%s" cannot be set through config', $configKey)
+                    );
+                }
 
                 return self::withValue($payload, $configKey, $payloadArray[$configKey]);
             },
@@ -215,16 +230,6 @@ class Payload
     public function getName(): string
     {
         return $this->config[self::NAME] ?? '';
-    }
-
-    /**
-     * Get DOM snapshot
-     *
-     * @return \Codeception\Module\Percy\Snapshot|null
-     */
-    public function getDomSnapshot(): ?Snapshot
-    {
-        return $this->config[self::DOM_SNAPSHOT] ?? null;
     }
 
     /**

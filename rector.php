@@ -22,7 +22,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         RemoveUselessParamTagRector::class,
         RemoveUselessReturnTagRector::class,
         ReturnTypeDeclarationRector::class => [
-            __DIR__ . '/src/Codeception/Module/Percy/Exchange/Adapter/CurlAdapter.php'
+            __DIR__ . '/src/Codeception/Module/Percy/Exchange/Adapter/CurlAdapter.php',
+            __DIR__ . '/src/Codeception/Module/Percy/RequestManagement.php'
         ]
     ]);
 };

@@ -15,23 +15,40 @@ use Symfony\Component\Process\Process;
 class ProcessManagement
 {
     /**
+     * @var \Codeception\Module\Percy\FilepathResolver
+     */
+    private $filepathResolver;
+
+    /**
      * @var \Symfony\Component\Process\Process<string, mixed>|null
      */
-    private static $process;
+    private $process;
+
+    /**
+     * ProcessManagement constructor.
+     *
+     * @param \Codeception\Module\Percy\FilepathResolver $filepathResolver
+     */
+    public function __construct(
+        FilepathResolver $filepathResolver
+    ) {
+        $this->filepathResolver = $filepathResolver;
+    }
 
     /**
      * Start Percy snapshot server
      *
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
+     * @throws \tr33m4n\Utilities\Exception\AdapterException
      */
-    public static function startPercySnapshotServer(): void
+    public function startPercySnapshotServer(): void
     {
-        self::$process = new Process(['node', FilepathResolver::percyCliExecutable(), 'exec:start']);
-        self::$process->setTimeout(ConfigProvider::get('snapshotServerTimeout') ?? null);
-        self::$process->start();
+        $this->process = new Process(['node', $this->filepathResolver->percyCliExecutable(), 'exec:start']);
+        $this->process->setTimeout(config('percy')->get('snapshotServerTimeout') ?? null);
+        $this->process->start();
 
         // Wait until server is ready
-        self::$process->waitUntil(static function (string $type, string $output): bool {
+        $this->process->waitUntil(static function (string $type, string $output): bool {
             return strpos($output, 'Percy has started!') !== false;
         });
     }
@@ -41,12 +58,12 @@ class ProcessManagement
      *
      * @throws \Symfony\Component\Process\Exception\RuntimeException
      */
-    public static function stopPercySnapshotServer(): void
+    public function stopPercySnapshotServer(): void
     {
-        if (!self::$process instanceof Process || !self::$process->isRunning()) {
+        if (!$this->process instanceof Process || !$this->process->isRunning()) {
             throw new RuntimeException('Percy snapshot server is not running');
         }
 
-        self::$process->stop();
+        $this->process->stop();
     }
 }
