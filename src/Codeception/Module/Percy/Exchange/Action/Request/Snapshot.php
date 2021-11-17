@@ -5,69 +5,84 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy\Exchange\Action\Request;
 
 use Codeception\Module\Percy\Persistence\Dom;
-use InvalidArgumentException;
+use League\Uri\Uri;
+use League\Uri\Contracts\UriInterface;
+use JsonSerializable;
 
-class Snapshot
+class Snapshot implements JsonSerializable
 {
-    /**
-     * Name key
-     */
-    public const NAME = 'name';
+    public const URL_KEY = 'url';
 
-    /**
-     * Url key
-     */
-    public const URL = 'url';
+    public const NAME_KEY = 'name';
 
-    /**
-     * Percy CSS key
-     */
-    public const PERCY_CSS = 'percyCSS';
+    public const PERCY_CSS_KEY = 'percyCSS';
 
-    /**
-     * Min height key
-     */
-    public const MIN_HEIGHT = 'minHeight';
+    public const MIN_HEIGHT_KEY = 'minHeight';
 
-    /**
-     * DOM snapshot key
-     */
-    public const DOM_SNAPSHOT = 'domSnapshot';
+    public const DOM_SNAPSHOT_KEY = 'domSnapshot';
 
-    /**
-     * Client info key
-     */
-    public const CLIENT_INFO = 'clientInfo';
+    public const CLIENT_INFO_KEY = 'clientInfo';
 
-    /**
-     * Enable JavaScript key
-     */
-    public const ENABLE_JAVASCRIPT = 'enableJavaScript';
+    public const ENVIRONMENT_INFO_KEY = 'environmentInfo';
 
-    /**
-     * Environment info key
-     */
-    public const ENVIRONMENT_INFO = 'environmentInfo';
+    public const ENABLE_JAVASCRIPT_KEY = 'enableJavaScript';
 
-    /**
-     * Widths key
-     */
-    public const WIDTHS = 'widths';
+    public const WIDTHS_KEY = 'widths';
 
     /**
      * Array of keys that can be set from config
      */
-    public const PUBLIC_KEYS = [
-        self::PERCY_CSS,
-        self::MIN_HEIGHT,
-        self::ENABLE_JAVASCRIPT,
-        self::WIDTHS
+    public const FROM_CONFIG = [
+        self::PERCY_CSS_KEY,
+        self::MIN_HEIGHT_KEY,
+        self::ENABLE_JAVASCRIPT_KEY,
+        self::WIDTHS_KEY
     ];
 
     /**
-     * @var array<string, mixed>
+     * @var \League\Uri\Contracts\UriInterface
      */
-    private $config = [];
+    private $url;
+
+    /**
+     * @var string|null
+     */
+    private $name;
+
+    /**
+     * @var string|null
+     */
+    private $percyCss;
+
+    /**
+     * @var int|null
+     */
+    private $minHeight;
+
+    /**
+     * @var \Codeception\Module\Percy\Persistence\Dom
+     */
+    private $domSnapshot;
+
+    /**
+     * @var string|null
+     */
+    private $clientInfo;
+
+    /**
+     * @var string|null
+     */
+    private $environmentInfo;
+
+    /**
+     * @var bool
+     */
+    private $enabledJavaScript = false;
+
+    /**
+     * @var int[]
+     */
+    private $widths = [];
 
     /**
      * Snapshot constructor.
@@ -78,37 +93,24 @@ class Snapshot
     }
 
     /**
-     * From array
+     * From config array
      *
-     * @param array<string, mixed> $payloadArray
+     * @param array<string, mixed> $configArray
      * @return \Codeception\Module\Percy\Exchange\Action\Request\Snapshot
      */
-    public static function from(array $payloadArray): Snapshot
+    public static function from(array $configArray): Snapshot
     {
         return array_reduce(
-            array_keys($payloadArray),
-            static function (Snapshot $payload, string $configKey) use ($payloadArray): Snapshot {
-                if (!in_array($configKey, self::PUBLIC_KEYS)) {
-                    throw new InvalidArgumentException(
-                        sprintf('"%s" cannot be set through config', $configKey)
-                    );
+            array_keys($configArray),
+            static function (Snapshot $snapshot, string $configKey) use ($configArray): Snapshot {
+                if (!in_array($configKey, self::FROM_CONFIG)) {
+                    return $snapshot;
                 }
 
-                return self::withValue($payload, $configKey, $payloadArray[$configKey]);
+                return $snapshot->{'with' . ucfirst($configKey)}($configArray[$configKey]);
             },
             new self()
         );
-    }
-
-    /**
-     * With name
-     *
-     * @param string $name
-     * @return \Codeception\Module\Percy\Exchange\Action\Request\Snapshot
-     */
-    public function withName(string $name): Snapshot
-    {
-        return self::withValue(clone $this, self::NAME, $name);
     }
 
     /**
@@ -119,29 +121,52 @@ class Snapshot
      */
     public function withUrl(string $url): Snapshot
     {
-        return self::withValue(clone $this, self::URL, $url);
+        $snapshot = clone $this;
+        $snapshot->url = Uri::createFromString($url);
+
+        return $snapshot;
+    }
+
+    /**
+     * With name
+     *
+     * @param string $name
+     * @return \Codeception\Module\Percy\Exchange\Action\Request\Snapshot
+     */
+    public function withName(string $name): Snapshot
+    {
+        $snapshot = clone $this;
+        $snapshot->name = $name;
+
+        return $snapshot;
     }
 
     /**
      * With Percy CSS
      *
-     * @param string|null $percyCss
+     * @param string $percyCss
      * @return \Codeception\Module\Percy\Exchange\Action\Request\Snapshot
      */
-    public function withPercyCss(?string $percyCss): Snapshot
+    public function withPercyCss(string $percyCss): Snapshot
     {
-        return self::withValue(clone $this, self::PERCY_CSS, $percyCss);
+        $snapshot = clone $this;
+        $snapshot->percyCss = $percyCss;
+
+        return $snapshot;
     }
 
     /**
      * With min height
      *
-     * @param int|null $minHeight
+     * @param int $minHeight
      * @return \Codeception\Module\Percy\Exchange\Action\Request\Snapshot
      */
-    public function withMinHeight(?int $minHeight): Snapshot
+    public function withMinHeight(int $minHeight): Snapshot
     {
-        return self::withValue(clone $this, self::MIN_HEIGHT, $minHeight);
+        $snapshot = clone $this;
+        $snapshot->minHeight = $minHeight;
+
+        return $snapshot;
     }
 
     /**
@@ -152,7 +177,10 @@ class Snapshot
      */
     public function withDomSnapshot(Dom $domSnapshot): Snapshot
     {
-        return self::withValue(clone $this, self::DOM_SNAPSHOT, $domSnapshot);
+        $snapshot = clone $this;
+        $snapshot->domSnapshot = $domSnapshot;
+
+        return $snapshot;
     }
 
     /**
@@ -163,18 +191,10 @@ class Snapshot
      */
     public function withClientInfo(string $clientInfo): Snapshot
     {
-        return self::withValue(clone $this, self::CLIENT_INFO, $clientInfo);
-    }
+        $snapshot = clone $this;
+        $snapshot->clientInfo = $clientInfo;
 
-    /**
-     * With enable JavaScript
-     *
-     * @param bool $enableJavaScript
-     * @return \Codeception\Module\Percy\Exchange\Action\Request\Snapshot
-     */
-    public function withEnableJavaScript(bool $enableJavaScript): Snapshot
-    {
-        return self::withValue(clone $this, self::ENABLE_JAVASCRIPT, $enableJavaScript);
+        return $snapshot;
     }
 
     /**
@@ -185,7 +205,24 @@ class Snapshot
      */
     public function withEnvironmentInfo(string $environmentInfo): Snapshot
     {
-        return self::withValue(clone $this, self::ENVIRONMENT_INFO, $environmentInfo);
+        $snapshot = clone $this;
+        $snapshot->environmentInfo = $environmentInfo;
+
+        return $snapshot;
+    }
+
+    /**
+     * With enable JavaScript
+     *
+     * @param bool $enableJavaScript
+     * @return \Codeception\Module\Percy\Exchange\Action\Request\Snapshot
+     */
+    public function withEnableJavaScript(bool $enableJavaScript): Snapshot
+    {
+        $snapshot = clone $this;
+        $snapshot->enabledJavaScript = $enableJavaScript;
+
+        return $snapshot;
     }
 
     /**
@@ -196,37 +233,121 @@ class Snapshot
      */
     public function withWidths(array $widths): Snapshot
     {
-        return self::withValue(clone $this, self::WIDTHS, $widths);
+        $snapshot = clone $this;
+        $snapshot->widths = $widths;
+
+        return $snapshot;
     }
 
     /**
-     * With value
+     * Get URL
      *
-     * @throws \InvalidArgumentException
-     * @param \Codeception\Module\Percy\Exchange\Action\Request\Snapshot $payload
-     * @param string                                                     $key
-     * @param mixed                                                      $value
-     * @return \Codeception\Module\Percy\Exchange\Action\Request\Snapshot
+     * @return \League\Uri\Contracts\UriInterface
      */
-    private static function withValue(Snapshot $payload, string $key, $value): Snapshot
+    public function getUrl(): UriInterface
     {
-        $payload->config[$key] = $value;
-
-        return $payload;
+        return $this->url;
     }
 
     /**
-     * As attributes array
+     * Get name
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        $snapshotUrl = $this->getUrl();
+
+        return $this->name ?? "{$snapshotUrl->getPath()}{$snapshotUrl->getQuery()}{$snapshotUrl->getFragment()}";
+    }
+
+    /**
+     * Get Percy CSS
+     *
+     * @return string|null
+     */
+    public function getPercyCss(): ?string
+    {
+        return $this->percyCss;
+    }
+
+    /**
+     * Get min height
+     *
+     * @return int|null
+     */
+    public function getMinHeight(): ?int
+    {
+        return $this->minHeight;
+    }
+
+    /**
+     * Get DOM snapshot
+     *
+     * @return \Codeception\Module\Percy\Persistence\Dom
+     */
+    public function getDomSnapshot(): Dom
+    {
+        return $this->domSnapshot;
+    }
+
+    /**
+     * Get client info
+     *
+     * @return string|null
+     */
+    public function getClientInfo(): ?string
+    {
+        return $this->clientInfo;
+    }
+
+    /**
+     * Get environment info
+     *
+     * @return string|null
+     */
+    public function getEnvironmentInfo(): ?string
+    {
+        return $this->environmentInfo;
+    }
+
+    /**
+     * Get enable Javascript
+     *
+     * @return bool
+     */
+    public function getEnableJavascript(): bool
+    {
+        return $this->enabledJavaScript;
+    }
+
+    /**
+     * Get widths
+     *
+     * @return int[]
+     */
+    public function getWidths(): array
+    {
+        return $this->widths;
+    }
+
+    /**
+     * As array
      *
      * @return array<string, mixed>
      */
-    public function asAttributesArray(): array
+    public function asArray(): array
     {
         return [
-            self::NAME => $this->config[self::NAME] ?? null,
-            self::WIDTHS => $this->config[self::WIDTHS] ?? null,
-            self::MIN_HEIGHT => $this->config[self::MIN_HEIGHT] ?? null,
-            self::ENABLE_JAVASCRIPT => $this->config[self::ENABLE_JAVASCRIPT] ?? null
+            self::URL_KEY => $this->getUrl(),
+            self::NAME_KEY => $this->getName(),
+            self::PERCY_CSS_KEY => $this->getPercyCss(),
+            self::MIN_HEIGHT_KEY => $this->getMinHeight(),
+            self::DOM_SNAPSHOT_KEY => $this->getDomSnapshot(),
+            self::CLIENT_INFO_KEY => $this->getClientInfo(),
+            self::ENVIRONMENT_INFO_KEY => $this->getEnvironmentInfo(),
+            self::ENABLE_JAVASCRIPT_KEY => $this->getEnableJavascript(),
+            self::WIDTHS_KEY => $this->getWidths()
         ];
     }
 
@@ -238,6 +359,16 @@ class Snapshot
      */
     public function __toString(): string
     {
-        return json_encode($this->config, JSON_THROW_ON_ERROR) ?: '';
+        return json_encode($this->asArray(), JSON_THROW_ON_ERROR) ?: '';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->asArray();
     }
 }

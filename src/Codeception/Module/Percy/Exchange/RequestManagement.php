@@ -89,7 +89,7 @@ class RequestManagement
         $createBuildResponse = $this->createBuild->execute();
 
         foreach ($this->snapshots as $snapshot) {
-            //codecept_debug(sprintf('[Percy] Sending snapshot "%s"', $snapshot->getName()));
+            codecept_debug(sprintf('[Percy] Sending snapshot "%s"', $snapshot->getName()));
 
             $this->sendSnapshot->execute($createBuildResponse->getId(), $snapshot);
         }

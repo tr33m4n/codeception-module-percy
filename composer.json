@@ -17,6 +17,7 @@
         "codeception/codeception": "^4.1.22",
         "codeception/module-webdriver": "^1.2",
         "guzzlehttp/guzzle": "^7.3",
+        "league/uri": "^6.5",
         "ramsey/uuid": "^4.1",
         "tr33m4n/codeception-module-percy-environment": "^1.0",
         "tr33m4n/di": "^1.1"
