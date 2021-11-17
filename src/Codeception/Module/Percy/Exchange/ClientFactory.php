@@ -22,6 +22,6 @@ class ClientFactory
      */
     public static function create(): Client
     {
-        return Client::create(CurlAdapter::create(ConfigProvider::get('snapshotEndpoint')));
+        return Client::create(CurlAdapter::create(ConfigProvider::get('snapshotBaseUrl')));
     }
 }

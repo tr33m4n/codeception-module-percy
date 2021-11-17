@@ -31,10 +31,17 @@ class Percy extends Module
      */
     protected $config = [
         'driver' => 'WebDriver',
-        'snapshotEndpoint' => 'http://localhost:5338',
+        'snapshotBaseUrl' => 'http://localhost:5338',
         'snapshotPath' => 'percy/snapshot',
         'serializeConfig' => [
             'enableJavaScript' => true
+        ],
+        'snapshotConfig' => [
+            'widths' => [
+                375,
+                1280
+            ],
+            'minHeight' => 1024
         ],
         'snapshotServerTimeout' => null,
         'throwOnAdapterError' => false,
