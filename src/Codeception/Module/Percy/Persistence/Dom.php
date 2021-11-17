@@ -50,6 +50,16 @@ class Dom implements JsonSerializable
      */
     public function jsonSerialize(): string
     {
+        return (string) $this;
+    }
+
+    /**
+     * Load content when cast to string
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
         return file_get_contents($this->getFilePath()) ?: '';
     }
 }
