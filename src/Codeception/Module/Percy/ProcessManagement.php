@@ -20,28 +20,31 @@ class ProcessManagement
     private static $process;
 
     /**
-     * Start Percy agent
+     * Start Percy snapshot server
      *
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      */
-    public static function startPercyAgent(): void
+    public static function startPercySnapshotServer(): void
     {
-        self::$process = new Process(['node', FilepathResolver::percyAgentExecutable(), 'start']);
-        self::$process->setTimeout(ConfigProvider::get('percyAgentTimeout') ?? null);
+        self::$process = new Process(['node', FilepathResolver::percyCliExecutable(), 'exec:start']);
+        self::$process->setTimeout(ConfigProvider::get('snapshotServerTimeout') ?? null);
         self::$process->start();
 
-        sleep(5);
+        // Wait until server is ready
+        self::$process->waitUntil(static function (string $type, string $output): bool {
+            return strpos($output, 'Percy has started!') !== false;
+        });
     }
 
     /**
-     * Stop Percy agent
+     * Stop Percy snapshot server
      *
      * @throws \Symfony\Component\Process\Exception\RuntimeException
      */
-    public static function stopPercyAgent(): void
+    public static function stopPercySnapshotServer(): void
     {
         if (!self::$process instanceof Process || !self::$process->isRunning()) {
-            throw new RuntimeException('Percy agent is not running');
+            throw new RuntimeException('Percy snapshot server is not running');
         }
 
         self::$process->stop();

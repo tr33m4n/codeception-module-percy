@@ -3,6 +3,8 @@ name: Test
 on:
     push:
         branches: [ development, master ]
+    pull_request:
+        branches: [ development, master ]
     workflow_dispatch:
 
 jobs:
@@ -22,7 +24,7 @@ jobs:
             -   name: Setup Node
                 uses: actions/setup-node@v2
                 with:
-                    node-version: 10
+                    node-version: 12
             -   name: Install dependencies
                 run: composer update
             -   name: Run test suite

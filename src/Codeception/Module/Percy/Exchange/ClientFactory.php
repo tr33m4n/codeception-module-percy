@@ -20,8 +20,8 @@ class ClientFactory
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @return \Codeception\Module\Percy\Exchange\Client
      */
-    public static function create() : Client
+    public static function create(): Client
     {
-        return Client::create(CurlAdapter::create(ConfigProvider::get('agentEndpoint')));
+        return Client::create(CurlAdapter::create(ConfigProvider::get('snapshotBaseUrl')));
     }
 }
