@@ -35,6 +35,13 @@ class Percy extends Module
         'serializeConfig' => [
             'enableJavaScript' => true
         ],
+        'snapshotConfig' => [
+            'widths' => [
+                375,
+                1280
+            ],
+            'minHeight' => 1024
+        ],
         'snapshotServerTimeout' => null,
         'throwOnAdapterError' => false,
         'cleanSnapshotStorage' => false
