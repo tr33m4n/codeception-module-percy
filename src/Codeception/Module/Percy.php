@@ -92,7 +92,7 @@ class Percy extends Module
         $this->webDriver->executeJS($this->percyCliJs);
 
         RequestManagement::addPayload(
-            Payload::from(array_merge_recursive($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
+            Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
                 ->withDomSnapshot($this->webDriver->executeJS(
