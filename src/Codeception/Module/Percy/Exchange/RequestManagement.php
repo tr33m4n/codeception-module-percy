@@ -11,10 +11,19 @@ use Codeception\Module\Percy\Persistence\DomStorage;
 
 class RequestManagement
 {
+    /**
+     * @var \Codeception\Module\Percy\Persistence\DomStorage
+     */
     private $domStorage;
 
+    /**
+     * @var \Codeception\Module\Percy\Exchange\Action\CreateBuild
+     */
     private $createBuild;
 
+    /**
+     * @var \Codeception\Module\Percy\Exchange\Action\SendSnapshot
+     */
     private $sendSnapshot;
 
     /**
@@ -42,12 +51,14 @@ class RequestManagement
     /**
      * Add a snapshot
      *
+     * @throws \Codeception\Module\Percy\Exception\StorageException
      * @param \Codeception\Module\Percy\Exchange\Action\Request\Snapshot $snapshot
+     * @param string                                                     $serializedDom
      * @return \Codeception\Module\Percy\Exchange\RequestManagement
      */
-    public function addSnapshot(Snapshot $snapshot): RequestManagement
+    public function addSnapshot(Snapshot $snapshot, string $serializedDom): RequestManagement
     {
-        $this->snapshots[] = $this->domStorage->save($snapshot);
+        $this->snapshots[] = $this->domStorage->save($snapshot, $serializedDom);
 
         return $this;
     }
@@ -94,9 +105,6 @@ class RequestManagement
     public function resetRequest(): void
     {
         $this->snapshots = [];
-
-        if (config('percy')->get('cleanSnapshotStorage')) {
-            $this->snapshotManagement->clean();
-        }
+        $this->domStorage->clean();
     }
 }

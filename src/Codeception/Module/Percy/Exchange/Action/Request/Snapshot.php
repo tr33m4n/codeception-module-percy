@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange\Action\Request;
 
-use Codeception\Module\Percy\SnapshotManagement;
+use Codeception\Module\Percy\Persistence\Dom;
 use InvalidArgumentException;
 
 class Snapshot
@@ -147,13 +147,12 @@ class Snapshot
     /**
      * With DOM snapshot
      *
-     * @throws \Codeception\Module\Percy\Exception\StorageException
-     * @param string $domSnapshot
+     * @param \Codeception\Module\Percy\Persistence\Dom $domSnapshot
      * @return \Codeception\Module\Percy\Exchange\Action\Request\Snapshot
      */
-    public function withDomSnapshot(string $domSnapshot): Snapshot
+    public function withDomSnapshot(Dom $domSnapshot): Snapshot
     {
-        return self::withValue(clone $this, self::DOM_SNAPSHOT, SnapshotManagement::save($domSnapshot));
+        return self::withValue(clone $this, self::DOM_SNAPSHOT, $domSnapshot);
     }
 
     /**

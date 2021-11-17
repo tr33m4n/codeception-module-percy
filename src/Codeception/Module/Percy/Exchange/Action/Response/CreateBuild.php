@@ -11,7 +11,7 @@ class CreateBuild
     public const ATTRIBUTES_FIELD = 'attributes';
 
     /**
-     * @var int|null
+     * @var int
      */
     private $id;
 
@@ -47,7 +47,7 @@ class CreateBuild
             new self()
         );
 
-        $createBuild->id = $response[self::ID_FIELD] ?? null;
+        $createBuild->id = $response[self::ID_FIELD];
 
         return $createBuild;
     }
@@ -70,9 +70,9 @@ class CreateBuild
     /**
      * Get ID
      *
-     * @return int|null
+     * @return int
      */
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }

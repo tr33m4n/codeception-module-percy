@@ -111,14 +111,14 @@ class Percy extends Module
             Snapshot::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
-                ->withDomSnapshot($this->webDriver->executeJS(
-                    sprintf(
-                        'return PercyDOM.serialize(%s)',
-                        json_encode($this->_getConfig('serializeConfig'), JSON_THROW_ON_ERROR)
-                    )
-                ))
                 ->withClientInfo($environmentProvider->getClientInfo())
-                ->withEnvironmentInfo($environmentProvider->getEnvironmentInfo())
+                ->withEnvironmentInfo($environmentProvider->getEnvironmentInfo()),
+            $this->webDriver->executeJS(
+                sprintf(
+                    'return PercyDOM.serialize(%s)',
+                    json_encode($this->_getConfig('serializeConfig'), JSON_THROW_ON_ERROR)
+                )
+            )
         );
     }
 
