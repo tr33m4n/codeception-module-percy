@@ -67,6 +67,8 @@ modules:
 
 ## Running
 The Percy integration runs automatically with the test suite but will need your `PERCY_TOKEN` to be set to successfully send snapshots. For more information, see https://docs.percy.io/docs/environment-variables#section-required
+### Overriding the `node` path
+By default, the `node` executable used will be the one defined within the `PATH` of the user running the test suite. This can be overridden however, by setting the environment variable `PERCY_NODE_PATH` to your preferred location.
 ### Example Test
 ```php
 <?php
