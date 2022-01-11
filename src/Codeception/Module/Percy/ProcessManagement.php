@@ -14,6 +14,8 @@ use Symfony\Component\Process\Process;
  */
 class ProcessManagement
 {
+    public const PERCY_NODE_PATH = 'PERCY_NODE_PATH';
+
     /**
      * @var \Symfony\Component\Process\Process<string, mixed>|null
      */
@@ -26,7 +28,7 @@ class ProcessManagement
      */
     public static function startPercySnapshotServer(): void
     {
-        self::$process = new Process(['node', FilepathResolver::percyCliExecutable(), 'exec:start']);
+        self::$process = new Process([self::resolveNodePath(), FilepathResolver::percyCliExecutable(), 'exec:start']);
         self::$process->setTimeout(ConfigProvider::get('snapshotServerTimeout') ?? null);
         self::$process->start();
 
@@ -48,5 +50,16 @@ class ProcessManagement
         }
 
         self::$process->stop();
+    }
+
+    /**
+     * If `PERCY_NODE_PATH` has been configured, use that as the path to the Node executable, rather than what's
+     * configured in `PATH`
+     *
+     * @return string
+     */
+    private static function resolveNodePath(): string
+    {
+        return $_ENV[self::PERCY_NODE_PATH] ?? 'node';
     }
 }
