@@ -17,6 +17,11 @@ Percy https://percy.io module for Codeception
 - PHP `>= 7.3`
 - Composer `v2`
 
+### `v4.0.x`
+- Node.js `>=14.0.0`
+- PHP `>= 7.4`
+- Composer `v2`
+
 ## Installation
 ```shell script
 composer require --dev tr33m4n/codeception-module-percy
