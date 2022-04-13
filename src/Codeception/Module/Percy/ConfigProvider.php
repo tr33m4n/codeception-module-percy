@@ -4,17 +4,12 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
-/**
- * Class ConfigProvider
- *
- * @package Codeception\Module\Percy
- */
 class ConfigProvider
 {
     /**
-     * @var array<string, mixed> $config
+     * @var array<string, mixed>
      */
-    private static $config;
+    private static array $config = [];
 
     /**
      * Set config

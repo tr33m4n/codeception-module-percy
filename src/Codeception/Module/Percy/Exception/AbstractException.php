@@ -7,11 +7,6 @@ namespace Codeception\Module\Percy\Exception;
 use Codeception\Exception\ModuleException;
 use Codeception\Module\Percy;
 
-/**
- * Class AbstractException
- *
- * @package Codeception\Module\Percy\Exception
- */
 abstract class AbstractException extends ModuleException
 {
     /**

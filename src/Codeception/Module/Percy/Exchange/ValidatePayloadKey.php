@@ -6,11 +6,6 @@ namespace Codeception\Module\Percy\Exchange;
 
 use InvalidArgumentException;
 
-/**
- * Class ValidatePayloadKey
- *
- * @package Codeception\Module\Percy\Exchange
- */
 class ValidatePayloadKey
 {
     /**

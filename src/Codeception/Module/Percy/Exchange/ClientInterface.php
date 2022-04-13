@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
 
-/**
- * Interface ClientInterface
- *
- * @package Codeception\Module\Percy\Exchange
- */
 interface ClientInterface
 {
     /**

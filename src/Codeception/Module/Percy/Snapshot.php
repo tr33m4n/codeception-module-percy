@@ -6,17 +6,9 @@ namespace Codeception\Module\Percy;
 
 use JsonSerializable;
 
-/**
- * Class Snapshot
- *
- * @package Codeception\Module\Percy
- */
 class Snapshot implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $filePath;
+    private string $filePath;
 
     /**
      * Snapshot constructor.
