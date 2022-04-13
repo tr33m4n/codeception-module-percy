@@ -3,6 +3,7 @@
 use Rector\Core\Configuration\Option;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUselessParamTagRector;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUselessReturnTagRector;
+use Rector\Php74\Rector\Property\TypedPropertyRector;
 use Rector\Set\ValueObject\SetList;
 use Rector\TypeDeclaration\Rector\FunctionLike\ReturnTypeDeclarationRector;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -21,6 +22,9 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         RemoveUselessParamTagRector::class,
         RemoveUselessReturnTagRector::class,
         ReturnTypeDeclarationRector::class => [
+            __DIR__ . '/src/Codeception/Module/Percy/Exchange/Adapter/CurlAdapter.php'
+        ],
+        TypedPropertyRector::class => [
             __DIR__ . '/src/Codeception/Module/Percy/Exchange/Adapter/CurlAdapter.php'
         ]
     ]);
