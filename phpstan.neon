@@ -1,4 +1,5 @@
 parameters:
+    reportUnmatchedIgnoredErrors: false
     paths:
         - %currentWorkingDirectory%/src
     excludes_analyse:
