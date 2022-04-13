@@ -9,9 +9,9 @@
     "license": "MIT",
     "author": "Daniel Doyle <tr33m4n@googlemail.com>",
     "engines": {
-        "node": ">=12"
+        "node": ">=14"
     },
     "dependencies": {
-        "@percy/cli": "^1.0.0-beta.72"
+        "@percy/cli": "^1.0.7"
     }
 }
