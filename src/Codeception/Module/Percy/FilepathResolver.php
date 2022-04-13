@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
-/**
- * Class FilepathResolver
- *
- * @package Codeception\Module\Percy
- */
 final class FilepathResolver
 {
     /**

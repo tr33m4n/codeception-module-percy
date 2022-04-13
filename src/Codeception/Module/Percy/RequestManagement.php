@@ -7,17 +7,12 @@ namespace Codeception\Module\Percy;
 use Codeception\Module\Percy\Exchange\ClientFactory;
 use Codeception\Module\Percy\Exchange\Payload;
 
-/**
- * Class RequestManagement
- *
- * @package Codeception\Module\Percy
- */
 class RequestManagement
 {
     /**
      * @var \Codeception\Module\Percy\Exchange\Payload[]
      */
-    private static $payloads = [];
+    private static array $payloads = [];
 
     /**
      * Add a payload

@@ -7,11 +7,6 @@ namespace Codeception\Module\Percy\Exchange;
 use Codeception\Module\Percy\ConfigProvider;
 use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
 
-/**
- * Class ClientFactory
- *
- * @package Codeception\Module\Percy\Exchange
- */
 class ClientFactory
 {
     /**

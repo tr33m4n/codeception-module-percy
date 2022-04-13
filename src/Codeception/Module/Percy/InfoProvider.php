@@ -7,24 +7,13 @@ namespace Codeception\Module\Percy;
 use Codeception\Module\WebDriver;
 use PackageVersions\Versions;
 
-/**
- * Class InfoProvider
- *
- * @package Codeception\Module\Percy
- */
 final class InfoProvider
 {
     public const PACKAGE_NAME = 'tr33m4n/codeception-module-percy';
 
-    /**
-     * @var string|null
-     */
-    private static $environmentInfo;
+    private static ?string $environmentInfo = null;
 
-    /**
-     * @var string|null
-     */
-    private static $clientInfo;
+    private static ?string $clientInfo = null;
 
     /**
      * Get environment info

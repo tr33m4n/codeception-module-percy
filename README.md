@@ -32,6 +32,9 @@ The way in which the Percy agent is started and stopped in `v1.1.x` changes sign
 ### `v2.0.x` to `v3.0.x`
 `v3.0.x` only supports Node `>=12`. Due to a typical PHP based platform using Composer not blocking the installation of this version if you have a lesser Node version, caution is advised!
 
+### `v3.0.x` to `v4.0.x`
+`v4.0.x` only support Node `>=14` and PHP `>=7.4`. The `driver` config parameter has also been dropped as this has always explicitly required the Codeception WebDriver module
+
 ## Example Configuration
 The following example configuration assumes the `WebDriver` module has been configured correctly for your test suite
 ```yaml
@@ -52,7 +55,6 @@ modules:
 ### Configuration Options
 | Parameter                         | Type     | Default                               | Description                                                                                                                                                                                                                           |
 | --------------------------------- | -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `driver`                          | string   | `WebDriver`                           | Set an alternative driver                                                                                                                                                                                                             |
 | `snapshotEndpoint`                | string   | `http://localhost:5338`               | The endpoint used for operations within the Percy agent                                                                                                                                                                               |
 | `snapshotPath`                    | string   | `percy/snapshot`                      | The path relative to the agent endpoint to post a snapshot to                                                                                                                                                                         |
 | `snapshotConfig`                  | object   | `{}`                                  | Additional configuration to pass to the "snapshot" functionality                                                                                                                                                                      |
