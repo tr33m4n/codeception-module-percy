@@ -15,7 +15,7 @@
         "ext-json": "*",
         "composer-plugin-api": "^2",
         "codeception/codeception": "^4.1.22",
-        "codeception/module-webdriver": "^1.2",
+        "codeception/module-webdriver": "^2.0",
         "composer/package-versions-deprecated": "^1.11.99",
         "eloquent/composer-npm-bridge": "^5.0",
         "ramsey/uuid": "^4.1",
