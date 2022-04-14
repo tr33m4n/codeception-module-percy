@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
-use Codeception\Module\WebDriver;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
 use PackageVersions\Versions;
 
 final class InfoProvider
@@ -18,16 +18,16 @@ final class InfoProvider
     /**
      * Get environment info
      *
-     * @param \Codeception\Module\WebDriver $webDriver
+     * @param \Facebook\WebDriver\Remote\RemoteWebDriver $webDriver
      * @return string
      */
-    public static function getEnvironmentInfo(WebDriver $webDriver): string
+    public static function getEnvironmentInfo(RemoteWebDriver $webDriver): string
     {
         if (null !== self::$environmentInfo) {
             return self::$environmentInfo;
         }
 
-        $webDriverCapabilities = $webDriver->webDriver->getCapabilities();
+        $webDriverCapabilities = $webDriver->getCapabilities();
 
         return self::$environmentInfo = sprintf(
             'codeception-php; %s; %s/%s',
