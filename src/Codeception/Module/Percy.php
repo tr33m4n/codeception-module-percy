@@ -92,6 +92,11 @@ class Percy extends Module
             return;
         }
 
+        // If remote web driver has not been set, return
+        if (null === $this->webDriver->webDriver) {
+            return;
+        }
+
         // Add Percy CLI JS to page
         $this->webDriver->executeJS($this->percyCliJs);
 
@@ -106,7 +111,7 @@ class Percy extends Module
                     )
                 ))
                 ->withClientInfo(InfoProvider::getClientInfo())
-                ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver))
+                ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver->webDriver))
         );
     }
 
