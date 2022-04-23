@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
+use Composer\InstalledVersions;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use PackageVersions\Versions;
 
 final class InfoProvider
 {
@@ -51,7 +51,7 @@ final class InfoProvider
         return self::$clientInfo = sprintf(
             '%s/%s',
             ltrim(strstr(self::PACKAGE_NAME, '/') ?: '', '/'),
-            strstr(Versions::getVersion(self::PACKAGE_NAME), '@', true)
+            InstalledVersions::getVersion(self::PACKAGE_NAME)
         );
     }
 }

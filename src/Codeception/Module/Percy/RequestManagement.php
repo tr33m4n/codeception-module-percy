@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
+use Codeception\Module\Percy\Exception\ConfigException;
 use Codeception\Module\Percy\Exchange\ClientFactory;
 use Codeception\Module\Percy\Exchange\Payload;
 
@@ -38,11 +39,17 @@ class RequestManagement
      * Send payloads to Percy
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
      */
     public static function sendRequest(): void
     {
         if (!self::hasPayloads()) {
             return;
+        }
+
+        $snapshotPath = ConfigProvider::get('snapshotPath');
+        if (!is_string($snapshotPath)) {
+            throw new ConfigException('Snapshot path is not a string');
         }
 
         ProcessManagement::startPercySnapshotServer();
@@ -51,7 +58,7 @@ class RequestManagement
         foreach (self::$payloads as $payload) {
             codecept_debug(sprintf('[Percy] Sending snapshot "%s"', $payload->getName()));
 
-            $client->post(ConfigProvider::get('snapshotPath'), $payload);
+            $client->post($snapshotPath, $payload);
         }
 
         ProcessManagement::stopPercySnapshotServer();

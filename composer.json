@@ -14,9 +14,9 @@
         "ext-curl": "*",
         "ext-json": "*",
         "composer-plugin-api": "^2",
+        "composer-runtime-api": "^2",
         "codeception/codeception": "^4.1.22",
         "codeception/module-webdriver": "^2.0",
-        "composer/package-versions-deprecated": "^1.11.99",
         "eloquent/composer-npm-bridge": "^5.0",
         "ramsey/uuid": "^4.1",
         "symfony/process": "^5.2"
@@ -31,13 +31,16 @@
         "codeception/module-asserts": "^2.0",
         "codeception/module-phpbrowser": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.8",
-        "phpstan/phpstan": "^0.12.90",
-        "rector/rector": "^0.11.35",
+        "phpstan/phpstan": "^1.5",
+        "rector/rector": "^0.12.21",
         "squizlabs/php_codesniffer": "^3.6"
     },
     "config": {
         "optimize-autoloader": true,
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "eloquent/composer-npm-bridge": true
+        }
     },
     "scripts": {
         "fix": "vendor/bin/rector process && vendor/bin/php-cs-fixer fix --diff",

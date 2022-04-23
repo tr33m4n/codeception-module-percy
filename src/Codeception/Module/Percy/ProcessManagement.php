@@ -20,8 +20,11 @@ class ProcessManagement
      */
     public static function startPercySnapshotServer(): void
     {
+        /** @var float|int|null $snapshotServerTimeout */
+        $snapshotServerTimeout = ConfigProvider::get('snapshotServerTimeout') ?? null;
+
         self::$process = new Process([self::resolveNodePath(), FilepathResolver::percyCliExecutable(), 'exec:start']);
-        self::$process->setTimeout(ConfigProvider::get('snapshotServerTimeout') ?? null);
+        self::$process->setTimeout($snapshotServerTimeout);
         self::$process->start();
 
         // Wait until server is ready
@@ -51,6 +54,6 @@ class ProcessManagement
      */
     private static function resolveNodePath(): string
     {
-        return $_ENV[self::PERCY_NODE_PATH] ?? 'node';
+        return getenv(self::PERCY_NODE_PATH) ?: 'node';
     }
 }
