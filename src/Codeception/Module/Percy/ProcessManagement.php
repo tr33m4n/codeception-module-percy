@@ -7,19 +7,11 @@ namespace Codeception\Module\Percy;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
 
-/**
- * Class ProcessManagement
- *
- * @package Codeception\Module\Percy
- */
 class ProcessManagement
 {
     public const PERCY_NODE_PATH = 'PERCY_NODE_PATH';
 
-    /**
-     * @var \Symfony\Component\Process\Process<string, mixed>|null
-     */
-    private static $process;
+    private static ?Process $process = null;
 
     /**
      * Start Percy snapshot server
@@ -33,9 +25,8 @@ class ProcessManagement
         self::$process->start();
 
         // Wait until server is ready
-        self::$process->waitUntil(static function (string $type, string $output): bool {
-            return strpos($output, 'Percy has started!') !== false;
-        });
+        self::$process->waitUntil(static fn (string $type, string $output): bool =>
+            strpos($output, 'Percy has started!') !== false);
     }
 
     /**

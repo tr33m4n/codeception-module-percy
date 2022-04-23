@@ -6,6 +6,7 @@ namespace Codeception\Module;
 
 use Codeception\Module;
 use Codeception\Module\Percy\ConfigProvider;
+use Codeception\Module\Percy\Exception\ApplicationException;
 use Codeception\Module\Percy\Exchange\Payload;
 use Codeception\Module\Percy\FilepathResolver;
 use Codeception\Module\Percy\InfoProvider;
@@ -30,7 +31,6 @@ class Percy extends Module
      * @var array<string, mixed>
      */
     protected $config = [
-        'driver' => 'WebDriver',
         'snapshotBaseUrl' => 'http://localhost:5338',
         'snapshotPath' => 'percy/snapshot',
         'serializeConfig' => [
@@ -48,15 +48,9 @@ class Percy extends Module
         'cleanSnapshotStorage' => false
     ];
 
-    /**
-     * @var \Codeception\Module\WebDriver
-     */
-    private $webDriver;
+    private ?WebDriver $webDriver = null;
 
-    /**
-     * @var string|null
-     */
-    private $percyCliJs;
+    private ?string $percyCliJs = null;
 
     /**
      * {@inheritdoc}
@@ -67,7 +61,12 @@ class Percy extends Module
     {
         ConfigProvider::set($this->_getConfig());
 
-        $this->webDriver = $this->getModule($this->_getConfig('driver'));
+        $webDriverModule = $this->getModule('WebDriver');
+        if (!$webDriverModule instanceof WebDriver) {
+            throw new ApplicationException('"WebDriver" module not found');
+        }
+
+        $this->webDriver = $webDriverModule;
         $this->percyCliJs = file_get_contents(FilepathResolver::percyCliBrowserJs()) ?: null;
     }
 
@@ -88,6 +87,16 @@ class Percy extends Module
             return;
         }
 
+        // If web driver has not been set, return
+        if (null === $this->webDriver) {
+            return;
+        }
+
+        // If remote web driver has not been set, return
+        if (null === $this->webDriver->webDriver) {
+            return;
+        }
+
         // Add Percy CLI JS to page
         $this->webDriver->executeJS($this->percyCliJs);
 
@@ -102,7 +111,7 @@ class Percy extends Module
                     )
                 ))
                 ->withClientInfo(InfoProvider::getClientInfo())
-                ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver))
+                ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver->webDriver))
         );
     }
 

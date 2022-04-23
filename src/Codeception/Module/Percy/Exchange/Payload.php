@@ -7,62 +7,30 @@ namespace Codeception\Module\Percy\Exchange;
 use Codeception\Module\Percy\Snapshot;
 use Codeception\Module\Percy\SnapshotManagement;
 
-/**
- * Class Payload
- *
- * @package Codeception\Module\Percy\Exchange
- */
 class Payload
 {
-    /**
-     * Name key
-     */
     public const NAME = 'name';
 
-    /**
-     * Url key
-     */
     public const URL = 'url';
 
-    /**
-     * Percy CSS key
-     */
     public const PERCY_CSS = 'percyCSS';
 
-    /**
-     * Min height key
-     */
     public const MIN_HEIGHT = 'minHeight';
 
-    /**
-     * DOM snapshot key
-     */
     public const DOM_SNAPSHOT = 'domSnapshot';
 
-    /**
-     * Client info key
-     */
     public const CLIENT_INFO = 'clientInfo';
 
-    /**
-     * Enable JavaScript key
-     */
     public const ENABLE_JAVASCRIPT = 'enableJavaScript';
 
-    /**
-     * Environment info key
-     */
     public const ENVIRONMENT_INFO = 'environmentInfo';
 
-    /**
-     * Widths key
-     */
     public const WIDTHS = 'widths';
 
     /**
      * @var array<string, mixed>
      */
-    private $config = [];
+    private array $config = [];
 
     /**
      * Payload constructor.

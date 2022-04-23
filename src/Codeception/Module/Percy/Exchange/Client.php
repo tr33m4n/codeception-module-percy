@@ -6,17 +6,9 @@ namespace Codeception\Module\Percy\Exchange;
 
 use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
 
-/**
- * Class Client
- *
- * @package Codeception\Module\Percy\Exchange
- */
 class Client implements ClientInterface
 {
-    /**
-     * @var \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
-     */
-    private $adapter;
+    private AdapterInterface $adapter;
 
     /**
      * Client constructor.

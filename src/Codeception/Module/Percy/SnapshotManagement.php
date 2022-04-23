@@ -7,11 +7,6 @@ namespace Codeception\Module\Percy;
 use Codeception\Module\Percy\Exception\StorageException;
 use Ramsey\Uuid\Uuid;
 
-/**
- * Class SnapshotManagement
- *
- * @package Codeception\Module\Percy
- */
 class SnapshotManagement
 {
     public const OUTPUT_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s.html';

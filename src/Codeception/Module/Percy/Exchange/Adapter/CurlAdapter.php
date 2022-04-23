@@ -6,17 +6,12 @@ namespace Codeception\Module\Percy\Exchange\Adapter;
 
 use Codeception\Module\Percy\Exception\AdapterException;
 
-/**
- * Class CurlAdapter
- *
- * @package Codeception\Module\Percy\Exchange\Adapter
- */
 class CurlAdapter implements AdapterInterface
 {
     /**
      * @var string
      */
-    private $baseUrl;
+    private string $baseUrl;
 
     /**
      * @var false|resource

@@ -1,4 +1,5 @@
 parameters:
+    reportUnmatchedIgnoredErrors: false
     paths:
         - %currentWorkingDirectory%/src
     excludes_analyse:
@@ -9,3 +10,5 @@ parameters:
         - vendor/codeception/codeception/autoload.php
     ignoreErrors:
         - '#Property Codeception\\Module\\Percy::\$webDriver#'
+        - '#of function (.*) expects CurlHandle, resource given.#'
+        - '#\$resource \(resource\|false\) does not accept CurlHandle.#'
