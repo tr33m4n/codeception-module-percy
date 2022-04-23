@@ -8,7 +8,6 @@ use Codeception\Module;
 use Codeception\Module\Percy\ConfigProvider;
 use Codeception\Module\Percy\Exception\ApplicationException;
 use Codeception\Module\Percy\Exchange\Payload;
-use Codeception\Module\Percy\FilepathResolver;
 use Codeception\Module\Percy\InfoProvider;
 use Codeception\Module\Percy\ProcessManagement;
 use Codeception\Module\Percy\RequestManagement;
@@ -61,7 +60,7 @@ class Percy extends Module
     {
         /** @var array<string, mixed> $moduleConfig */
         $moduleConfig = $this->_getConfig() ?? [];
-        ConfigProvider::set($moduleConfig);
+        ConfigProvider::hydrate($moduleConfig);
 
         $webDriverModule = $this->getModule('WebDriver');
         if (!$webDriverModule instanceof WebDriver) {
@@ -69,7 +68,7 @@ class Percy extends Module
         }
 
         $this->webDriver = $webDriverModule;
-        $this->percyCliJs = file_get_contents(FilepathResolver::percyCliBrowserJs()) ?: null;
+        $this->percyCliJs = file_get_contents(ConfigProvider::getPercyCliBrowserJsPath()) ?: null;
     }
 
     /**

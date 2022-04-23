@@ -73,7 +73,7 @@ class RequestManagement
     {
         self::$payloads = [];
 
-        if (ConfigProvider::get('cleanSnapshotStorage')) {
+        if (ConfigProvider::shouldCleanSnapshotStorage()) {
             SnapshotManagement::clean();
         }
     }

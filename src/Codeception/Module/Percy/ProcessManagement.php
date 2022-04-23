@@ -17,14 +17,17 @@ class ProcessManagement
      * Start Percy snapshot server
      *
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
      */
     public static function startPercySnapshotServer(): void
     {
-        /** @var float|int|null $snapshotServerTimeout */
-        $snapshotServerTimeout = ConfigProvider::get('snapshotServerTimeout') ?? null;
+        self::$process = new Process([
+            self::resolveNodePath(),
+            ConfigProvider::getPercyCliExecutablePath(),
+            'exec:start'
+        ]);
 
-        self::$process = new Process([self::resolveNodePath(), FilepathResolver::percyCliExecutable(), 'exec:start']);
-        self::$process->setTimeout($snapshotServerTimeout);
+        self::$process->setTimeout(ConfigProvider::getSnapshotServerTimeout());
         self::$process->start();
 
         // Wait until server is ready
