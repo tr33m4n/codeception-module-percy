@@ -2,7 +2,7 @@ parameters:
     reportUnmatchedIgnoredErrors: false
     paths:
         - %currentWorkingDirectory%/src
-    excludes_analyse:
+    excludePaths:
         - *Test*
         - *tests*
     level: max

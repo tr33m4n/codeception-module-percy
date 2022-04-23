@@ -182,7 +182,15 @@ class Payload
      */
     public function getName(): string
     {
-        return $this->config[self::NAME] ?? '';
+        if (!array_key_exists(self::NAME, $this->config)) {
+            return '';
+        }
+
+        if (!is_string($this->config[self::NAME])) {
+            return '';
+        }
+
+        return $this->config[self::NAME];
     }
 
     /**
@@ -192,7 +200,15 @@ class Payload
      */
     public function getDomSnapshot(): ?Snapshot
     {
-        return $this->config[self::DOM_SNAPSHOT] ?? null;
+        if (!array_key_exists(self::DOM_SNAPSHOT, $this->config)) {
+            return null;
+        }
+
+        if (!$this->config[self::DOM_SNAPSHOT] instanceof Snapshot) {
+            return null;
+        }
+
+        return $this->config[self::DOM_SNAPSHOT];
     }
 
     /**

@@ -59,7 +59,9 @@ class Percy extends Module
      */
     public function _initialize(): void
     {
-        ConfigProvider::set($this->_getConfig());
+        /** @var array<string, mixed> $moduleConfig */
+        $moduleConfig = $this->_getConfig() ?? [];
+        ConfigProvider::set($moduleConfig);
 
         $webDriverModule = $this->getModule('WebDriver');
         if (!$webDriverModule instanceof WebDriver) {
@@ -100,16 +102,22 @@ class Percy extends Module
         // Add Percy CLI JS to page
         $this->webDriver->executeJS($this->percyCliJs);
 
+        /** @var array<string, mixed> $moduleSnapshotConfig */
+        $moduleSnapshotConfig = $this->_getConfig('snapshotConfig') ?? [];
+
+        /** @var string $domSnapshot */
+        $domSnapshot = $this->webDriver->executeJS(
+            sprintf(
+                'return PercyDOM.serialize(%s)',
+                json_encode($this->_getConfig('serializeConfig'), JSON_THROW_ON_ERROR)
+            )
+        );
+
         RequestManagement::addPayload(
-            Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
+            Payload::from(array_merge($moduleSnapshotConfig, $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
-                ->withDomSnapshot($this->webDriver->executeJS(
-                    sprintf(
-                        'return PercyDOM.serialize(%s)',
-                        json_encode($this->_getConfig('serializeConfig'), JSON_THROW_ON_ERROR)
-                    )
-                ))
+                ->withDomSnapshot($domSnapshot)
                 ->withClientInfo(InfoProvider::getClientInfo())
                 ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver->webDriver))
         );
