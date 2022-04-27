@@ -4,25 +4,55 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
-use Codeception\Module\Percy\Exception\ConfigException;
-use Codeception\Module\Percy\Exchange\ClientFactory;
+use Codeception\Module\Percy\Exchange\ClientInterface;
 use Codeception\Module\Percy\Exchange\Payload;
 
 class RequestManagement
 {
+    private ConfigManagement $configManagement;
+
+    private SnapshotManagement $snapshotManagement;
+
+    private ProcessManagement $processManagement;
+
+    private ClientInterface $client;
+
     /**
      * @var \Codeception\Module\Percy\Exchange\Payload[]
      */
-    private static array $payloads = [];
+    private array $payloads = [];
+
+    /**
+     * RequestManagement constructor.
+     *
+     * @param \Codeception\Module\Percy\ConfigManagement         $configManagement
+     * @param \Codeception\Module\Percy\SnapshotManagement       $snapshotManagement
+     * @param \Codeception\Module\Percy\ProcessManagement        $processManagement
+     * @param \Codeception\Module\Percy\Exchange\ClientInterface $client
+     */
+    public function __construct(
+        ConfigManagement $configManagement,
+        SnapshotManagement $snapshotManagement,
+        ProcessManagement $processManagement,
+        ClientInterface $client
+    ) {
+        $this->configManagement = $configManagement;
+        $this->snapshotManagement = $snapshotManagement;
+        $this->processManagement = $processManagement;
+        $this->client = $client;
+    }
 
     /**
      * Add a payload
      *
      * @param \Codeception\Module\Percy\Exchange\Payload $payload
+     * @return \Codeception\Module\Percy\RequestManagement
      */
-    public static function addPayload(Payload $payload): void
+    public function addPayload(Payload $payload): RequestManagement
     {
-        self::$payloads[] = $payload;
+        $this->payloads[] = $payload;
+
+        return $this;
     }
 
     /**
@@ -30,9 +60,9 @@ class RequestManagement
      *
      * @return bool
      */
-    public static function hasPayloads(): bool
+    public function hasPayloads(): bool
     {
-        return self::$payloads !== [];
+        return $this->payloads !== [];
     }
 
     /**
@@ -41,40 +71,31 @@ class RequestManagement
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @throws \Codeception\Module\Percy\Exception\ConfigException
      */
-    public static function sendRequest(): void
+    public function sendRequest(): void
     {
-        if (!self::hasPayloads()) {
+        if (!$this->hasPayloads()) {
             return;
         }
 
-        $snapshotPath = ConfigProvider::get('snapshotPath');
-        if (!is_string($snapshotPath)) {
-            throw new ConfigException('Snapshot path is not a string');
-        }
+        $this->processManagement->startPercySnapshotServer();
 
-        ProcessManagement::startPercySnapshotServer();
-        $client = ClientFactory::create();
-
-        foreach (self::$payloads as $payload) {
+        foreach ($this->payloads as $payload) {
             codecept_debug(sprintf('[Percy] Sending snapshot "%s"', $payload->getName()));
 
-            $client->post($snapshotPath, $payload);
+            $this->client->post($this->configManagement->getSnapshotPath(), $payload);
         }
 
-        ProcessManagement::stopPercySnapshotServer();
+        $this->processManagement->stopPercySnapshotServer();
 
-        self::resetRequest();
+        $this->resetRequest();
     }
 
     /**
      * Reset payloads
      */
-    public static function resetRequest(): void
+    public function resetRequest(): void
     {
-        self::$payloads = [];
-
-        if (ConfigProvider::shouldCleanSnapshotStorage()) {
-            SnapshotManagement::clean();
-        }
+        $this->payloads = [];
+        $this->snapshotManagement->clean();
     }
 }

@@ -11,15 +11,28 @@ class SnapshotManagement
 {
     public const OUTPUT_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s.html';
 
+    private ConfigManagement $configManagement;
+
     /**
-     * Save DOM snapshot to file
+     * SnapshotManagement constructor.
+     *
+     * @param \Codeception\Module\Percy\ConfigManagement $configManagement
+     */
+    public function __construct(
+        ConfigManagement $configManagement
+    ) {
+        $this->configManagement = $configManagement;
+    }
+
+    /**
+     * Create snapshot from DOM string
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \Exception
      * @param string $domString
      * @return \Codeception\Module\Percy\Snapshot
      */
-    public static function save(string $domString): Snapshot
+    public function create(string $domString): Snapshot
     {
         if (!function_exists('codecept_output_dir')) {
             throw new StorageException('`codecept_output_dir` function is not available!');
@@ -42,21 +55,14 @@ class SnapshotManagement
     }
 
     /**
-     * Load DOM snapshot from file
-     *
-     * @param \Codeception\Module\Percy\Snapshot $snapshot
-     * @return string
-     */
-    public static function load(Snapshot $snapshot): string
-    {
-        return file_get_contents($snapshot->getFilePath()) ?: '';
-    }
-
-    /**
      * Clean snapshot directory
      */
-    public static function clean(): void
+    public function clean(): void
     {
+        if (!$this->configManagement->shouldCleanSnapshotStorage()) {
+            return;
+        }
+
         foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $snapshotFile) {
             unlink($snapshotFile);
         }

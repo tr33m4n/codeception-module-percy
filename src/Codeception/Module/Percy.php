@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Codeception\Module;
 
 use Codeception\Module;
-use Codeception\Module\Percy\ConfigProvider;
+use Codeception\Module\Percy\ConfigManagement;
 use Codeception\Module\Percy\Exception\ApplicationException;
 use Codeception\Module\Percy\Exchange\Payload;
-use Codeception\Module\Percy\InfoProvider;
 use Codeception\Module\Percy\ProcessManagement;
 use Codeception\Module\Percy\RequestManagement;
+use Codeception\Module\Percy\ServiceContainer;
 use Codeception\TestInterface;
 use Exception;
 use Symfony\Component\Process\Exception\RuntimeException;
+use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProviderInterface;
 
 /**
  * Class Percy
@@ -25,6 +26,8 @@ use Symfony\Component\Process\Exception\RuntimeException;
 class Percy extends Module
 {
     public const NAMESPACE = 'Percy';
+
+    public const PACKAGE_NAME = 'tr33m4n/codeception-module-percy';
 
     /**
      * @var array<string, mixed>
@@ -47,6 +50,14 @@ class Percy extends Module
         'cleanSnapshotStorage' => false
     ];
 
+    private ?ServiceContainer $serviceContainer = null;
+
+    private ?ConfigManagement $configManagement = null;
+
+    private ?RequestManagement $requestManagement = null;
+
+    private ?EnvironmentProviderInterface $environmentProvider = null;
+
     private ?WebDriver $webDriver = null;
 
     private ?string $percyCliJs = null;
@@ -58,17 +69,23 @@ class Percy extends Module
      */
     public function _initialize(): void
     {
-        /** @var array<string, mixed> $moduleConfig */
-        $moduleConfig = $this->_getConfig() ?? [];
-        ConfigProvider::hydrate($moduleConfig);
-
         $webDriverModule = $this->getModule('WebDriver');
         if (!$webDriverModule instanceof WebDriver) {
             throw new ApplicationException('"WebDriver" module not found');
         }
 
+        /** @var array<string, mixed> $percyModuleConfig */
+        $percyModuleConfig = $this->_getConfig() ?? [];
+
+        $this->serviceContainer = new ServiceContainer($webDriverModule, $percyModuleConfig);
+        $this->configManagement = $this->serviceContainer->getConfigManagement();
+        $this->requestManagement = $this->serviceContainer->getRequestManagement();
+        $this->environmentProvider = $this->serviceContainer->getEnvironmentProvider();
+
         $this->webDriver = $webDriverModule;
-        $this->percyCliJs = file_get_contents(ConfigProvider::getPercyCliBrowserJsPath()) ?: null;
+        $this->percyCliJs = file_get_contents(
+            $this->serviceContainer->getConfigManagement()->getPercyCliBrowserJsPath()
+        ) ?: null;
     }
 
     /**
@@ -76,6 +93,7 @@ class Percy extends Module
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
+     * @throws \tr33m4n\CodeceptionModulePercyEnvironment\Exception\EnvironmentException
      * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
@@ -83,42 +101,30 @@ class Percy extends Module
         string $name,
         array $snapshotConfig = []
     ): void {
-        // If we cannot access the CLI JS, return silently
-        if (!$this->percyCliJs) {
-            return;
-        }
-
-        // If web driver has not been set, return
-        if (null === $this->webDriver) {
-            return;
-        }
-
-        // If remote web driver has not been set, return
-        if (null === $this->webDriver->webDriver) {
+        /**
+         * As we're not "constructing" the class in a traditional sense, static analysis doesn't rule out the
+         * possibility that this method could be called before `_initialize`. Check all required class properties and
+         * ensure they are not "falsey"
+         */
+        if (!$this->percyCliJs || !$this->webDriver || !$this->webDriver->webDriver || !$this->serviceContainer || !$this->configManagement || !$this->environmentProvider) {
             return;
         }
 
         // Add Percy CLI JS to page
         $this->webDriver->executeJS($this->percyCliJs);
 
-        /** @var array<string, mixed> $moduleSnapshotConfig */
-        $moduleSnapshotConfig = $this->_getConfig('snapshotConfig') ?? [];
-
         /** @var string $domSnapshot */
         $domSnapshot = $this->webDriver->executeJS(
-            sprintf(
-                'return PercyDOM.serialize(%s)',
-                json_encode($this->_getConfig('serializeConfig'), JSON_THROW_ON_ERROR)
-            )
+            sprintf('return PercyDOM.serialize(%s)', $this->configManagement->getSerializeConfig())
         );
 
         RequestManagement::addPayload(
-            Payload::from(array_merge($moduleSnapshotConfig, $snapshotConfig))
+            Payload::from(array_merge($this->configManagement->getSnapshotConfig(), $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
                 ->withDomSnapshot($domSnapshot)
-                ->withClientInfo(InfoProvider::getClientInfo())
-                ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver->webDriver))
+                ->withClientInfo($this->environmentProvider->getClientInfo())
+                ->withEnvironmentInfo($this->environmentProvider->getEnvironmentInfo())
         );
     }
 
@@ -173,14 +179,14 @@ class Percy extends Module
             [$exception->getMessage(), $exception->getTraceAsString()]
         );
 
-        if (!$this->_getConfig('throwOnAdapterError')) {
-            return;
-        }
-
         try {
             ProcessManagement::stopPercySnapshotServer();
         } catch (RuntimeException $exception) {
             // Fail silently if the process is not running
+        }
+
+        if ($this->configManagement && !$this->configManagement->shouldThrowOnAdapterError()) {
+            return;
         }
 
         throw $exception;
