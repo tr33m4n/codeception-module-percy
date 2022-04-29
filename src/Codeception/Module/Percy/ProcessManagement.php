@@ -35,7 +35,7 @@ class ProcessManagement
     public function startPercySnapshotServer(): void
     {
         $this->process = new Process([
-            self::resolveNodePath(),
+            $this->resolveNodePath(),
             $this->configManagement->getPercyCliExecutablePath(),
             'exec:start'
         ]);
