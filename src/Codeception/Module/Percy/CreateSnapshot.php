@@ -7,19 +7,19 @@ namespace Codeception\Module\Percy;
 use Codeception\Module\Percy\Exception\StorageException;
 use Ramsey\Uuid\Uuid;
 
-class SnapshotManagement
+class CreateSnapshot
 {
     public const OUTPUT_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s.html';
 
     /**
-     * Save DOM snapshot to file
+     * Create snapshot from DOM string
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \Exception
      * @param string $domString
      * @return \Codeception\Module\Percy\Snapshot
      */
-    public static function save(string $domString): Snapshot
+    public function execute(string $domString): Snapshot
     {
         if (!function_exists('codecept_output_dir')) {
             throw new StorageException('`codecept_output_dir` function is not available!');
@@ -36,29 +36,11 @@ class SnapshotManagement
             chmod($fileDirectory, 0777);
         }
 
-        file_put_contents($filePath, $domString);
-
-        return Snapshot::from($filePath);
-    }
-
-    /**
-     * Load DOM snapshot from file
-     *
-     * @param \Codeception\Module\Percy\Snapshot $snapshot
-     * @return string
-     */
-    public static function load(Snapshot $snapshot): string
-    {
-        return file_get_contents($snapshot->getFilePath()) ?: '';
-    }
-
-    /**
-     * Clean snapshot directory
-     */
-    public static function clean(): void
-    {
-        foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $snapshotFile) {
-            unlink($snapshotFile);
+        $writeResults = file_put_contents($filePath, $domString);
+        if (!$writeResults) {
+            throw new StorageException('Something went wrong when writing the DOM string');
         }
+
+        return Snapshot::create($filePath);
     }
 }

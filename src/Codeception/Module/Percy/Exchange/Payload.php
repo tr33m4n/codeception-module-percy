@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy\Exchange;
 
 use Codeception\Module\Percy\Snapshot;
-use Codeception\Module\Percy\SnapshotManagement;
+use InvalidArgumentException;
 
 class Payload
 {
@@ -26,6 +26,16 @@ class Payload
     public const ENVIRONMENT_INFO = 'environmentInfo';
 
     public const WIDTHS = 'widths';
+
+    /**
+     * Array of keys that can be set from config
+     */
+    public const PUBLIC_KEYS = [
+        self::PERCY_CSS,
+        self::MIN_HEIGHT,
+        self::ENABLE_JAVASCRIPT,
+        self::WIDTHS
+    ];
 
     /**
      * @var array<string, mixed>
@@ -51,7 +61,11 @@ class Payload
         return array_reduce(
             array_keys($payloadArray),
             static function (Payload $payload, string $configKey) use ($payloadArray): Payload {
-                ValidatePayloadKey::execute($configKey);
+                if (!in_array($configKey, self::PUBLIC_KEYS)) {
+                    throw new InvalidArgumentException(
+                        sprintf('"%s" cannot be set through config', $configKey)
+                    );
+                }
 
                 return self::withValue($payload, $configKey, $payloadArray[$configKey]);
             },
@@ -82,17 +96,6 @@ class Payload
     }
 
     /**
-     * With Percy CSS
-     *
-     * @param string|null $percyCss
-     * @return \Codeception\Module\Percy\Exchange\Payload
-     */
-    public function withPercyCss(?string $percyCss): Payload
-    {
-        return self::withValue(clone $this, self::PERCY_CSS, $percyCss);
-    }
-
-    /**
      * With min height
      *
      * @param int|null $minHeight
@@ -106,13 +109,12 @@ class Payload
     /**
      * With DOM snapshot
      *
-     * @throws \Codeception\Module\Percy\Exception\StorageException
-     * @param string $domSnapshot
+     * @param \Codeception\Module\Percy\Snapshot $domSnapshot
      * @return \Codeception\Module\Percy\Exchange\Payload
      */
-    public function withDomSnapshot(string $domSnapshot): Payload
+    public function withDomSnapshot(Snapshot $domSnapshot): Payload
     {
-        return self::withValue(clone $this, self::DOM_SNAPSHOT, SnapshotManagement::save($domSnapshot));
+        return self::withValue(clone $this, self::DOM_SNAPSHOT, $domSnapshot);
     }
 
     /**
@@ -127,17 +129,6 @@ class Payload
     }
 
     /**
-     * With enable JavaScript
-     *
-     * @param bool $enableJavaScript
-     * @return \Codeception\Module\Percy\Exchange\Payload
-     */
-    public function withEnableJavaScript(bool $enableJavaScript): Payload
-    {
-        return self::withValue(clone $this, self::ENABLE_JAVASCRIPT, $enableJavaScript);
-    }
-
-    /**
      * With environment info
      *
      * @param string $environmentInfo
@@ -146,17 +137,6 @@ class Payload
     public function withEnvironmentInfo(string $environmentInfo): Payload
     {
         return self::withValue(clone $this, self::ENVIRONMENT_INFO, $environmentInfo);
-    }
-
-    /**
-     * With widths
-     *
-     * @param int[] $widths
-     * @return \Codeception\Module\Percy\Exchange\Payload
-     */
-    public function withWidths(array $widths): Payload
-    {
-        return self::withValue(clone $this, self::WIDTHS, $widths);
     }
 
     /**
@@ -191,24 +171,6 @@ class Payload
         }
 
         return $this->config[self::NAME];
-    }
-
-    /**
-     * Get DOM snapshot
-     *
-     * @return \Codeception\Module\Percy\Snapshot|null
-     */
-    public function getDomSnapshot(): ?Snapshot
-    {
-        if (!array_key_exists(self::DOM_SNAPSHOT, $this->config)) {
-            return null;
-        }
-
-        if (!$this->config[self::DOM_SNAPSHOT] instanceof Snapshot) {
-            return null;
-        }
-
-        return $this->config[self::DOM_SNAPSHOT];
     }
 
     /**

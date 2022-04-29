@@ -19,7 +19,8 @@
         "codeception/module-webdriver": "^2.0",
         "eloquent/composer-npm-bridge": "^5.0",
         "ramsey/uuid": "^4.1",
-        "symfony/process": "^5.2"
+        "symfony/process": "^5.2",
+        "tr33m4n/codeception-module-percy-environment": "^1.0"
     },
     "autoload": {
         "psr-4": {

@@ -11,25 +11,40 @@ class ProcessManagement
 {
     public const PERCY_NODE_PATH = 'PERCY_NODE_PATH';
 
-    private static ?Process $process = null;
+    private ConfigManagement $configManagement;
+
+    private ?Process $process = null;
+
+    /**
+     * ProcessManagement constructor.
+     *
+     * @param \Codeception\Module\Percy\ConfigManagement $configManagement
+     */
+    public function __construct(
+        ConfigManagement $configManagement
+    ) {
+        $this->configManagement = $configManagement;
+    }
 
     /**
      * Start Percy snapshot server
      *
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
      */
-    public static function startPercySnapshotServer(): void
+    public function startPercySnapshotServer(): void
     {
-        /** @var float|int|null $snapshotServerTimeout */
-        $snapshotServerTimeout = ConfigProvider::get('snapshotServerTimeout') ?? null;
+        $this->process = new Process([
+            self::resolveNodePath(),
+            $this->configManagement->getPercyCliExecutablePath(),
+            'exec:start'
+        ]);
 
-        self::$process = new Process([self::resolveNodePath(), FilepathResolver::percyCliExecutable(), 'exec:start']);
-        self::$process->setTimeout($snapshotServerTimeout);
-        self::$process->start();
+        $this->process->setTimeout($this->configManagement->getSnapshotServerTimeout());
+        $this->process->start();
 
         // Wait until server is ready
-        self::$process->waitUntil(static fn (string $type, string $output): bool =>
-            strpos($output, 'Percy has started!') !== false);
+        $this->process->waitUntil(fn (string $type, string $output): bool => $this->hasServerStarted($output));
     }
 
     /**
@@ -37,13 +52,13 @@ class ProcessManagement
      *
      * @throws \Symfony\Component\Process\Exception\RuntimeException
      */
-    public static function stopPercySnapshotServer(): void
+    public function stopPercySnapshotServer(): void
     {
-        if (!self::$process instanceof Process || !self::$process->isRunning()) {
+        if (!$this->process instanceof Process || !$this->process->isRunning()) {
             throw new RuntimeException('Percy snapshot server is not running');
         }
 
-        self::$process->stop();
+        $this->process->stop();
     }
 
     /**
@@ -52,8 +67,19 @@ class ProcessManagement
      *
      * @return string
      */
-    private static function resolveNodePath(): string
+    private function resolveNodePath(): string
     {
         return getenv(self::PERCY_NODE_PATH) ?: 'node';
+    }
+
+    /**
+     * Determine whether the server has started
+     *
+     * @param string $cliOutput
+     * @return bool
+     */
+    private function hasServerStarted(string $cliOutput): bool
+    {
+        return strpos($cliOutput, 'Percy has started!') !== false;
     }
 }

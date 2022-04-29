@@ -19,12 +19,12 @@ class Snapshot implements JsonSerializable
     }
 
     /**
-     * From file path
+     * Create from file path
      *
      * @param string $filePath
      * @return \Codeception\Module\Percy\Snapshot
      */
-    public static function from(string $filePath): Snapshot
+    public static function create(string $filePath): Snapshot
     {
         $snapshot = new self();
         $snapshot->filePath = $filePath;
@@ -47,6 +47,6 @@ class Snapshot implements JsonSerializable
      */
     public function jsonSerialize(): string
     {
-        return SnapshotManagement::load($this);
+        return file_get_contents($this->getFilePath()) ?: '';
     }
 }

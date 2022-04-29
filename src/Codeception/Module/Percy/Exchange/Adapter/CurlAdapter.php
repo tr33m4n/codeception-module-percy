@@ -33,18 +33,6 @@ class CurlAdapter implements AdapterInterface
     }
 
     /**
-     * Create new instance
-     *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $baseUrl
-     * @return \Codeception\Module\Percy\Exchange\Adapter\CurlAdapter
-     */
-    public static function create(string $baseUrl): CurlAdapter
-    {
-        return new self($baseUrl);
-    }
-
-    /**
      * @inheritDoc
      */
     public function setBaseUrl(string $baseUrl): AdapterInterface
