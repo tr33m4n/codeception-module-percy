@@ -9,6 +9,6 @@ parameters:
     bootstrapFiles:
         - vendor/codeception/codeception/autoload.php
     ignoreErrors:
-        - '#Property Codeception\\Module\\Percy::\$webDriver#'
         - '#of function (.*) expects CurlHandle, resource given.#'
         - '#\$resource \(resource\|false\) does not accept CurlHandle.#'
+        - '#Method Codeception\\Module\\Percy\\ServiceContainer::(.*) should return (.*) but returns mixed.#'

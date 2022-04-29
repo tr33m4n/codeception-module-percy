@@ -107,7 +107,7 @@ class Percy extends Module
         array $snapshotConfig = []
     ): void {
         // If the remote web driver doesn't exist, return
-        if (!$this->webDriver->webDriver) {
+        if (null === $this->webDriver->webDriver) {
             return;
         }
 

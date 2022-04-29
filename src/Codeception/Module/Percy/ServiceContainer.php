@@ -86,7 +86,7 @@ final class ServiceContainer
     /**
      * Get instantiated CI types
      *
-     * @return array<string, \tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment\CiType\CiTypeInterface>
+     * @return array<string, mixed>
      */
     public function getCiTypes(): array
     {
@@ -274,7 +274,7 @@ final class ServiceContainer
      *
      * @param class-string $className
      * @param mixed[]      $parameters
-     * @return mixed|object
+     * @return mixed
      */
     private function resolveService(string $className, array $parameters = [])
     {

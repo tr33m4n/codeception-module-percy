@@ -44,7 +44,7 @@ class ProcessManagement
         $this->process->start();
 
         // Wait until server is ready
-        $this->process->waitUntil(static fn(string $type, string $output): bool => strpos($output, 'Percy has started!') !== false);
+        $this->process->waitUntil(fn (string $type, string $output): bool => $this->hasServerStarted($output));
     }
 
     /**
@@ -70,5 +70,16 @@ class ProcessManagement
     private function resolveNodePath(): string
     {
         return getenv(self::PERCY_NODE_PATH) ?: 'node';
+    }
+
+    /**
+     * Determine whether the server has started
+     *
+     * @param string $cliOutput
+     * @return bool
+     */
+    private function hasServerStarted(string $cliOutput): bool
+    {
+        return strpos($cliOutput, 'Percy has started!') !== false;
     }
 }
