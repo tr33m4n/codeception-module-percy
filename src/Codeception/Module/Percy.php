@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Codeception\Module;
 
+use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
 use Codeception\Module\Percy\ConfigManagement;
-use Codeception\Module\Percy\Exception\ApplicationException;
+use Codeception\Module\Percy\CreateSnapshot;
 use Codeception\Module\Percy\Exchange\Payload;
 use Codeception\Module\Percy\ProcessManagement;
 use Codeception\Module\Percy\RequestManagement;
@@ -50,42 +51,45 @@ class Percy extends Module
         'cleanSnapshotStorage' => false
     ];
 
-    private ?ServiceContainer $serviceContainer = null;
+    private ConfigManagement $configManagement;
 
-    private ?ConfigManagement $configManagement = null;
+    private RequestManagement $requestManagement;
 
-    private ?RequestManagement $requestManagement = null;
+    private ProcessManagement $processManagement;
 
-    private ?EnvironmentProviderInterface $environmentProvider = null;
+    private CreateSnapshot $createSnapshot;
 
-    private ?WebDriver $webDriver = null;
+    private EnvironmentProviderInterface $environmentProvider;
 
-    private ?string $percyCliJs = null;
+    private WebDriver $webDriver;
 
     /**
-     * {@inheritdoc}
+     * Percy constructor.
      *
-     * @throws \Exception
+     * @throws \Codeception\Exception\ModuleException
+     * @param array<string, mixed>|null        $config
+     * @param \Codeception\Lib\ModuleContainer $moduleContainer
      */
-    public function _initialize(): void
-    {
+    public function __construct(
+        ModuleContainer $moduleContainer,
+        array $config = null
+    ) {
+        parent::__construct($moduleContainer, $config);
+
+        /** @var \Codeception\Module\WebDriver $webDriverModule */
         $webDriverModule = $this->getModule('WebDriver');
-        if (!$webDriverModule instanceof WebDriver) {
-            throw new ApplicationException('"WebDriver" module not found');
-        }
 
         /** @var array<string, mixed> $percyModuleConfig */
         $percyModuleConfig = $this->_getConfig() ?? [];
 
-        $this->serviceContainer = new ServiceContainer($webDriverModule, $percyModuleConfig);
-        $this->configManagement = $this->serviceContainer->getConfigManagement();
-        $this->requestManagement = $this->serviceContainer->getRequestManagement();
-        $this->environmentProvider = $this->serviceContainer->getEnvironmentProvider();
+        $serviceContainer = new ServiceContainer($webDriverModule, $percyModuleConfig);
 
+        $this->configManagement = $serviceContainer->getConfigManagement();
+        $this->requestManagement = $serviceContainer->getRequestManagement();
+        $this->processManagement = $serviceContainer->getProcessManagement();
+        $this->createSnapshot = $serviceContainer->getCreateSnapshot();
+        $this->environmentProvider = $serviceContainer->getEnvironmentProvider();
         $this->webDriver = $webDriverModule;
-        $this->percyCliJs = file_get_contents(
-            $this->serviceContainer->getConfigManagement()->getPercyCliBrowserJsPath()
-        ) ?: null;
     }
 
     /**
@@ -94,6 +98,7 @@ class Percy extends Module
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
      * @throws \tr33m4n\CodeceptionModulePercyEnvironment\Exception\EnvironmentException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
@@ -101,28 +106,24 @@ class Percy extends Module
         string $name,
         array $snapshotConfig = []
     ): void {
-        /**
-         * As we're not "constructing" the class in a traditional sense, static analysis doesn't rule out the
-         * possibility that this method could be called before `_initialize`. Check all required class properties and
-         * ensure they are not "falsey"
-         */
-        if (!$this->percyCliJs || !$this->webDriver || !$this->webDriver->webDriver || !$this->serviceContainer || !$this->configManagement || !$this->environmentProvider) {
+        // If the remote web driver doesn't exist, return
+        if (!$this->webDriver->webDriver) {
             return;
         }
 
         // Add Percy CLI JS to page
-        $this->webDriver->executeJS($this->percyCliJs);
+        $this->webDriver->executeJS($this->configManagement->getPercyCliBrowserJs());
 
         /** @var string $domSnapshot */
         $domSnapshot = $this->webDriver->executeJS(
             sprintf('return PercyDOM.serialize(%s)', $this->configManagement->getSerializeConfig())
         );
 
-        RequestManagement::addPayload(
+        $this->requestManagement->addPayload(
             Payload::from(array_merge($this->configManagement->getSnapshotConfig(), $snapshotConfig))
                 ->withName($name)
                 ->withUrl($this->webDriver->webDriver->getCurrentURL())
-                ->withDomSnapshot($domSnapshot)
+                ->withDomSnapshot($this->createSnapshot->execute($domSnapshot))
                 ->withClientInfo($this->environmentProvider->getClientInfo())
                 ->withEnvironmentInfo($this->environmentProvider->getEnvironmentInfo())
         );
@@ -137,14 +138,14 @@ class Percy extends Module
      */
     public function _afterSuite(): void
     {
-        if (!RequestManagement::hasPayloads()) {
+        if (!$this->requestManagement->hasPayloads()) {
             return;
         }
 
         $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots..');
 
         try {
-            RequestManagement::sendRequest();
+            $this->requestManagement->sendRequest();
         } catch (Exception $exception) {
             $this->debugConnectionError($exception);
         }
@@ -163,7 +164,7 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail): void
     {
-        RequestManagement::resetRequest();
+        $this->requestManagement->resetRequest();
     }
 
     /**
@@ -180,12 +181,12 @@ class Percy extends Module
         );
 
         try {
-            ProcessManagement::stopPercySnapshotServer();
+            $this->processManagement->stopPercySnapshotServer();
         } catch (RuntimeException $exception) {
             // Fail silently if the process is not running
         }
 
-        if ($this->configManagement && !$this->configManagement->shouldThrowOnAdapterError()) {
+        if (!$this->configManagement->shouldThrowOnAdapterError()) {
             return;
         }
 

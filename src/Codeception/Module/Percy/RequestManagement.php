@@ -11,7 +11,7 @@ class RequestManagement
 {
     private ConfigManagement $configManagement;
 
-    private SnapshotManagement $snapshotManagement;
+    private CleanSnapshots $cleanSnapshots;
 
     private ProcessManagement $processManagement;
 
@@ -26,18 +26,18 @@ class RequestManagement
      * RequestManagement constructor.
      *
      * @param \Codeception\Module\Percy\ConfigManagement         $configManagement
-     * @param \Codeception\Module\Percy\SnapshotManagement       $snapshotManagement
+     * @param \Codeception\Module\Percy\CleanSnapshots           $cleanSnapshots
      * @param \Codeception\Module\Percy\ProcessManagement        $processManagement
      * @param \Codeception\Module\Percy\Exchange\ClientInterface $client
      */
     public function __construct(
         ConfigManagement $configManagement,
-        SnapshotManagement $snapshotManagement,
+        CleanSnapshots $cleanSnapshots,
         ProcessManagement $processManagement,
         ClientInterface $client
     ) {
         $this->configManagement = $configManagement;
-        $this->snapshotManagement = $snapshotManagement;
+        $this->cleanSnapshots = $cleanSnapshots;
         $this->processManagement = $processManagement;
         $this->client = $client;
     }
@@ -96,6 +96,6 @@ class RequestManagement
     public function resetRequest(): void
     {
         $this->payloads = [];
-        $this->snapshotManagement->clean();
+        $this->cleanSnapshots->execute();
     }
 }

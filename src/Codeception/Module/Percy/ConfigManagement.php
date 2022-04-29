@@ -66,6 +66,22 @@ class ConfigManagement
     }
 
     /**
+     * Get Percy CLI browser JS
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @return string
+     */
+    public function getPercyCliBrowserJs(): string
+    {
+        $browserJs = file_get_contents($this->getPercyCliBrowserJsPath());
+        if (!$browserJs) {
+            throw new ConfigException('Unable to resolve browser JS');
+        }
+
+        return $browserJs;
+    }
+
+    /**
      * Get snapshot base URL
      *
      * @throws \Codeception\Module\Percy\Exception\ConfigException

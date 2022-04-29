@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy;
 
 use Codeception\Module\Percy;
+use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
+use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
+use Codeception\Module\Percy\Exchange\Client;
+use Codeception\Module\Percy\Exchange\ClientInterface;
 use Codeception\Module\WebDriver;
 use CzProject\GitPhp\Git;
 use OndraM\CiDetector\Env as EnvHelper;
@@ -194,9 +198,75 @@ final class ServiceContainer
         return $this->resolveService(ConfigManagement::class, [$this->moduleConfig]);
     }
 
+    /**
+     * Get create snapshot
+     *
+     * @return \Codeception\Module\Percy\CreateSnapshot
+     */
+    public function getCreateSnapshot(): CreateSnapshot
+    {
+        return $this->resolveService(CreateSnapshot::class);
+    }
+
+    /**
+     * Get clean snapshots
+     *
+     * @return \Codeception\Module\Percy\CleanSnapshots
+     */
+    public function getCleanSnapshots(): CleanSnapshots
+    {
+        return $this->resolveService(CleanSnapshots::class, [$this->getConfigManagement()]);
+    }
+
+    /**
+     * Get process management
+     *
+     * @return \Codeception\Module\Percy\ProcessManagement
+     */
+    public function getProcessManagement(): ProcessManagement
+    {
+        return $this->resolveService(ProcessManagement::class, [$this->getConfigManagement()]);
+    }
+
+    /**
+     * Get adapter
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
+     */
+    public function getAdapter(): AdapterInterface
+    {
+        return $this->resolveService(CurlAdapter::class, [$this->getConfigManagement()->getSnapshotBaseUrl()]);
+    }
+
+    /**
+     * Get client
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @return \Codeception\Module\Percy\Exchange\ClientInterface
+     */
+    public function getClient(): ClientInterface
+    {
+        return $this->resolveService(Client::class, [$this->getAdapter()]);
+    }
+
+    /**
+     * Get request management
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @return \Codeception\Module\Percy\RequestManagement
+     */
     public function getRequestManagement(): RequestManagement
     {
-        return $this->resolveService(RequestManagement::class);
+        return $this->resolveService(
+            RequestManagement::class,
+            [
+                $this->getConfigManagement(),
+                $this->getCleanSnapshots(),
+                $this->getProcessManagement(),
+                $this->getClient()
+            ]
+        );
     }
 
     /**
