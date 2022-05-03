@@ -191,6 +191,16 @@ class ConfigManagement
     }
 
     /**
+     * Check if we should be collecting snapshots, rather than sending
+     *
+     * @return bool
+     */
+    public function shouldCollectOnly(): bool
+    {
+        return (bool) $this->get('collectOnly');
+    }
+
+    /**
      * Validate file path
      *
      * @throws \Codeception\Module\Percy\Exception\ConfigException

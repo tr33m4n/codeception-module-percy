@@ -46,7 +46,8 @@ class Percy extends Module
         ],
         'snapshotServerTimeout' => null,
         'throwOnAdapterError' => false,
-        'instanceId' => null
+        'instanceId' => null,
+        'collectOnly' => false
     ];
 
     private ConfigManagement $configManagement;
@@ -133,7 +134,13 @@ class Percy extends Module
      */
     public function _afterSuite(): void
     {
-        $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots..');
+        if ($this->configManagement->shouldCollectOnly()) {
+            $this->debugSection(self::NAMESPACE, 'All snapshots collected!');
+
+            return;
+        }
+
+        $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots...');
 
         try {
             $this->snapshotManagement->sendAll();
