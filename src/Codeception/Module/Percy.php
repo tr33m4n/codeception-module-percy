@@ -71,10 +71,11 @@ class Percy extends Module
     /**
      * Take snapshot of DOM and send to https://percy.io
      *
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
      * @throws \tr33m4n\CodeceptionModulePercyEnvironment\Exception\EnvironmentException
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
@@ -82,11 +83,6 @@ class Percy extends Module
         string $name,
         array $snapshotConfig = []
     ): void {
-        // If the remote web driver doesn't exist, return
-        if (null === $this->webDriver->webDriver) {
-            return;
-        }
-
         // Add Percy CLI JS to page
         $this->webDriver->executeJS($this->configManagement->getPercyCliBrowserJs());
 
@@ -98,7 +94,7 @@ class Percy extends Module
         $this->snapshotManagement->createSnapshot(
             $domString,
             $name,
-            $this->webDriver->webDriver->getCurrentURL(),
+            $this->webDriver->_getCurrentUri(),
             $this->environmentProvider->getClientInfo(),
             $this->environmentProvider->getEnvironmentInfo(),
             array_merge($this->configManagement->getSnapshotConfig(), $snapshotConfig)

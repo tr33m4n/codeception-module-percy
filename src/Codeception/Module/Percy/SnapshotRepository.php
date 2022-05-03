@@ -68,14 +68,14 @@ class SnapshotRepository
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
-     * @param string $snapshotFile
+     * @param string $snapshotFilePath
      * @return \Codeception\Module\Percy\Snapshot
      */
-    public function load(string $snapshotFile): Snapshot
+    public function load(string $snapshotFilePath): Snapshot
     {
-        $snapshotFileContents = file_get_contents($snapshotFile);
+        $snapshotFileContents = file_get_contents($snapshotFilePath);
         if (!$snapshotFileContents) {
-            throw new StorageException(sprintf('Unable to load the snapshot file "%s"', $snapshotFile));
+            throw new StorageException(sprintf('Unable to load the snapshot file "%s"', $snapshotFilePath));
         }
 
         /** @var array<string, string> $decodedSnapshotFileContents */
