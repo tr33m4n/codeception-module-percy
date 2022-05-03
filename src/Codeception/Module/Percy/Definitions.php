@@ -21,10 +21,10 @@ final class Definitions
             ],
             'minHeight' => 1024
         ],
+        'collectOnly' => false,
         'snapshotServerTimeout' => null,
         'snapshotServerPort' => 5338,
         'throwOnAdapterError' => false,
-        'instanceId' => null,
-        'collectOnly' => false
+        'instanceId' => null
     ];
 }
