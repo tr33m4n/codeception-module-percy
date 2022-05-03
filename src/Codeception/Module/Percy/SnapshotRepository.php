@@ -11,16 +11,21 @@ class SnapshotRepository
 {
     public const STORAGE_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s_%s.json';
 
+    private Serializer $serializer;
+
     private string $instanceId;
 
     /**
      * SnapshotRepository constructor.
      *
-     * @param string|null $instanceId
+     * @param \Codeception\Module\Percy\Serializer $serializer
+     * @param string|null                          $instanceId
      */
     public function __construct(
+        Serializer $serializer,
         ?string $instanceId = null
     ) {
+        $this->serializer = $serializer;
         // Ensure we're only managing snapshots created by this test run by prepending with an "instance ID"
         $this->instanceId = $instanceId ?? (string) Uuid::uuid4();
     }
@@ -52,7 +57,7 @@ class SnapshotRepository
             chmod($fileDirectory, 0777);
         }
 
-        $writeResults = file_put_contents($filePath, json_encode($snapshot, JSON_THROW_ON_ERROR));
+        $writeResults = file_put_contents($filePath, $this->serializer->serialize($snapshot));
         if (!$writeResults) {
             throw new StorageException('Something went wrong when writing the DOM string');
         }
@@ -74,7 +79,7 @@ class SnapshotRepository
         }
 
         /** @var array<string, string> $decodedSnapshotFileContents */
-        $decodedSnapshotFileContents = (array) json_decode($snapshotFileContents, true, 512, JSON_THROW_ON_ERROR);
+        $decodedSnapshotFileContents = $this->serializer->unserialize($snapshotFileContents);
 
         return Snapshot::hydrate($decodedSnapshotFileContents);
     }

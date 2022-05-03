@@ -189,13 +189,23 @@ final class ServiceContainer
     }
 
     /**
+     * Get serializer
+     *
+     * @return \Codeception\Module\Percy\Serializer
+     */
+    public function getSerializer(): Serializer
+    {
+        return $this->resolveService(Serializer::class);
+    }
+
+    /**
      * Get config management
      *
      * @return \Codeception\Module\Percy\ConfigManagement
      */
     public function getConfigManagement(): ConfigManagement
     {
-        return $this->resolveService(ConfigManagement::class, [$this->moduleConfig]);
+        return $this->resolveService(ConfigManagement::class, [$this->getSerializer(), $this->moduleConfig]);
     }
 
     /**
@@ -237,7 +247,10 @@ final class ServiceContainer
      */
     public function getSnapshotRepository(): SnapshotRepository
     {
-        return $this->resolveService(SnapshotRepository::class, [$this->getConfigManagement()->getInstanceId()]);
+        return $this->resolveService(
+            SnapshotRepository::class,
+            [$this->getSerializer(), $this->getConfigManagement()->getInstanceId()]
+        );
     }
 
     /**

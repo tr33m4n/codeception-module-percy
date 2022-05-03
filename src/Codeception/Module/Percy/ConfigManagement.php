@@ -8,6 +8,8 @@ use Codeception\Module\Percy\Exception\ConfigException;
 
 class ConfigManagement
 {
+    private Serializer $serializer;
+
     /**
      * @var array<string, mixed>
      */
@@ -16,11 +18,14 @@ class ConfigManagement
     /**
      * ConfigManagement constructor.
      *
-     * @param array<string, mixed> $config
+     * @param \Codeception\Module\Percy\Serializer $serializer
+     * @param array<string, mixed>                 $config
      */
     public function __construct(
+        Serializer $serializer,
         array $config = []
     ) {
+        $this->serializer = $serializer;
         $this->config = $config;
     }
 
@@ -167,7 +172,13 @@ class ConfigManagement
      */
     public function getSerializeConfig(): string
     {
-        return json_encode($this->get('serializeConfig'), JSON_THROW_ON_ERROR);
+        /** @var array<string, mixed> $serializedConfig */
+        $serializedConfig = $this->get('serializeConfig');
+        if (!is_array($serializedConfig)) {
+            return '';
+        }
+
+        return $this->serializer->serialize($serializedConfig);
     }
 
     /**
