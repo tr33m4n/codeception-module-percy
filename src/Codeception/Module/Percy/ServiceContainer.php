@@ -237,7 +237,7 @@ final class ServiceContainer
      */
     public function getSnapshotRepository(): SnapshotRepository
     {
-        return $this->resolveService(SnapshotRepository::class);
+        return $this->resolveService(SnapshotRepository::class, [$this->getConfigManagement()->getInstanceId()]);
     }
 
     /**

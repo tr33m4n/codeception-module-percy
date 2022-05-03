@@ -145,6 +145,21 @@ class ConfigManagement
     }
 
     /**
+     * Get instance ID
+     *
+     * @return string|null
+     */
+    public function getInstanceId(): ?string
+    {
+        $instanceId = $this->get('instanceId');
+        if (!is_string($instanceId)) {
+            return null;
+        }
+
+        return $instanceId;
+    }
+
+    /**
      * Get serialize config
      *
      * @throws \JsonException

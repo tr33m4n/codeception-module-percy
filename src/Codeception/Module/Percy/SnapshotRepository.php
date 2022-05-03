@@ -9,7 +9,21 @@ use Ramsey\Uuid\Uuid;
 
 class SnapshotRepository
 {
-    public const STORAGE_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s.json';
+    public const STORAGE_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s_%s.json';
+
+    private string $instanceId;
+
+    /**
+     * SnapshotRepository constructor.
+     *
+     * @param string|null $instanceId
+     */
+    public function __construct(
+        string $instanceId = null
+    ) {
+        // Ensure we're only managing snapshots created by this test run by prepending with an "instance ID"
+        $this->instanceId = $instanceId ?? (string) Uuid::uuid4();
+    }
 
     /**
      * Save snapshot
@@ -25,7 +39,9 @@ class SnapshotRepository
             throw new StorageException('`codecept_output_dir` function is not available!');
         }
 
-        $filePath = codecept_output_dir(sprintf(self::STORAGE_FILE_PATTERN, Uuid::uuid4()->toString()));
+        $filePath = codecept_output_dir(
+            sprintf(self::STORAGE_FILE_PATTERN, $this->instanceId, (string) Uuid::uuid4())
+        );
 
         $fileDirectory = dirname($filePath);
         if (!file_exists($fileDirectory)) {
@@ -108,6 +124,6 @@ class SnapshotRepository
      */
     private function getSnapshotFilePaths(): array
     {
-        return glob(codecept_output_dir(sprintf(self::STORAGE_FILE_PATTERN, '*'))) ?: [];
+        return glob(codecept_output_dir(sprintf(self::STORAGE_FILE_PATTERN, $this->instanceId, '*'))) ?: [];
     }
 }

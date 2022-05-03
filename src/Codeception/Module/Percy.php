@@ -45,7 +45,8 @@ class Percy extends Module
             'minHeight' => 1024
         ],
         'snapshotServerTimeout' => null,
-        'throwOnAdapterError' => false
+        'throwOnAdapterError' => false,
+        'instanceId' => null
     ];
 
     private ConfigManagement $configManagement;
