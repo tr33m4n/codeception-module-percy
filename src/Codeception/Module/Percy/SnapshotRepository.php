@@ -94,9 +94,10 @@ class SnapshotRepository
      */
     public function loadAll(string $instanceId = null): array
     {
-        return array_map(function (string $snapshotFile): Snapshot {
-            return $this->load($snapshotFile);
-        }, $this->getSnapshotFilePaths($instanceId));
+        return array_map(
+            fn (string $snapshotFile): Snapshot => $this->load($snapshotFile),
+            $this->getSnapshotFilePaths($instanceId)
+        );
     }
 
     /**

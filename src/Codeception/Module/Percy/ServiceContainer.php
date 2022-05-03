@@ -177,7 +177,7 @@ final class ServiceContainer
      */
     public function getEnvironmentProvider(): EnvironmentProviderInterface
     {
-        if (null === $this->webDriver) {
+        if (!$this->webDriver instanceof WebDriver) {
             throw new ContainerException('Web driver has not been configured');
         }
 
