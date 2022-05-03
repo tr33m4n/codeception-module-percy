@@ -120,7 +120,7 @@ class Snapshot implements JsonSerializable
      */
     public static function hydrate(array $snapshotData): Snapshot
     {
-        if (count(array_intersect_key($snapshotData, self::REQUIRED_KEYS)) !== count(self::REQUIRED_KEYS)) {
+        if (count(array_intersect_key($snapshotData, array_flip(self::REQUIRED_KEYS))) !== count(self::REQUIRED_KEYS)) {
             throw new InvalidArgumentException('Missing required snapshot fields');
         }
 
@@ -130,7 +130,7 @@ class Snapshot implements JsonSerializable
             $snapshotData[self::URL],
             $snapshotData[self::CLIENT_INFO],
             $snapshotData[self::ENVIRONMENT_INFO],
-            array_diff_key($snapshotData, self::REQUIRED_KEYS)
+            array_diff_key($snapshotData, array_flip(self::REQUIRED_KEYS))
         );
     }
 

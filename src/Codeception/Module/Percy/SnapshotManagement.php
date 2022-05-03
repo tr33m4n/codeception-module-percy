@@ -88,6 +88,7 @@ class SnapshotManagement
      * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
+     * @param string|null $instanceId
      */
     public function sendInstance(string $instanceId = null): void
     {
