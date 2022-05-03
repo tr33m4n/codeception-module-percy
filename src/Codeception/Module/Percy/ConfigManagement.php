@@ -87,39 +87,6 @@ class ConfigManagement
     }
 
     /**
-     * Get snapshot base URL
-     *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return string
-     */
-    public function getSnapshotBaseUrl(): string
-    {
-        /** @var string $snapshotBaseUrl */
-        $snapshotBaseUrl = $this->get('snapshotBaseUrl');
-        if (!filter_var($snapshotBaseUrl, FILTER_VALIDATE_URL)) {
-            throw new ConfigException('Snapshot base URL is not a valid URL');
-        }
-
-        return $snapshotBaseUrl;
-    }
-
-    /**
-     * Get snapshot path
-     *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return string
-     */
-    public function getSnapshotPath(): string
-    {
-        $snapshotPath = $this->get('snapshotPath');
-        if (!is_string($snapshotPath)) {
-            throw new ConfigException('Snapshot path is not a string');
-        }
-
-        return $snapshotPath;
-    }
-
-    /**
      * Get snapshot server timeout
      *
      * @return float|null
@@ -132,6 +99,39 @@ class ConfigManagement
         }
 
         return (float) $snapshotServerTimeout;
+    }
+
+    /**
+     * Get snapshot server port
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @return int
+     */
+    public function getSnapshotServerPort(): int
+    {
+        /** @var int $snapshotServerPort */
+        $snapshotServerPort = $this->get('snapshotServerPort');
+        if (!is_int($snapshotServerPort)) {
+            throw new ConfigException(sprintf('"%s" is an invalid port number', $snapshotServerPort));
+        }
+
+        return $snapshotServerPort;
+    }
+
+    /**
+     * Get snapshot server URI
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @return string
+     */
+    public function getSnapshotServerUri(): string
+    {
+        $snapshotServerUri = sprintf('http://localhost:%s/percy/snapshot', $this->getSnapshotServerPort());
+        if (!filter_var($snapshotServerUri, FILTER_VALIDATE_URL)) {
+            throw new ConfigException(sprintf('Snapshot URI "%s" is not valid', $snapshotServerUri));
+        }
+
+        return $snapshotServerUri;
     }
 
     /**

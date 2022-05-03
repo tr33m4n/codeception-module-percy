@@ -41,11 +41,14 @@ class ProcessManagement
         $this->process = new Process([
             $this->resolveNodePath(),
             $this->configManagement->getPercyCliExecutablePath(),
-            'exec:start'
+            'exec:start',
+            '--port',
+            $this->configManagement->getSnapshotServerPort()
         ]);
 
-        $this->process->setTimeout($this->configManagement->getSnapshotServerTimeout());
-        $this->process->start();
+        $this->process
+            ->setTimeout($this->configManagement->getSnapshotServerTimeout())
+            ->start();
 
         // Wait until server is ready
         $this->process->waitUntil(fn (string $type, string $output): bool => $this->hasServerStarted($output));

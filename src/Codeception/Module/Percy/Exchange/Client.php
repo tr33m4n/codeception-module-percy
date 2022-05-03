@@ -27,15 +27,15 @@ class Client implements ClientInterface
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @throws \JsonException
-     * @param string                             $path
+     * @param string                             $uri
      * @param \Codeception\Module\Percy\Snapshot $snapshot
      * @return string
      */
-    public function post(string $path, Snapshot $snapshot): string
+    public function post(string $uri, Snapshot $snapshot): string
     {
         $payloadAsString = json_encode($snapshot, JSON_THROW_ON_ERROR);
 
-        return $this->adapter->setPath($path)
+        return $this->adapter->setUri($uri)
             ->setPayload($payloadAsString)
             ->setHeaders([
                 'Content-Type: application/json',

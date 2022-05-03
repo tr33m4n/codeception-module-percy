@@ -32,8 +32,6 @@ class Percy extends Module
      * @var array<string, mixed>
      */
     protected $config = [
-        'snapshotBaseUrl' => 'http://localhost:5338',
-        'snapshotPath' => 'percy/snapshot',
         'serializeConfig' => [
             'enableJavaScript' => true
         ],
@@ -45,6 +43,7 @@ class Percy extends Module
             'minHeight' => 1024
         ],
         'snapshotServerTimeout' => null,
+        'snapshotServerPort' => 5338,
         'throwOnAdapterError' => false,
         'instanceId' => null,
         'collectOnly' => false

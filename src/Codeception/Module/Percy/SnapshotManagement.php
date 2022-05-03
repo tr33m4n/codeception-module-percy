@@ -94,7 +94,7 @@ class SnapshotManagement
         foreach ($snapshots as $snapshot) {
             $this->debug(sprintf('Sending snapshot "%s"', $snapshot->getName()));
 
-            $this->client->post($this->configManagement->getSnapshotPath(), $snapshot);
+            $this->client->post($this->configManagement->getSnapshotServerUri(), $snapshot);
         }
 
         $this->processManagement->stopPercySnapshotServer();

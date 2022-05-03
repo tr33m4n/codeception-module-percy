@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy;
 
 use Codeception\Module\Percy;
+use Codeception\Module\Percy\Exception\ContainerException;
 use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
 use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
 use Codeception\Module\Percy\Exchange\Client;
@@ -26,7 +27,7 @@ final class ServiceContainer
 {
     private ServiceFactory $serviceFactory;
 
-    private WebDriver $webDriver;
+    private ?WebDriver $webDriver;
 
     /**
      * @var array<string, mixed>
@@ -41,11 +42,11 @@ final class ServiceContainer
     /**
      * ServiceContainer constructor.
      *
-     * @param \Codeception\Module\WebDriver $webDriver
-     * @param array<string, mixed>          $moduleConfig
+     * @param \Codeception\Module\WebDriver|null $webDriver
+     * @param array<string, mixed>               $moduleConfig
      */
     public function __construct(
-        WebDriver $webDriver,
+        ?WebDriver $webDriver,
         array $moduleConfig = []
     ) {
         $this->serviceFactory = new ServiceFactory();
@@ -172,10 +173,15 @@ final class ServiceContainer
     /**
      * Get environment provider
      *
+     * @throws \Codeception\Module\Percy\Exception\ContainerException
      * @return \tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProviderInterface
      */
     public function getEnvironmentProvider(): EnvironmentProviderInterface
     {
+        if (null === $this->webDriver) {
+            throw new ContainerException('Web driver has not been configured');
+        }
+
         return $this->resolveService(
             EnvironmentProvider::class,
             [
@@ -221,18 +227,16 @@ final class ServiceContainer
     /**
      * Get adapter
      *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
     public function getAdapter(): AdapterInterface
     {
-        return $this->resolveService(CurlAdapter::class, [$this->getConfigManagement()->getSnapshotBaseUrl()]);
+        return $this->resolveService(CurlAdapter::class);
     }
 
     /**
      * Get client
      *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @return \Codeception\Module\Percy\Exchange\ClientInterface
      */
     public function getClient(): ClientInterface
@@ -256,7 +260,6 @@ final class ServiceContainer
     /**
      * Get snapshot management
      *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @return \Codeception\Module\Percy\SnapshotManagement
      */
     public function getSnapshotManagement(): SnapshotManagement
