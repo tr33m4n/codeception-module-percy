@@ -74,18 +74,20 @@ class SnapshotManagement
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
      */
     public function sendAll(): void
     {
-        $snapshots = $this->snapshotRepository->loadAll();
-        if (empty($snapshots)) {
+        // Passing `*` will load all snapshots from all runs, not just the current one
+        $snapshots = $this->snapshotRepository->loadAll('*');
+        if ([] === $snapshots) {
             $this->debug('No snapshots to send!');
 
             return;
         }
 
-        $this->debug('Sending Percy snapshots...');
+        $this->debug(sprintf('Sending %s Percy snapshots...', count($snapshots)));
 
         $this->processManagement->startPercySnapshotServer();
 

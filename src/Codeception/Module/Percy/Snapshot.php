@@ -28,13 +28,24 @@ class Snapshot implements JsonSerializable
     public const WIDTHS = 'widths';
 
     /**
-     * Array of keys that can be set from config
+     * Array of keys that are optional
      */
-    public const PUBLIC_KEYS = [
+    public const OPTIONAL_KEYS = [
         self::PERCY_CSS,
         self::MIN_HEIGHT,
         self::ENABLE_JAVASCRIPT,
         self::WIDTHS
+    ];
+
+    /**
+     * Array of required keys
+     */
+    public const REQUIRED_KEYS = [
+        self::DOM_SNAPSHOT,
+        self::NAME,
+        self::URL,
+        self::CLIENT_INFO,
+        self::ENVIRONMENT_INFO
     ];
 
     private string $name;
@@ -89,7 +100,7 @@ class Snapshot implements JsonSerializable
         return array_reduce(
             array_keys($additionalConfig),
             static function (Snapshot $snapshot, string $configKey) use ($additionalConfig): Snapshot {
-                if (!in_array($configKey, self::PUBLIC_KEYS)) {
+                if (!in_array($configKey, self::OPTIONAL_KEYS)) {
                     throw new InvalidArgumentException(
                         sprintf('"%s" cannot be set through config', $configKey)
                     );
@@ -98,6 +109,28 @@ class Snapshot implements JsonSerializable
                 return $snapshot->withConfigValue($configKey, $additionalConfig[$configKey]);
             },
             $snapshot
+        );
+    }
+
+    /**
+     * Hydrate snapshot from snapshot data
+     *
+     * @param array<string, string> $snapshotData
+     * @return \Codeception\Module\Percy\Snapshot
+     */
+    public static function hydrate(array $snapshotData): Snapshot
+    {
+        if (count(array_intersect_key($snapshotData, self::REQUIRED_KEYS)) !== count(self::REQUIRED_KEYS)) {
+            throw new InvalidArgumentException('Missing required snapshot fields');
+        }
+
+        return self::create(
+            $snapshotData[self::DOM_SNAPSHOT],
+            $snapshotData[self::NAME],
+            $snapshotData[self::URL],
+            $snapshotData[self::CLIENT_INFO],
+            $snapshotData[self::ENVIRONMENT_INFO],
+            array_diff_key($snapshotData, self::REQUIRED_KEYS)
         );
     }
 

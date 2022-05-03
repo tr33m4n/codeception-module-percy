@@ -19,7 +19,7 @@ class SnapshotRepository
      * @param string|null $instanceId
      */
     public function __construct(
-        string $instanceId = null
+        ?string $instanceId = null
     ) {
         // Ensure we're only managing snapshots created by this test run by prepending with an "instance ID"
         $this->instanceId = $instanceId ?? (string) Uuid::uuid4();
@@ -61,58 +61,47 @@ class SnapshotRepository
     /**
      * Load snapshot from file
      *
+     * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
      * @param string $snapshotFile
      * @return \Codeception\Module\Percy\Snapshot
      */
     public function load(string $snapshotFile): Snapshot
     {
-        /** @var array<string, string> $decodedSnapshotFile */
-        $decodedSnapshotFile = (array) json_decode(
-            file_get_contents($snapshotFile) ?: '',
-            true,
-            512,
-            JSON_THROW_ON_ERROR
-        );
+        $snapshotFileContents = file_get_contents($snapshotFile);
+        if (!$snapshotFileContents) {
+            throw new StorageException(sprintf('Unable to load the snapshot file "%s"', $snapshotFile));
+        }
 
-        return Snapshot::create(
-            $decodedSnapshotFile[Snapshot::DOM_SNAPSHOT],
-            $decodedSnapshotFile[Snapshot::NAME],
-            $decodedSnapshotFile[Snapshot::URL],
-            $decodedSnapshotFile[Snapshot::CLIENT_INFO],
-            $decodedSnapshotFile[Snapshot::ENVIRONMENT_INFO],
-            array_diff_key(
-                $decodedSnapshotFile,
-                [
-                    Snapshot::DOM_SNAPSHOT,
-                    Snapshot::NAME,
-                    Snapshot::URL,
-                    Snapshot::CLIENT_INFO,
-                    Snapshot::ENVIRONMENT_INFO
-                ]
-            )
-        );
+        /** @var array<string, string> $decodedSnapshotFileContents */
+        $decodedSnapshotFileContents = (array) json_decode($snapshotFileContents, true, 512, JSON_THROW_ON_ERROR);
+
+        return Snapshot::hydrate($decodedSnapshotFileContents);
     }
 
     /**
      * Load all snapshots
      *
+     * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
+     * @param string|null $instanceId
      * @return \Codeception\Module\Percy\Snapshot[]
      */
-    public function loadAll(): array
+    public function loadAll(string $instanceId = null): array
     {
         return array_map(function (string $snapshotFile): Snapshot {
             return $this->load($snapshotFile);
-        }, $this->getSnapshotFilePaths());
+        }, $this->getSnapshotFilePaths($instanceId));
     }
 
     /**
      * Delete all snapshots
+     *
+     * @param string|null $instanceId
      */
-    public function deleteAll(): void
+    public function deleteAll(string $instanceId = null): void
     {
-        foreach ($this->getSnapshotFilePaths() as $snapshotFile) {
+        foreach ($this->getSnapshotFilePaths($instanceId) as $snapshotFile) {
             unlink($snapshotFile);
         }
     }
@@ -120,10 +109,19 @@ class SnapshotRepository
     /**
      * Get snapshot file paths
      *
+     * @param string|null $instanceId
      * @return string[]
      */
-    private function getSnapshotFilePaths(): array
+    private function getSnapshotFilePaths(string $instanceId = null): array
     {
-        return glob(codecept_output_dir(sprintf(self::STORAGE_FILE_PATTERN, $this->instanceId, '*'))) ?: [];
+        return glob(
+            codecept_output_dir(
+                sprintf(
+                    self::STORAGE_FILE_PATTERN,
+                    $instanceId ?? $this->instanceId,
+                    '*'
+                )
+            )
+        ) ?: [];
     }
 }
