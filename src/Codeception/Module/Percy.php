@@ -140,15 +140,11 @@ class Percy extends Module
             return;
         }
 
-        $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots...');
-
         try {
             $this->snapshotManagement->sendAll();
         } catch (Exception $exception) {
             $this->debugConnectionError($exception);
         }
-
-        $this->debugSection(self::NAMESPACE, 'All snapshots sent!');
     }
 
     /**

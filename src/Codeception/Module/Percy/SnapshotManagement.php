@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
+use Codeception\Module\Percy;
 use Codeception\Module\Percy\Exchange\ClientInterface;
 
 class SnapshotManagement
@@ -79,18 +80,24 @@ class SnapshotManagement
     {
         $snapshots = $this->snapshotRepository->loadAll();
         if (empty($snapshots)) {
+            $this->debug('No snapshots to send!');
+
             return;
         }
+
+        $this->debug('Sending Percy snapshots...');
 
         $this->processManagement->startPercySnapshotServer();
 
         foreach ($snapshots as $snapshot) {
-            codecept_debug(sprintf('[Percy] Sending snapshot "%s"', $snapshot->getName()));
+            $this->debug(sprintf('Sending snapshot "%s"', $snapshot->getName()));
 
             $this->client->post($this->configManagement->getSnapshotPath(), $snapshot);
         }
 
         $this->processManagement->stopPercySnapshotServer();
+
+        $this->debug('All snapshots sent!');
     }
 
     /**
@@ -99,5 +106,15 @@ class SnapshotManagement
     public function reset(): void
     {
         $this->snapshotRepository->deleteAll();
+    }
+
+    /**
+     * Output debug message
+     *
+     * @param string $message
+     */
+    private function debug(string $message): void
+    {
+        codecept_debug(sprintf('[%s] %s', Percy::NAMESPACE, $message));
     }
 }
