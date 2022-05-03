@@ -83,6 +83,11 @@ class Percy extends Module
         string $name,
         array $snapshotConfig = []
     ): void {
+        // If the remote web driver doesn't exist, return
+        if (null === $this->webDriver->webDriver) {
+            return;
+        }
+
         // Add Percy CLI JS to page
         $this->webDriver->executeJS($this->configManagement->getPercyCliBrowserJs());
 
@@ -94,7 +99,7 @@ class Percy extends Module
         $this->snapshotManagement->createSnapshot(
             $domString,
             $name,
-            $this->webDriver->_getCurrentUri(),
+            $this->webDriver->webDriver->getCurrentURL(),
             $this->environmentProvider->getClientInfo(),
             $this->environmentProvider->getEnvironmentInfo(),
             array_merge($this->configManagement->getSnapshotConfig(), $snapshotConfig)
