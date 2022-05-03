@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy\Exchange;
 
 use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
+use Codeception\Module\Percy\Snapshot;
 
 class Client implements ClientInterface
 {
@@ -22,11 +23,17 @@ class Client implements ClientInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
+     *
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @throws \JsonException
+     * @param string                             $path
+     * @param \Codeception\Module\Percy\Snapshot $snapshot
+     * @return string
      */
-    public function post(string $path, Payload $payload = null): string
+    public function post(string $path, Snapshot $snapshot): string
     {
-        $payloadAsString = (string) $payload;
+        $payloadAsString = json_encode($snapshot, JSON_THROW_ON_ERROR);
 
         return $this->adapter->setPath($path)
             ->setPayload($payloadAsString)

@@ -7,11 +7,9 @@ namespace Codeception\Module;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
 use Codeception\Module\Percy\ConfigManagement;
-use Codeception\Module\Percy\CreateSnapshot;
-use Codeception\Module\Percy\Exchange\Payload;
 use Codeception\Module\Percy\ProcessManagement;
-use Codeception\Module\Percy\RequestManagement;
 use Codeception\Module\Percy\ServiceContainer;
+use Codeception\Module\Percy\SnapshotManagement;
 use Codeception\TestInterface;
 use Exception;
 use Symfony\Component\Process\Exception\RuntimeException;
@@ -47,17 +45,14 @@ class Percy extends Module
             'minHeight' => 1024
         ],
         'snapshotServerTimeout' => null,
-        'throwOnAdapterError' => false,
-        'cleanSnapshotStorage' => false
+        'throwOnAdapterError' => false
     ];
 
     private ConfigManagement $configManagement;
 
-    private RequestManagement $requestManagement;
-
     private ProcessManagement $processManagement;
 
-    private CreateSnapshot $createSnapshot;
+    private SnapshotManagement $snapshotManagement;
 
     private EnvironmentProviderInterface $environmentProvider;
 
@@ -85,9 +80,8 @@ class Percy extends Module
         $serviceContainer = new ServiceContainer($webDriverModule, $percyModuleConfig);
 
         $this->configManagement = $serviceContainer->getConfigManagement();
-        $this->requestManagement = $serviceContainer->getRequestManagement();
         $this->processManagement = $serviceContainer->getProcessManagement();
-        $this->createSnapshot = $serviceContainer->getCreateSnapshot();
+        $this->snapshotManagement = $serviceContainer->getSnapshotManagement();
         $this->environmentProvider = $serviceContainer->getEnvironmentProvider();
         $this->webDriver = $webDriverModule;
     }
@@ -114,18 +108,18 @@ class Percy extends Module
         // Add Percy CLI JS to page
         $this->webDriver->executeJS($this->configManagement->getPercyCliBrowserJs());
 
-        /** @var string $domSnapshot */
-        $domSnapshot = $this->webDriver->executeJS(
+        /** @var string $domString */
+        $domString = $this->webDriver->executeJS(
             sprintf('return PercyDOM.serialize(%s)', $this->configManagement->getSerializeConfig())
         );
 
-        $this->requestManagement->addPayload(
-            Payload::from(array_merge($this->configManagement->getSnapshotConfig(), $snapshotConfig))
-                ->withName($name)
-                ->withUrl($this->webDriver->webDriver->getCurrentURL())
-                ->withDomSnapshot($this->createSnapshot->execute($domSnapshot))
-                ->withClientInfo($this->environmentProvider->getClientInfo())
-                ->withEnvironmentInfo($this->environmentProvider->getEnvironmentInfo())
+        $this->snapshotManagement->createSnapshot(
+            $domString,
+            $name,
+            $this->webDriver->webDriver->getCurrentURL(),
+            $this->environmentProvider->getClientInfo(),
+            $this->environmentProvider->getEnvironmentInfo(),
+            array_merge($this->configManagement->getSnapshotConfig(), $snapshotConfig)
         );
     }
 
@@ -138,14 +132,10 @@ class Percy extends Module
      */
     public function _afterSuite(): void
     {
-        if (!$this->requestManagement->hasPayloads()) {
-            return;
-        }
-
         $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots..');
 
         try {
-            $this->requestManagement->sendRequest();
+            $this->snapshotManagement->sendAll();
         } catch (Exception $exception) {
             $this->debugConnectionError($exception);
         }
@@ -164,7 +154,7 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail): void
     {
-        $this->requestManagement->resetRequest();
+        $this->snapshotManagement->reset();
     }
 
     /**

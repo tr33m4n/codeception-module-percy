@@ -34,6 +34,10 @@ class ProcessManagement
      */
     public function startPercySnapshotServer(): void
     {
+        if ($this->process instanceof Process && $this->process->isRunning()) {
+            return;
+        }
+
         $this->process = new Process([
             $this->resolveNodePath(),
             $this->configManagement->getPercyCliExecutablePath(),

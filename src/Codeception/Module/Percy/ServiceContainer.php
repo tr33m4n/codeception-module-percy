@@ -199,26 +199,6 @@ final class ServiceContainer
     }
 
     /**
-     * Get create snapshot
-     *
-     * @return \Codeception\Module\Percy\CreateSnapshot
-     */
-    public function getCreateSnapshot(): CreateSnapshot
-    {
-        return $this->resolveService(CreateSnapshot::class);
-    }
-
-    /**
-     * Get clean snapshots
-     *
-     * @return \Codeception\Module\Percy\CleanSnapshots
-     */
-    public function getCleanSnapshots(): CleanSnapshots
-    {
-        return $this->resolveService(CleanSnapshots::class, [$this->getConfigManagement()]);
-    }
-
-    /**
      * Get process management
      *
      * @return \Codeception\Module\Percy\ProcessManagement
@@ -251,18 +231,28 @@ final class ServiceContainer
     }
 
     /**
-     * Get request management
+     * Get snapshot repository
+     *
+     * @return \Codeception\Module\Percy\SnapshotRepository
+     */
+    public function getSnapshotRepository(): SnapshotRepository
+    {
+        return $this->resolveService(SnapshotRepository::class);
+    }
+
+    /**
+     * Get snapshot management
      *
      * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return \Codeception\Module\Percy\RequestManagement
+     * @return \Codeception\Module\Percy\SnapshotManagement
      */
-    public function getRequestManagement(): RequestManagement
+    public function getSnapshotManagement(): SnapshotManagement
     {
         return $this->resolveService(
-            RequestManagement::class,
+            SnapshotManagement::class,
             [
                 $this->getConfigManagement(),
-                $this->getCleanSnapshots(),
+                $this->getSnapshotRepository(),
                 $this->getProcessManagement(),
                 $this->getClient()
             ]
