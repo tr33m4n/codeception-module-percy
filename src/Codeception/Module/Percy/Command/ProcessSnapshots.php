@@ -66,8 +66,11 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-        Debug::setOutput(new Output([]));
+        // Codeception uses its own "output" when configuring the `debug` methods. Create a new instance
+        $codeceptionOutputInstance = new Output([]);
+
+        $io = new SymfonyStyle($input, $codeceptionOutputInstance);
+        Debug::setOutput($codeceptionOutputInstance);
 
         $this->snapshotManagement->sendAll();
         $this->snapshotManagement->resetAll();

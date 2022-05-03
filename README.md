@@ -56,7 +56,7 @@ The Percy integration runs automatically with the test suite but will need your 
 By default, the `node` executable used will be the one defined within the `PATH` of the user running the test suite. This can be overridden however, by setting the environment variable `PERCY_NODE_PATH` to your preferred location.
 ### Collect only
 In some advanced CI setups, it might make sense to collect all snapshots for multiple runs with different parameters and then send them a single time when all runs are complete. This can be achieved by setting the `collectOnly` config to `true`. Once all runs are complete, running the command `vendor/bin/codecept percy:process-snapshots`
-will then iterate all collected snapshots, send to Percy and then clean up the snapshot folder
+will then iterate all collected snapshots, send to Percy and then clean up the snapshot folder. The `percy:process-snapshots` command needs to be configured in the `codeception.yml` file, see the "Example Configuration" section
 ### Example Test
 ```php
 <?php
