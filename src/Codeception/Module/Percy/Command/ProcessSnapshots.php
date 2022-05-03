@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy\Command;
 
 use Codeception\CustomCommandInterface;
+use Codeception\Lib\Console\Output;
 use Codeception\Module\Percy\Definitions;
 use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Module\Percy\SnapshotManagement;
+use Codeception\Util\Debug;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -65,6 +67,7 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        Debug::setOutput(new Output([]));
 
         $this->snapshotManagement->sendAll();
         $this->snapshotManagement->resetAll();
