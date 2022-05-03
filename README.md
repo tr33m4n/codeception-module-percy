@@ -73,12 +73,12 @@ class FirstCest
 `$I->takeAPercySnapshot` can optionally be passed an array of additional arguments to override the global settings for `percyCSS`, `minHeight`, `enableJavaScript` and `widths` on the fly, for example:
 ```php
 
-use Codeception\Module\Percy\Exchange\Payload;
+use Codeception\Module\Percy\Snapshot;
 
 $I->takeAPercySnapshot('My snapshot name', [
-    Payload::WIDTHS => [1024, 768, 320], // Browser breakpoint widths
-    Payload::MIN_HEIGHT => 1080, // Minimum height of the resulting snapshot
-    Payload::PERCY_CSS => 'iframe { display: none; }', // Percy specific CSS
-    Payload::ENABLE_JAVASCRIPT => true // Enable/disable JavaScript
+    Snapshot::WIDTHS => [1024, 768, 320], // Browser breakpoint widths
+    Snapshot::MIN_HEIGHT => 1080, // Minimum height of the resulting snapshot
+    Snapshot::PERCY_CSS => 'iframe { display: none; }', // Percy specific CSS
+    Snapshot::ENABLE_JAVASCRIPT => true // Enable/disable JavaScript
 ]);
 ```
