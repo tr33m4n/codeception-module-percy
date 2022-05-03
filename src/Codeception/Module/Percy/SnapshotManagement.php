@@ -78,8 +78,21 @@ class SnapshotManagement
      */
     public function sendAll(): void
     {
+        $this->sendInstance('*');
+    }
+
+    /**
+     * Send instance snapshots
+     *
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @throws \Codeception\Module\Percy\Exception\StorageException
+     * @throws \JsonException
+     */
+    public function sendInstance(string $instanceId = null): void
+    {
         // Passing `*` will load all snapshots from all runs, not just the current one
-        $snapshots = $this->snapshotRepository->loadAll('*');
+        $snapshots = $this->snapshotRepository->loadAll($instanceId);
         if ([] === $snapshots) {
             $this->debug('No snapshots to send!');
 
@@ -102,11 +115,21 @@ class SnapshotManagement
     }
 
     /**
-     * Reset
+     * Reset all
      */
-    public function reset(): void
+    public function resetAll(): void
     {
-        $this->snapshotRepository->deleteAll();
+        $this->resetInstance('*');
+    }
+
+    /**
+     * Reset instance
+     *
+     * @param string|null $instanceId
+     */
+    public function resetInstance(string $instanceId = null): void
+    {
+        $this->snapshotRepository->deleteAll($instanceId);
     }
 
     /**

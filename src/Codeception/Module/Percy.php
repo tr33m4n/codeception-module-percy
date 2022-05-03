@@ -121,7 +121,7 @@ class Percy extends Module
         }
 
         try {
-            $this->snapshotManagement->sendAll();
+            $this->snapshotManagement->sendInstance();
         } catch (Exception $exception) {
             $this->debugConnectionError($exception);
         }
@@ -138,7 +138,7 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail): void
     {
-        $this->snapshotManagement->reset();
+        $this->snapshotManagement->resetInstance();
     }
 
     /**

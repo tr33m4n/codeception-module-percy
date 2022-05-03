@@ -10,6 +10,8 @@ modules:
         - WebDriver
         - Percy
         - \Helper\Acceptance
+    extensions:
+        - Percy\Command\ProcessSnapshots
     config:
         WebDriver:
             url: 'http://localhost:8081/'
