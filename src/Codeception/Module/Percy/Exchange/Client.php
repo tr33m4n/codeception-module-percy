@@ -5,21 +5,27 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy\Exchange;
 
 use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
+use Codeception\Module\Percy\Serializer;
 use Codeception\Module\Percy\Snapshot;
 
 class Client implements ClientInterface
 {
     private AdapterInterface $adapter;
 
+    private Serializer $serializer;
+
     /**
      * Client constructor.
      *
      * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
+     * @param \Codeception\Module\Percy\Serializer                        $serializer
      */
     public function __construct(
-        AdapterInterface $adapter
+        AdapterInterface $adapter,
+        Serializer $serializer
     ) {
         $this->adapter = $adapter;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -33,7 +39,7 @@ class Client implements ClientInterface
      */
     public function post(string $uri, Snapshot $snapshot): string
     {
-        $payloadAsString = json_encode($snapshot, JSON_THROW_ON_ERROR);
+        $payloadAsString = $this->serializer->serialize($snapshot);
 
         return $this->adapter->setUri($uri)
             ->setPayload($payloadAsString)

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
-use Codeception\Module\Percy;
 use Codeception\Module\Percy\Exception\ContainerException;
 use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
 use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
@@ -189,7 +188,7 @@ final class ServiceContainer
                 $this->getGitEnvironment(),
                 $this->getPercyEnvironment(),
                 $this->webDriver,
-                Percy::PACKAGE_NAME
+                Definitions::PACKAGE_NAME
             ]
         );
     }
@@ -241,7 +240,7 @@ final class ServiceContainer
      */
     public function getClient(): ClientInterface
     {
-        return $this->resolveService(Client::class, [$this->getAdapter()]);
+        return $this->resolveService(Client::class, [$this->getAdapter(), $this->getSerializer()]);
     }
 
     /**

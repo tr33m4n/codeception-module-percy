@@ -7,6 +7,7 @@ namespace Codeception\Module;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
 use Codeception\Module\Percy\ConfigManagement;
+use Codeception\Module\Percy\Definitions;
 use Codeception\Module\Percy\ProcessManagement;
 use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Module\Percy\SnapshotManagement;
@@ -24,30 +25,10 @@ use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProviderInterface;
  */
 class Percy extends Module
 {
-    public const NAMESPACE = 'Percy';
-
-    public const PACKAGE_NAME = 'tr33m4n/codeception-module-percy';
-
     /**
      * @var array<string, mixed>
      */
-    protected $config = [
-        'serializeConfig' => [
-            'enableJavaScript' => true
-        ],
-        'snapshotConfig' => [
-            'widths' => [
-                375,
-                1280
-            ],
-            'minHeight' => 1024
-        ],
-        'snapshotServerTimeout' => null,
-        'snapshotServerPort' => 5338,
-        'throwOnAdapterError' => false,
-        'instanceId' => null,
-        'collectOnly' => false
-    ];
+    protected $config = Definitions::DEFAULT_CONFIG;
 
     private ConfigManagement $configManagement;
 
@@ -134,7 +115,7 @@ class Percy extends Module
     public function _afterSuite(): void
     {
         if ($this->configManagement->shouldCollectOnly()) {
-            $this->debugSection(self::NAMESPACE, 'All snapshots collected!');
+            $this->debugSection(Definitions::NAMESPACE, 'All snapshots collected!');
 
             return;
         }
@@ -169,7 +150,7 @@ class Percy extends Module
     private function debugConnectionError(Exception $exception): void
     {
         $this->debugSection(
-            self::NAMESPACE,
+            Definitions::NAMESPACE,
             [$exception->getMessage(), $exception->getTraceAsString()]
         );
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
-use Codeception\Module\Percy;
 use Codeception\Module\Percy\Exchange\ClientInterface;
 
 class SnapshotManagement
@@ -117,6 +116,6 @@ class SnapshotManagement
      */
     private function debug(string $message): void
     {
-        codecept_debug(sprintf('[%s] %s', Percy::NAMESPACE, $message));
+        codecept_debug(sprintf('[%s] %s', Definitions::NAMESPACE, $message));
     }
 }
