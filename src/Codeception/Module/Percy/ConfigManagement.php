@@ -8,6 +8,8 @@ use Codeception\Module\Percy\Exception\ConfigException;
 
 class ConfigManagement
 {
+    private Serializer $serializer;
+
     /**
      * @var array<string, mixed>
      */
@@ -16,11 +18,14 @@ class ConfigManagement
     /**
      * ConfigManagement constructor.
      *
-     * @param array<string, mixed> $config
+     * @param \Codeception\Module\Percy\Serializer $serializer
+     * @param array<string, mixed>                 $config
      */
     public function __construct(
+        Serializer $serializer,
         array $config = []
     ) {
+        $this->serializer = $serializer;
         $this->config = $config;
     }
 
@@ -82,39 +87,6 @@ class ConfigManagement
     }
 
     /**
-     * Get snapshot base URL
-     *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return string
-     */
-    public function getSnapshotBaseUrl(): string
-    {
-        /** @var string $snapshotBaseUrl */
-        $snapshotBaseUrl = $this->get('snapshotBaseUrl');
-        if (!filter_var($snapshotBaseUrl, FILTER_VALIDATE_URL)) {
-            throw new ConfigException('Snapshot base URL is not a valid URL');
-        }
-
-        return $snapshotBaseUrl;
-    }
-
-    /**
-     * Get snapshot path
-     *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return string
-     */
-    public function getSnapshotPath(): string
-    {
-        $snapshotPath = $this->get('snapshotPath');
-        if (!is_string($snapshotPath)) {
-            throw new ConfigException('Snapshot path is not a string');
-        }
-
-        return $snapshotPath;
-    }
-
-    /**
      * Get snapshot server timeout
      *
      * @return float|null
@@ -127,6 +99,39 @@ class ConfigManagement
         }
 
         return (float) $snapshotServerTimeout;
+    }
+
+    /**
+     * Get snapshot server port
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @return int
+     */
+    public function getSnapshotServerPort(): int
+    {
+        /** @var int $snapshotServerPort */
+        $snapshotServerPort = $this->get('snapshotServerPort');
+        if (!is_int($snapshotServerPort)) {
+            throw new ConfigException(sprintf('"%s" is an invalid port number', $snapshotServerPort));
+        }
+
+        return $snapshotServerPort;
+    }
+
+    /**
+     * Get snapshot server URI
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @return string
+     */
+    public function getSnapshotServerUri(): string
+    {
+        $snapshotServerUri = sprintf('http://localhost:%s/percy/snapshot', $this->getSnapshotServerPort());
+        if (!filter_var($snapshotServerUri, FILTER_VALIDATE_URL)) {
+            throw new ConfigException(sprintf('Snapshot URI "%s" is not valid', $snapshotServerUri));
+        }
+
+        return $snapshotServerUri;
     }
 
     /**
@@ -145,6 +150,21 @@ class ConfigManagement
     }
 
     /**
+     * Get instance ID
+     *
+     * @return string|null
+     */
+    public function getInstanceId(): ?string
+    {
+        $instanceId = $this->get('instanceId');
+        if (!is_string($instanceId)) {
+            return null;
+        }
+
+        return $instanceId;
+    }
+
+    /**
      * Get serialize config
      *
      * @throws \JsonException
@@ -152,7 +172,13 @@ class ConfigManagement
      */
     public function getSerializeConfig(): string
     {
-        return json_encode($this->get('serializeConfig'), JSON_THROW_ON_ERROR);
+        /** @var array<string, mixed> $serializedConfig */
+        $serializedConfig = $this->get('serializeConfig');
+        if (!is_array($serializedConfig)) {
+            return '';
+        }
+
+        return $this->serializer->serialize($serializedConfig);
     }
 
     /**
@@ -173,6 +199,16 @@ class ConfigManagement
     public function shouldThrowOnAdapterError(): bool
     {
         return (bool) $this->get('throwOnAdapterError');
+    }
+
+    /**
+     * Check if we should be collecting snapshots, rather than sending
+     *
+     * @return bool
+     */
+    public function shouldCollectOnly(): bool
+    {
+        return (bool) $this->get('collectOnly');
     }
 
     /**

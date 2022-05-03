@@ -8,3 +8,5 @@ actor_suffix: Tester
 extensions:
     enabled:
         - Codeception\Extension\RunFailed
+    commands:
+        - Codeception\Module\Percy\Command\ProcessSnapshots

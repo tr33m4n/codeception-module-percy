@@ -7,20 +7,12 @@ namespace Codeception\Module\Percy\Exchange\Adapter;
 interface AdapterInterface
 {
     /**
-     * Set adapter base URL
+     * Set adapter URI
      *
-     * @param string $baseUrl
+     * @param string $uri
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setBaseUrl(string $baseUrl): AdapterInterface;
-
-    /**
-     * Set adapter path
-     *
-     * @param string $path
-     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
-     */
-    public function setPath(string $path): AdapterInterface;
+    public function setUri(string $uri): AdapterInterface;
 
     /**
      * Set payload

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
-use Codeception\Module\Percy;
+use Codeception\Module\Percy\Exception\ContainerException;
 use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
 use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
 use Codeception\Module\Percy\Exchange\Client;
@@ -26,7 +26,7 @@ final class ServiceContainer
 {
     private ServiceFactory $serviceFactory;
 
-    private WebDriver $webDriver;
+    private ?WebDriver $webDriver;
 
     /**
      * @var array<string, mixed>
@@ -41,11 +41,11 @@ final class ServiceContainer
     /**
      * ServiceContainer constructor.
      *
-     * @param \Codeception\Module\WebDriver $webDriver
-     * @param array<string, mixed>          $moduleConfig
+     * @param \Codeception\Module\WebDriver|null $webDriver
+     * @param array<string, mixed>               $moduleConfig
      */
     public function __construct(
-        WebDriver $webDriver,
+        ?WebDriver $webDriver,
         array $moduleConfig = []
     ) {
         $this->serviceFactory = new ServiceFactory();
@@ -172,10 +172,15 @@ final class ServiceContainer
     /**
      * Get environment provider
      *
+     * @throws \Codeception\Module\Percy\Exception\ContainerException
      * @return \tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProviderInterface
      */
     public function getEnvironmentProvider(): EnvironmentProviderInterface
     {
+        if (!$this->webDriver instanceof WebDriver) {
+            throw new ContainerException('Web driver has not been configured');
+        }
+
         return $this->resolveService(
             EnvironmentProvider::class,
             [
@@ -183,9 +188,19 @@ final class ServiceContainer
                 $this->getGitEnvironment(),
                 $this->getPercyEnvironment(),
                 $this->webDriver,
-                Percy::PACKAGE_NAME
+                Definitions::PACKAGE_NAME
             ]
         );
+    }
+
+    /**
+     * Get serializer
+     *
+     * @return \Codeception\Module\Percy\Serializer
+     */
+    public function getSerializer(): Serializer
+    {
+        return $this->resolveService(Serializer::class);
     }
 
     /**
@@ -195,27 +210,7 @@ final class ServiceContainer
      */
     public function getConfigManagement(): ConfigManagement
     {
-        return $this->resolveService(ConfigManagement::class, [$this->moduleConfig]);
-    }
-
-    /**
-     * Get create snapshot
-     *
-     * @return \Codeception\Module\Percy\CreateSnapshot
-     */
-    public function getCreateSnapshot(): CreateSnapshot
-    {
-        return $this->resolveService(CreateSnapshot::class);
-    }
-
-    /**
-     * Get clean snapshots
-     *
-     * @return \Codeception\Module\Percy\CleanSnapshots
-     */
-    public function getCleanSnapshots(): CleanSnapshots
-    {
-        return $this->resolveService(CleanSnapshots::class, [$this->getConfigManagement()]);
+        return $this->resolveService(ConfigManagement::class, [$this->getSerializer(), $this->moduleConfig]);
     }
 
     /**
@@ -231,38 +226,48 @@ final class ServiceContainer
     /**
      * Get adapter
      *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
     public function getAdapter(): AdapterInterface
     {
-        return $this->resolveService(CurlAdapter::class, [$this->getConfigManagement()->getSnapshotBaseUrl()]);
+        return $this->resolveService(CurlAdapter::class);
     }
 
     /**
      * Get client
      *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @return \Codeception\Module\Percy\Exchange\ClientInterface
      */
     public function getClient(): ClientInterface
     {
-        return $this->resolveService(Client::class, [$this->getAdapter()]);
+        return $this->resolveService(Client::class, [$this->getAdapter(), $this->getSerializer()]);
     }
 
     /**
-     * Get request management
+     * Get snapshot repository
      *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return \Codeception\Module\Percy\RequestManagement
+     * @return \Codeception\Module\Percy\SnapshotRepository
      */
-    public function getRequestManagement(): RequestManagement
+    public function getSnapshotRepository(): SnapshotRepository
     {
         return $this->resolveService(
-            RequestManagement::class,
+            SnapshotRepository::class,
+            [$this->getSerializer(), $this->getConfigManagement()->getInstanceId()]
+        );
+    }
+
+    /**
+     * Get snapshot management
+     *
+     * @return \Codeception\Module\Percy\SnapshotManagement
+     */
+    public function getSnapshotManagement(): SnapshotManagement
+    {
+        return $this->resolveService(
+            SnapshotManagement::class,
             [
                 $this->getConfigManagement(),
-                $this->getCleanSnapshots(),
+                $this->getSnapshotRepository(),
                 $this->getProcessManagement(),
                 $this->getClient()
             ]

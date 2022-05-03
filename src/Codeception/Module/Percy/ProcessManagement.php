@@ -34,14 +34,21 @@ class ProcessManagement
      */
     public function startPercySnapshotServer(): void
     {
+        if ($this->process instanceof Process && $this->process->isRunning()) {
+            return;
+        }
+
         $this->process = new Process([
-            self::resolveNodePath(),
+            $this->resolveNodePath(),
             $this->configManagement->getPercyCliExecutablePath(),
-            'exec:start'
+            'exec:start',
+            '--port',
+            $this->configManagement->getSnapshotServerPort()
         ]);
 
-        $this->process->setTimeout($this->configManagement->getSnapshotServerTimeout());
-        $this->process->start();
+        $this->process
+            ->setTimeout($this->configManagement->getSnapshotServerTimeout())
+            ->start();
 
         // Wait until server is ready
         $this->process->waitUntil(fn (string $type, string $output): bool => $this->hasServerStarted($output));
