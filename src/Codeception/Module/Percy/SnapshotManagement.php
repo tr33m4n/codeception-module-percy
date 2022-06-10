@@ -4,61 +4,142 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
-use Codeception\Module\Percy\Exception\StorageException;
-use Ramsey\Uuid\Uuid;
+use Codeception\Module\Percy\Exchange\ClientInterface;
 
 class SnapshotManagement
 {
-    public const OUTPUT_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s.html';
+    private ConfigManagement $configManagement;
+
+    private SnapshotRepository $snapshotRepository;
+
+    private ProcessManagement $processManagement;
+
+    private ClientInterface $client;
 
     /**
-     * Save DOM snapshot to file
+     * SnapshotManagement constructor.
+     *
+     * @param \Codeception\Module\Percy\ConfigManagement         $configManagement
+     * @param \Codeception\Module\Percy\SnapshotRepository       $snapshotRepository
+     * @param \Codeception\Module\Percy\ProcessManagement        $processManagement
+     * @param \Codeception\Module\Percy\Exchange\ClientInterface $client
+     */
+    public function __construct(
+        ConfigManagement $configManagement,
+        SnapshotRepository $snapshotRepository,
+        ProcessManagement $processManagement,
+        ClientInterface $client
+    ) {
+        $this->configManagement = $configManagement;
+        $this->snapshotRepository = $snapshotRepository;
+        $this->processManagement = $processManagement;
+        $this->client = $client;
+    }
+
+    /**
+     * Create snapshot
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
-     * @throws \Exception
-     * @param string $domString
-     * @return \Codeception\Module\Percy\Snapshot
+     * @throws \JsonException
+     * @param string               $domString
+     * @param string               $name
+     * @param string               $currentUrl
+     * @param string               $clientInfo
+     * @param string               $environmentInfo
+     * @param array<string, mixed> $additionalConfig
      */
-    public static function save(string $domString): Snapshot
-    {
-        if (!function_exists('codecept_output_dir')) {
-            throw new StorageException('`codecept_output_dir` function is not available!');
-        }
-
-        $filePath = codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, Uuid::uuid4()->toString()));
-
-        $fileDirectory = dirname($filePath);
-        if (!file_exists($fileDirectory)) {
-            mkdir($fileDirectory, 0777, true);
-        }
-
-        if (!is_writable($fileDirectory)) {
-            chmod($fileDirectory, 0777);
-        }
-
-        file_put_contents($filePath, $domString);
-
-        return Snapshot::from($filePath);
+    public function createSnapshot(
+        string $domString,
+        string $name,
+        string $currentUrl,
+        string $clientInfo,
+        string $environmentInfo,
+        array $additionalConfig = []
+    ): void {
+        $this->snapshotRepository->save(
+            Snapshot::create(
+                $domString,
+                $name,
+                $currentUrl,
+                $clientInfo,
+                $environmentInfo,
+                $additionalConfig
+            )
+        );
     }
 
     /**
-     * Load DOM snapshot from file
+     * Send all snapshots
      *
-     * @param \Codeception\Module\Percy\Snapshot $snapshot
-     * @return string
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @throws \Codeception\Module\Percy\Exception\StorageException
+     * @throws \JsonException
      */
-    public static function load(Snapshot $snapshot): string
+    public function sendAll(): void
     {
-        return file_get_contents($snapshot->getFilePath()) ?: '';
+        $this->sendInstance('*');
     }
 
     /**
-     * Clean snapshot directory
+     * Send instance snapshots
+     *
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @throws \Codeception\Module\Percy\Exception\StorageException
+     * @throws \JsonException
+     * @param string|null $instanceId
      */
-    public static function clean(): void
+    public function sendInstance(string $instanceId = null): void
     {
-        foreach (glob(codecept_output_dir(sprintf(self::OUTPUT_FILE_PATTERN, '*'))) ?: [] as $snapshotFile) {
-            unlink($snapshotFile);
+        // Passing `*` will load all snapshots from all runs, not just the current one
+        $snapshots = $this->snapshotRepository->loadAll($instanceId);
+        if ([] === $snapshots) {
+            $this->debug('No snapshots to send!');
+
+            return;
         }
+
+        $this->debug(sprintf('Sending %s Percy snapshots...', count($snapshots)));
+
+        $this->processManagement->startPercySnapshotServer();
+
+        foreach ($snapshots as $snapshot) {
+            $this->debug(sprintf('Sending snapshot "%s"', $snapshot->getName()));
+
+            $this->client->post($this->configManagement->getSnapshotServerUri(), $snapshot);
+        }
+
+        $this->processManagement->stopPercySnapshotServer();
+
+        $this->debug('All snapshots sent!');
+    }
+
+    /**
+     * Reset all
+     */
+    public function resetAll(): void
+    {
+        $this->resetInstance('*');
+    }
+
+    /**
+     * Reset instance
+     *
+     * @param string|null $instanceId
+     */
+    public function resetInstance(string $instanceId = null): void
+    {
+        $this->snapshotRepository->deleteAll($instanceId);
+    }
+
+    /**
+     * Output debug message
+     *
+     * @param string $message
+     */
+    private function debug(string $message): void
+    {
+        codecept_debug(sprintf('[%s] %s', Definitions::NAMESPACE, $message));
     }
 }

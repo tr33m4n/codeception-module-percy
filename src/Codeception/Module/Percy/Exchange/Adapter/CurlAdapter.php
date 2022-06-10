@@ -9,11 +9,6 @@ use Codeception\Module\Percy\Exception\AdapterException;
 class CurlAdapter implements AdapterInterface
 {
     /**
-     * @var string
-     */
-    private string $baseUrl;
-
-    /**
      * @var false|resource
      */
     private $resource;
@@ -22,48 +17,23 @@ class CurlAdapter implements AdapterInterface
      * CurlAdapter constructor.
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $baseUrl
      */
-    public function __construct(string $baseUrl)
+    public function __construct()
     {
         $this->resource = curl_init();
 
-        $this->setBaseUrl($baseUrl);
         $this->setDefaults();
-    }
-
-    /**
-     * Create new instance
-     *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $baseUrl
-     * @return \Codeception\Module\Percy\Exchange\Adapter\CurlAdapter
-     */
-    public static function create(string $baseUrl): CurlAdapter
-    {
-        return new self($baseUrl);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setBaseUrl(string $baseUrl): AdapterInterface
-    {
-        $this->baseUrl = $baseUrl;
-
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $path
      * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
-    public function setPath(string $path): AdapterInterface
+    public function setUri(string $uri): AdapterInterface
     {
-        curl_setopt($this->getResource(), CURLOPT_URL, rtrim($this->baseUrl, '/') . '/' . $path);
+        curl_setopt($this->getResource(), CURLOPT_URL, $uri);
 
         return $this;
     }

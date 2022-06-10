@@ -12,6 +12,6 @@
         "node": ">=14"
     },
     "dependencies": {
-        "@percy/cli": "^1.0.7"
+        "@percy/cli": "^1.2.1"
     }
 }

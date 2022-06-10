@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Codeception\Module;
 
+use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
-use Codeception\Module\Percy\ConfigProvider;
-use Codeception\Module\Percy\Exception\ApplicationException;
-use Codeception\Module\Percy\Exchange\Payload;
-use Codeception\Module\Percy\FilepathResolver;
-use Codeception\Module\Percy\InfoProvider;
+use Codeception\Module\Percy\ConfigManagement;
+use Codeception\Module\Percy\Definitions;
 use Codeception\Module\Percy\ProcessManagement;
-use Codeception\Module\Percy\RequestManagement;
+use Codeception\Module\Percy\ServiceContainer;
+use Codeception\Module\Percy\SnapshotManagement;
 use Codeception\TestInterface;
 use Exception;
 use Symfony\Component\Process\Exception\RuntimeException;
+use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProviderInterface;
 
 /**
  * Class Percy
@@ -25,56 +25,57 @@ use Symfony\Component\Process\Exception\RuntimeException;
  */
 class Percy extends Module
 {
-    public const NAMESPACE = 'Percy';
-
     /**
      * @var array<string, mixed>
      */
-    protected $config = [
-        'snapshotBaseUrl' => 'http://localhost:5338',
-        'snapshotPath' => 'percy/snapshot',
-        'serializeConfig' => [
-            'enableJavaScript' => true
-        ],
-        'snapshotConfig' => [
-            'widths' => [
-                375,
-                1280
-            ],
-            'minHeight' => 1024
-        ],
-        'snapshotServerTimeout' => null,
-        'throwOnAdapterError' => false,
-        'cleanSnapshotStorage' => false
-    ];
+    protected $config = Definitions::DEFAULT_CONFIG;
 
-    private ?WebDriver $webDriver = null;
+    private ConfigManagement $configManagement;
 
-    private ?string $percyCliJs = null;
+    private ProcessManagement $processManagement;
+
+    private SnapshotManagement $snapshotManagement;
+
+    private EnvironmentProviderInterface $environmentProvider;
+
+    private WebDriver $webDriver;
 
     /**
-     * {@inheritdoc}
+     * Percy constructor.
      *
-     * @throws \Exception
+     * @throws \Codeception\Exception\ModuleException
+     * @param array<string, mixed>|null        $config
+     * @param \Codeception\Lib\ModuleContainer $moduleContainer
      */
-    public function _initialize(): void
-    {
-        ConfigProvider::set($this->_getConfig());
+    public function __construct(
+        ModuleContainer $moduleContainer,
+        array $config = null
+    ) {
+        parent::__construct($moduleContainer, $config);
 
+        /** @var \Codeception\Module\WebDriver $webDriverModule */
         $webDriverModule = $this->getModule('WebDriver');
-        if (!$webDriverModule instanceof WebDriver) {
-            throw new ApplicationException('"WebDriver" module not found');
-        }
 
+        /** @var array<string, mixed> $percyModuleConfig */
+        $percyModuleConfig = $this->_getConfig() ?? [];
+
+        $serviceContainer = new ServiceContainer($webDriverModule, $percyModuleConfig);
+
+        $this->configManagement = $serviceContainer->getConfigManagement();
+        $this->processManagement = $serviceContainer->getProcessManagement();
+        $this->snapshotManagement = $serviceContainer->getSnapshotManagement();
+        $this->environmentProvider = $serviceContainer->getEnvironmentProvider();
         $this->webDriver = $webDriverModule;
-        $this->percyCliJs = file_get_contents(FilepathResolver::percyCliBrowserJs()) ?: null;
     }
 
     /**
      * Take snapshot of DOM and send to https://percy.io
      *
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
+     * @throws \tr33m4n\CodeceptionModulePercyEnvironment\Exception\EnvironmentException
      * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
@@ -82,36 +83,26 @@ class Percy extends Module
         string $name,
         array $snapshotConfig = []
     ): void {
-        // If we cannot access the CLI JS, return silently
-        if (!$this->percyCliJs) {
-            return;
-        }
-
-        // If web driver has not been set, return
-        if (null === $this->webDriver) {
-            return;
-        }
-
-        // If remote web driver has not been set, return
+        // If the remote web driver doesn't exist, return
         if (null === $this->webDriver->webDriver) {
             return;
         }
 
         // Add Percy CLI JS to page
-        $this->webDriver->executeJS($this->percyCliJs);
+        $this->webDriver->executeJS($this->configManagement->getPercyCliBrowserJs());
 
-        RequestManagement::addPayload(
-            Payload::from(array_merge($this->_getConfig('snapshotConfig') ?? [], $snapshotConfig))
-                ->withName($name)
-                ->withUrl($this->webDriver->webDriver->getCurrentURL())
-                ->withDomSnapshot($this->webDriver->executeJS(
-                    sprintf(
-                        'return PercyDOM.serialize(%s)',
-                        json_encode($this->_getConfig('serializeConfig'), JSON_THROW_ON_ERROR)
-                    )
-                ))
-                ->withClientInfo(InfoProvider::getClientInfo())
-                ->withEnvironmentInfo(InfoProvider::getEnvironmentInfo($this->webDriver->webDriver))
+        /** @var string $domString */
+        $domString = $this->webDriver->executeJS(
+            sprintf('return PercyDOM.serialize(%s)', $this->configManagement->getSerializeConfig())
+        );
+
+        $this->snapshotManagement->createSnapshot(
+            $domString,
+            $name,
+            $this->webDriver->webDriver->getCurrentURL(),
+            $this->environmentProvider->getClientInfo(),
+            $this->environmentProvider->getEnvironmentInfo(),
+            array_merge($this->configManagement->getSnapshotConfig(), $snapshotConfig)
         );
     }
 
@@ -124,19 +115,17 @@ class Percy extends Module
      */
     public function _afterSuite(): void
     {
-        if (!RequestManagement::hasPayloads()) {
+        if ($this->configManagement->shouldCollectOnly()) {
+            $this->debugSection(Definitions::NAMESPACE, 'All snapshots collected!');
+
             return;
         }
 
-        $this->debugSection(self::NAMESPACE, 'Sending Percy snapshots..');
-
         try {
-            RequestManagement::sendRequest();
+            $this->snapshotManagement->sendInstance();
         } catch (Exception $exception) {
             $this->debugConnectionError($exception);
         }
-
-        $this->debugSection(self::NAMESPACE, 'All snapshots sent!');
     }
 
     /**
@@ -150,7 +139,7 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail): void
     {
-        RequestManagement::resetRequest();
+        $this->snapshotManagement->resetInstance();
     }
 
     /**
@@ -162,18 +151,18 @@ class Percy extends Module
     private function debugConnectionError(Exception $exception): void
     {
         $this->debugSection(
-            self::NAMESPACE,
+            Definitions::NAMESPACE,
             [$exception->getMessage(), $exception->getTraceAsString()]
         );
 
-        if (!$this->_getConfig('throwOnAdapterError')) {
-            return;
-        }
-
         try {
-            ProcessManagement::stopPercySnapshotServer();
+            $this->processManagement->stopPercySnapshotServer();
         } catch (RuntimeException $exception) {
             // Fail silently if the process is not running
+        }
+
+        if (!$this->configManagement->shouldThrowOnAdapterError()) {
+            return;
         }
 
         throw $exception;

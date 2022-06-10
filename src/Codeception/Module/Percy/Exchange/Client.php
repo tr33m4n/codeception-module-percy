@@ -5,41 +5,43 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy\Exchange;
 
 use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
+use Codeception\Module\Percy\Serializer;
+use Codeception\Module\Percy\Snapshot;
 
 class Client implements ClientInterface
 {
     private AdapterInterface $adapter;
 
+    private Serializer $serializer;
+
     /**
      * Client constructor.
      *
      * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
+     * @param \Codeception\Module\Percy\Serializer                        $serializer
      */
     public function __construct(
-        AdapterInterface $adapter
+        AdapterInterface $adapter,
+        Serializer $serializer
     ) {
         $this->adapter = $adapter;
+        $this->serializer = $serializer;
     }
 
     /**
-     * Create new instance
+     * {@inheritdoc}
      *
-     * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
-     * @return \Codeception\Module\Percy\Exchange\Client
+     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @throws \JsonException
+     * @param string                             $uri
+     * @param \Codeception\Module\Percy\Snapshot $snapshot
+     * @return string
      */
-    public static function create(AdapterInterface $adapter): Client
+    public function post(string $uri, Snapshot $snapshot): string
     {
-        return new self($adapter);
-    }
+        $payloadAsString = $this->serializer->serialize($snapshot);
 
-    /**
-     * @inheritDoc
-     */
-    public function post(string $path, Payload $payload = null): string
-    {
-        $payloadAsString = (string) $payload;
-
-        return $this->adapter->setPath($path)
+        return $this->adapter->setUri($uri)
             ->setPayload($payloadAsString)
             ->setHeaders([
                 'Content-Type: application/json',
