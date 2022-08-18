@@ -34,7 +34,7 @@
         "codeception/module-phpbrowser": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.8",
         "phpstan/phpstan": "^1.5",
-        "rector/rector": "^0.12.21",
+        "rector/rector": "^0.14.0",
         "squizlabs/php_codesniffer": "^3.6"
     },
     "config": {

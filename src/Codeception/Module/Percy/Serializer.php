@@ -11,7 +11,6 @@ class Serializer
      *
      * @throws \JsonException
      * @param array<string, mixed>|\Codeception\Module\Percy\Snapshot $data
-     * @return string
      */
     public function serialize($data): string
     {
@@ -22,7 +21,6 @@ class Serializer
      * Unserialize data
      *
      * @throws \JsonException
-     * @param string $data
      * @return array<string, mixed>
      */
     public function unserialize(string $data): array

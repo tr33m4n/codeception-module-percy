@@ -17,9 +17,6 @@ class SnapshotRepository
 
     /**
      * SnapshotRepository constructor.
-     *
-     * @param \Codeception\Module\Percy\Serializer $serializer
-     * @param string|null                          $instanceId
      */
     public function __construct(
         Serializer $serializer,
@@ -35,8 +32,6 @@ class SnapshotRepository
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
-     * @param \Codeception\Module\Percy\Snapshot $snapshot
-     * @return void
      */
     public function save(Snapshot $snapshot): void
     {
@@ -68,8 +63,6 @@ class SnapshotRepository
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
-     * @param string $snapshotFilePath
-     * @return \Codeception\Module\Percy\Snapshot
      */
     public function load(string $snapshotFilePath): Snapshot
     {

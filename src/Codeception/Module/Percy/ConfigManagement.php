@@ -18,7 +18,6 @@ class ConfigManagement
     /**
      * ConfigManagement constructor.
      *
-     * @param \Codeception\Module\Percy\Serializer $serializer
      * @param array<string, mixed>                 $config
      */
     public function __construct(
@@ -52,7 +51,6 @@ class ConfigManagement
      * Get Percy CLI browser JS path
      *
      * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return string
      */
     public function getPercyCliBrowserJsPath(): string
     {
@@ -63,7 +61,6 @@ class ConfigManagement
      * Get Percy CLI executable path
      *
      * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return string
      */
     public function getPercyCliExecutablePath(): string
     {
@@ -74,7 +71,6 @@ class ConfigManagement
      * Get Percy CLI browser JS
      *
      * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return string
      */
     public function getPercyCliBrowserJs(): string
     {
@@ -88,8 +84,6 @@ class ConfigManagement
 
     /**
      * Get snapshot server timeout
-     *
-     * @return float|null
      */
     public function getSnapshotServerTimeout(): ?float
     {
@@ -105,7 +99,6 @@ class ConfigManagement
      * Get snapshot server port
      *
      * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return int
      */
     public function getSnapshotServerPort(): int
     {
@@ -122,7 +115,6 @@ class ConfigManagement
      * Get snapshot server URI
      *
      * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @return string
      */
     public function getSnapshotServerUri(): string
     {
@@ -151,8 +143,6 @@ class ConfigManagement
 
     /**
      * Get instance ID
-     *
-     * @return string|null
      */
     public function getInstanceId(): ?string
     {
@@ -168,7 +158,6 @@ class ConfigManagement
      * Get serialize config
      *
      * @throws \JsonException
-     * @return string
      */
     public function getSerializeConfig(): string
     {
@@ -183,8 +172,6 @@ class ConfigManagement
 
     /**
      * Check if we should clean snapshot storage
-     *
-     * @return bool
      */
     public function shouldCleanSnapshotStorage(): bool
     {
@@ -193,8 +180,6 @@ class ConfigManagement
 
     /**
      * Check if we should throw on adapter error
-     *
-     * @return bool
      */
     public function shouldThrowOnAdapterError(): bool
     {
@@ -203,8 +188,6 @@ class ConfigManagement
 
     /**
      * Check if we should be collecting snapshots, rather than sending
-     *
-     * @return bool
      */
     public function shouldCollectOnly(): bool
     {
@@ -215,8 +198,6 @@ class ConfigManagement
      * Validate file path
      *
      * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @param string $filePath
-     * @return string
      */
     private function validateFilePath(string $filePath): string
     {

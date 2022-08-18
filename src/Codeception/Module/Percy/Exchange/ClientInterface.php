@@ -12,9 +12,6 @@ interface ClientInterface
      * Post
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string                             $uri
-     * @param \Codeception\Module\Percy\Snapshot $snapshot
-     * @return string
      */
     public function post(string $uri, Snapshot $snapshot): string;
 }

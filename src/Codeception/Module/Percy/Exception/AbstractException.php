@@ -11,8 +11,6 @@ abstract class AbstractException extends ModuleException
 {
     /**
      * AbstractException constructor.
-     *
-     * @param string $message
      */
     public function __construct(string $message)
     {

@@ -11,7 +11,6 @@ final class ServiceFactory
      *
      * @param class-string         $className
      * @param array<string, mixed> $parameters
-     * @return object
      */
     public function create(string $className, array $parameters = []): object
     {

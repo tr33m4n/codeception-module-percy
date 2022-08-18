@@ -43,8 +43,6 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
 
     /**
      * Get default description
-     *
-     * @return string
      */
     public static function getDefaultDescription(): string
     {
@@ -62,7 +60,6 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
      * @throws \JsonException
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
