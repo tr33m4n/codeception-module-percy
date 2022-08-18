@@ -41,7 +41,6 @@ final class ServiceContainer
     /**
      * ServiceContainer constructor.
      *
-     * @param \Codeception\Module\WebDriver|null $webDriver
      * @param array<string, mixed>               $moduleConfig
      */
     public function __construct(
@@ -55,8 +54,6 @@ final class ServiceContainer
 
     /**
      * Get "env" helper
-     *
-     * @return \OndraM\CiDetector\Env
      */
     public function getEnvHelper(): EnvHelper
     {
@@ -65,8 +62,6 @@ final class ServiceContainer
 
     /**
      * Get event data provider
-     *
-     * @return \tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment\CiType\GitHub\EventDataProvider
      */
     public function getEventDataProvider(): EventDataProvider
     {
@@ -75,8 +70,6 @@ final class ServiceContainer
 
     /**
      * Get Git API
-     *
-     * @return \CzProject\GitPhp\Git
      */
     public function getGitApi(): Git
     {
@@ -121,8 +114,6 @@ final class ServiceContainer
 
     /**
      * Get CI type pool
-     *
-     * @return \tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment\CiTypePool
      */
     public function getCiTypePool(): CiTypePool
     {
@@ -131,8 +122,6 @@ final class ServiceContainer
 
     /**
      * Get CI type resolver
-     *
-     * @return \tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment\CiTypeResolver
      */
     public function getCiTypeResolver(): CiTypeResolver
     {
@@ -141,8 +130,6 @@ final class ServiceContainer
 
     /**
      * Get CI environment
-     *
-     * @return \tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment
      */
     public function getCiEnvironment(): CiEnvironment
     {
@@ -151,8 +138,6 @@ final class ServiceContainer
 
     /**
      * Get Git environment
-     *
-     * @return \tr33m4n\CodeceptionModulePercyEnvironment\GitEnvironment
      */
     public function getGitEnvironment(): GitEnvironment
     {
@@ -161,8 +146,6 @@ final class ServiceContainer
 
     /**
      * Get Percy environment
-     *
-     * @return \tr33m4n\CodeceptionModulePercyEnvironment\PercyEnvironment
      */
     public function getPercyEnvironment(): PercyEnvironment
     {
@@ -173,7 +156,6 @@ final class ServiceContainer
      * Get environment provider
      *
      * @throws \Codeception\Module\Percy\Exception\ContainerException
-     * @return \tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProviderInterface
      */
     public function getEnvironmentProvider(): EnvironmentProviderInterface
     {
@@ -195,8 +177,6 @@ final class ServiceContainer
 
     /**
      * Get serializer
-     *
-     * @return \Codeception\Module\Percy\Serializer
      */
     public function getSerializer(): Serializer
     {
@@ -205,8 +185,6 @@ final class ServiceContainer
 
     /**
      * Get config management
-     *
-     * @return \Codeception\Module\Percy\ConfigManagement
      */
     public function getConfigManagement(): ConfigManagement
     {
@@ -215,8 +193,6 @@ final class ServiceContainer
 
     /**
      * Get process management
-     *
-     * @return \Codeception\Module\Percy\ProcessManagement
      */
     public function getProcessManagement(): ProcessManagement
     {
@@ -225,8 +201,6 @@ final class ServiceContainer
 
     /**
      * Get adapter
-     *
-     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
     public function getAdapter(): AdapterInterface
     {
@@ -235,8 +209,6 @@ final class ServiceContainer
 
     /**
      * Get client
-     *
-     * @return \Codeception\Module\Percy\Exchange\ClientInterface
      */
     public function getClient(): ClientInterface
     {
@@ -245,8 +217,6 @@ final class ServiceContainer
 
     /**
      * Get snapshot repository
-     *
-     * @return \Codeception\Module\Percy\SnapshotRepository
      */
     public function getSnapshotRepository(): SnapshotRepository
     {
@@ -258,8 +228,6 @@ final class ServiceContainer
 
     /**
      * Get snapshot management
-     *
-     * @return \Codeception\Module\Percy\SnapshotManagement
      */
     public function getSnapshotManagement(): SnapshotManagement
     {

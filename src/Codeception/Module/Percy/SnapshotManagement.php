@@ -18,11 +18,6 @@ class SnapshotManagement
 
     /**
      * SnapshotManagement constructor.
-     *
-     * @param \Codeception\Module\Percy\ConfigManagement         $configManagement
-     * @param \Codeception\Module\Percy\SnapshotRepository       $snapshotRepository
-     * @param \Codeception\Module\Percy\ProcessManagement        $processManagement
-     * @param \Codeception\Module\Percy\Exchange\ClientInterface $client
      */
     public function __construct(
         ConfigManagement $configManagement,
@@ -41,11 +36,6 @@ class SnapshotManagement
      *
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
-     * @param string               $domString
-     * @param string               $name
-     * @param string               $currentUrl
-     * @param string               $clientInfo
-     * @param string               $environmentInfo
      * @param array<string, mixed> $additionalConfig
      */
     public function createSnapshot(
@@ -135,8 +125,6 @@ class SnapshotManagement
 
     /**
      * Output debug message
-     *
-     * @param string $message
      */
     private function debug(string $message): void
     {

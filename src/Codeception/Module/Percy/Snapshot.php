@@ -74,13 +74,7 @@ class Snapshot implements JsonSerializable
     /**
      * Create from file path
      *
-     * @param string               $domSnapshot
-     * @param string               $name
-     * @param string               $url
-     * @param string               $clientInfo
-     * @param string               $environmentInfo
      * @param array<string, mixed> $additionalConfig
-     * @return \Codeception\Module\Percy\Snapshot
      */
     public static function create(
         string $domSnapshot,
@@ -116,7 +110,6 @@ class Snapshot implements JsonSerializable
      * Hydrate snapshot from snapshot data
      *
      * @param array<string, string> $snapshotData
-     * @return \Codeception\Module\Percy\Snapshot
      */
     public static function hydrate(array $snapshotData): Snapshot
     {
@@ -137,9 +130,7 @@ class Snapshot implements JsonSerializable
     /**
      * With value
      *
-     * @param string $key
      * @param mixed  $value
-     * @return \Codeception\Module\Percy\Snapshot
      */
     public function withConfigValue(string $key, $value): Snapshot
     {
@@ -151,8 +142,6 @@ class Snapshot implements JsonSerializable
 
     /**
      * Get name
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -161,8 +150,6 @@ class Snapshot implements JsonSerializable
 
     /**
      * Get URL
-     *
-     * @return string
      */
     public function getUrl(): string
     {
@@ -171,8 +158,6 @@ class Snapshot implements JsonSerializable
 
     /**
      * Get client info
-     *
-     * @return string
      */
     public function getClientInfo(): string
     {
@@ -181,8 +166,6 @@ class Snapshot implements JsonSerializable
 
     /**
      * Get environment info
-     *
-     * @return string
      */
     public function getEnvironmentInfo(): string
     {
@@ -191,8 +174,6 @@ class Snapshot implements JsonSerializable
 
     /**
      * Get DOM snapshot
-     *
-     * @return string
      */
     public function getDomSnapshot(): string
     {

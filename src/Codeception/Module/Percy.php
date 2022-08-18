@@ -45,7 +45,6 @@ class Percy extends Module
      *
      * @throws \Codeception\Exception\ModuleException
      * @param array<string, mixed>|null        $config
-     * @param \Codeception\Lib\ModuleContainer $moduleContainer
      */
     public function __construct(
         ModuleContainer $moduleContainer,
@@ -76,7 +75,6 @@ class Percy extends Module
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
      * @throws \tr33m4n\CodeceptionModulePercyEnvironment\Exception\EnvironmentException
-     * @param string               $name
      * @param array<string, mixed> $snapshotConfig
      */
     public function takeAPercySnapshot(
@@ -146,7 +144,6 @@ class Percy extends Module
      * Echo connection error message
      *
      * @throws \Exception
-     * @param \Exception $exception
      */
     private function debugConnectionError(Exception $exception): void
     {

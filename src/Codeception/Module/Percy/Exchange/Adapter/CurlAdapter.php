@@ -29,7 +29,6 @@ class CurlAdapter implements AdapterInterface
      * {@inheritdoc}
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
     public function setUri(string $uri): AdapterInterface
     {
@@ -42,7 +41,6 @@ class CurlAdapter implements AdapterInterface
      * Set defaults
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
     public function setDefaults(): AdapterInterface
     {
@@ -59,8 +57,6 @@ class CurlAdapter implements AdapterInterface
      * {@inheritdoc}
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @param string $payload
-     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
     public function setPayload(string $payload): AdapterInterface
     {
@@ -74,7 +70,6 @@ class CurlAdapter implements AdapterInterface
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @param string[] $headers
-     * @return \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface
      */
     public function setHeaders(array $headers): AdapterInterface
     {

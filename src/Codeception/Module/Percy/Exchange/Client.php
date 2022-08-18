@@ -16,9 +16,6 @@ class Client implements ClientInterface
 
     /**
      * Client constructor.
-     *
-     * @param \Codeception\Module\Percy\Exchange\Adapter\AdapterInterface $adapter
-     * @param \Codeception\Module\Percy\Serializer                        $serializer
      */
     public function __construct(
         AdapterInterface $adapter,
@@ -33,9 +30,6 @@ class Client implements ClientInterface
      *
      * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @throws \JsonException
-     * @param string                             $uri
-     * @param \Codeception\Module\Percy\Snapshot $snapshot
-     * @return string
      */
     public function post(string $uri, Snapshot $snapshot): string
     {

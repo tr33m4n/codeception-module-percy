@@ -17,8 +17,6 @@ class ProcessManagement
 
     /**
      * ProcessManagement constructor.
-     *
-     * @param \Codeception\Module\Percy\ConfigManagement $configManagement
      */
     public function __construct(
         ConfigManagement $configManagement
@@ -71,8 +69,6 @@ class ProcessManagement
     /**
      * If `PERCY_NODE_PATH` has been configured, use that as the path to the Node executable, rather than what's
      * configured in `PATH`
-     *
-     * @return string
      */
     private function resolveNodePath(): string
     {
@@ -81,9 +77,6 @@ class ProcessManagement
 
     /**
      * Determine whether the server has started
-     *
-     * @param string $cliOutput
-     * @return bool
      */
     private function hasServerStarted(string $cliOutput): bool
     {
