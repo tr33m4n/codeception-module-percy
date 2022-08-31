@@ -11,12 +11,12 @@ class Debug
      *
      * @param array<string, string> $context
      */
-    public function out(string $message, array $context = [], string $namespace = Definitions::NAMESPACE): void
+    public function out(string $message, array $context = [], ?string $namespace = Definitions::NAMESPACE): void
     {
-        codecept_debug(sprintf('[%s] %s', $namespace, $message));
+        codecept_debug($namespace ? sprintf('[%s] %s', $namespace, $message) : $message);
 
         foreach ($context as $contextKey => $message) {
-            $this->out($message, [], sprintf('%s: %s', Definitions::NAMESPACE, $contextKey));
+            $this->out($message, [], sprintf('%s->%s', Definitions::NAMESPACE, $contextKey));
         }
     }
 }

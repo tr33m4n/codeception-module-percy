@@ -195,6 +195,14 @@ class ConfigManagement
     }
 
     /**
+     * Check whether we're in debug mode
+     */
+    public function isDebugMode(): bool
+    {
+        return (bool) $this->get('snapshotServerDebug');
+    }
+
+    /**
      * Validate file path
      *
      * @throws \Codeception\Module\Percy\Exception\ConfigException

@@ -21,6 +21,7 @@ modules:
                     args: [ '-headless' ]
         Percy:
             throwOnAdapterError: true
+            snapshotServerDebug: true
             snapshotConfig:
                 enableJavaScript: true
                 widths:

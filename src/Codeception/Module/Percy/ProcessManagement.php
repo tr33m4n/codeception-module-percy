@@ -42,22 +42,31 @@ class ProcessManagement
             return;
         }
 
-        $this->process = new Process([
+        $command = [
             $this->resolveNodePath(),
             $this->configManagement->getPercyCliExecutablePath(),
             'exec:start',
-            '-q',
             '-P',
             $this->configManagement->getSnapshotServerPort()
-        ]);
+        ];
 
-        $this->process
-            ->setTimeout($this->configManagement->getSnapshotServerTimeout())
-            ->start(
-                function (string $type, string $output): void {
-                    $this->debug->out($output);
-                }
-            );
+        if ($this->configManagement->isDebugMode()) {
+            $command[] = '-v';
+        }
+
+        $this->process = (new Process($command))
+            ->setTimeout($this->configManagement->getSnapshotServerTimeout());
+
+        $this->process->start(
+            function (string $type, string $output): void {
+                // Transform output to match the rest of the Codeception Percy output
+                $this->debug->out(
+                    str_replace('[percy', sprintf('[%s->CLI', Definitions::NAMESPACE), $output),
+                    [],
+                    null
+                );
+            }
+        );
 
         $this->debug->out(
             'Snapshot server starting...',

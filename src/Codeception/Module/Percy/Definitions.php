@@ -24,7 +24,8 @@ final class Definitions
         'collectOnly' => false,
         'snapshotServerTimeout' => 30,
         'snapshotServerPort' => 5338,
-        'throwOnAdapterError' => false,
+        'snapshotServerDebug' => false,
+        'throwOnAdapterError' => true,
         'instanceId' => null
     ];
 }
