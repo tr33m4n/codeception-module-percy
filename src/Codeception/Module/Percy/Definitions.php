@@ -22,7 +22,7 @@ final class Definitions
             'minHeight' => 1024
         ],
         'collectOnly' => false,
-        'snapshotServerTimeout' => null,
+        'snapshotServerTimeout' => 30,
         'snapshotServerPort' => 5338,
         'throwOnAdapterError' => false,
         'instanceId' => null
