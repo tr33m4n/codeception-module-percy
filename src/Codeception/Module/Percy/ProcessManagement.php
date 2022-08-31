@@ -13,15 +13,19 @@ class ProcessManagement
 
     private ConfigManagement $configManagement;
 
+    private Debug $debug;
+
     private ?Process $process = null;
 
     /**
      * ProcessManagement constructor.
      */
     public function __construct(
-        ConfigManagement $configManagement
+        ConfigManagement $configManagement,
+        Debug $debug
     ) {
         $this->configManagement = $configManagement;
+        $this->debug = $debug;
     }
 
     /**
@@ -33,6 +37,8 @@ class ProcessManagement
     public function startPercySnapshotServer(): void
     {
         if ($this->process instanceof Process && $this->process->isRunning()) {
+            $this->debug->out('Snapshot server already running!');
+
             return;
         }
 
@@ -40,16 +46,40 @@ class ProcessManagement
             $this->resolveNodePath(),
             $this->configManagement->getPercyCliExecutablePath(),
             'exec:start',
-            '--port',
+            '-q',
+            '-P',
             $this->configManagement->getSnapshotServerPort()
         ]);
 
         $this->process
             ->setTimeout($this->configManagement->getSnapshotServerTimeout())
-            ->start();
+            ->start(
+                function (string $type, string $output): void {
+                    $this->debug->out($output);
+                }
+            );
+
+        $this->debug->out(
+            'Snapshot server starting...',
+            [
+                'Node path' => realpath($this->resolveNodePath()) ?: 'Default',
+                'Percy path' => realpath($this->configManagement->getPercyCliExecutablePath()) ?: '',
+                'Port' => (string) $this->configManagement->getSnapshotServerPort()
+            ]
+        );
 
         // Wait until server is ready
-        $this->process->waitUntil(fn (string $type, string $output): bool => $this->hasServerStarted($output));
+        $running = $this->process->waitUntil(
+            fn (string $type, string $output): bool => $this->hasServerStarted($output)
+        );
+
+        if (!$running) {
+            $this->debug->out($this->process->getErrorOutput());
+
+            throw new RuntimeException('Percy snapshot server is not running');
+        }
+
+        $this->debug->out('Snapshot server ready...');
     }
 
     /**

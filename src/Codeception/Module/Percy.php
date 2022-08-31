@@ -7,6 +7,7 @@ namespace Codeception\Module;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
 use Codeception\Module\Percy\ConfigManagement;
+use Codeception\Module\Percy\Debug;
 use Codeception\Module\Percy\Definitions;
 use Codeception\Module\Percy\ProcessManagement;
 use Codeception\Module\Percy\ServiceContainer;
@@ -38,13 +39,15 @@ class Percy extends Module
 
     private EnvironmentProviderInterface $environmentProvider;
 
+    private Debug $debug;
+
     private WebDriver $webDriver;
 
     /**
      * Percy constructor.
      *
      * @throws \Codeception\Exception\ModuleException
-     * @param array<string, mixed>|null        $config
+     * @param array<string, mixed>|null $config
      */
     public function __construct(
         ModuleContainer $moduleContainer,
@@ -64,6 +67,7 @@ class Percy extends Module
         $this->processManagement = $serviceContainer->getProcessManagement();
         $this->snapshotManagement = $serviceContainer->getSnapshotManagement();
         $this->environmentProvider = $serviceContainer->getEnvironmentProvider();
+        $this->debug = $serviceContainer->getDebug();
         $this->webDriver = $webDriverModule;
     }
 
@@ -114,7 +118,7 @@ class Percy extends Module
     public function _afterSuite(): void
     {
         if ($this->configManagement->shouldCollectOnly()) {
-            $this->debugSection(Definitions::NAMESPACE, 'All snapshots collected!');
+            $this->debug->out('All snapshots collected!');
 
             return;
         }
@@ -147,10 +151,7 @@ class Percy extends Module
      */
     private function debugConnectionError(Exception $exception): void
     {
-        $this->debugSection(
-            Definitions::NAMESPACE,
-            [$exception->getMessage(), $exception->getTraceAsString()]
-        );
+        $this->debug->out($exception->getMessage(), ['Trace' => $exception->getTraceAsString()]);
 
         try {
             $this->processManagement->stopPercySnapshotServer();

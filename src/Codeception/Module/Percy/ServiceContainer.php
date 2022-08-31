@@ -77,6 +77,14 @@ final class ServiceContainer
     }
 
     /**
+     * Get debug
+     */
+    public function getDebug(): Debug
+    {
+        return $this->resolveService(Debug::class);
+    }
+
+    /**
      * Get instantiated CI types
      *
      * @return array<string, mixed>
@@ -196,7 +204,7 @@ final class ServiceContainer
      */
     public function getProcessManagement(): ProcessManagement
     {
-        return $this->resolveService(ProcessManagement::class, [$this->getConfigManagement()]);
+        return $this->resolveService(ProcessManagement::class, [$this->getConfigManagement(), $this->getDebug()]);
     }
 
     /**
@@ -237,7 +245,8 @@ final class ServiceContainer
                 $this->getConfigManagement(),
                 $this->getSnapshotRepository(),
                 $this->getProcessManagement(),
-                $this->getClient()
+                $this->getClient(),
+                $this->getDebug()
             ]
         );
     }
