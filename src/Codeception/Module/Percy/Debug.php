@@ -15,10 +15,8 @@ class Debug
     {
         codecept_debug(sprintf('[%s] %s', $namespace, $message));
 
-        if (!empty($context)) {
-            foreach ($context as $contextKey => $message) {
-                $this->out($message, [], sprintf('%s: %s', Definitions::NAMESPACE, $contextKey));
-            }
+        foreach ($context as $contextKey => $message) {
+            $this->out($message, [], sprintf('%s: %s', Definitions::NAMESPACE, $contextKey));
         }
     }
 }
