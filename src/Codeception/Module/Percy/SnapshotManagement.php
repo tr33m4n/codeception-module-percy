@@ -16,7 +16,7 @@ class SnapshotManagement
 
     private ClientInterface $client;
 
-    private Debug $debug;
+    private Output $output;
 
     /**
      * SnapshotManagement constructor.
@@ -26,13 +26,13 @@ class SnapshotManagement
         SnapshotRepository $snapshotRepository,
         ProcessManagement $processManagement,
         ClientInterface $client,
-        Debug $debug
+        Output $output
     ) {
         $this->configManagement = $configManagement;
         $this->snapshotRepository = $snapshotRepository;
         $this->processManagement = $processManagement;
         $this->client = $client;
-        $this->debug = $debug;
+        $this->output = $output;
     }
 
     /**
@@ -89,21 +89,21 @@ class SnapshotManagement
         // Passing `*` will load all snapshots from all runs, not just the current one
         $snapshots = $this->snapshotRepository->loadAll($instanceId);
         if ([] === $snapshots) {
-            $this->debug->out('No snapshots to send!');
+            $this->output->debug('No snapshots to send!');
 
             return;
         }
 
-        $this->debug->out(sprintf('Sending %s Percy snapshots...', count($snapshots)));
+        $this->output->debug(sprintf('Sending %s Percy snapshots...', count($snapshots)));
         $this->processManagement->startPercySnapshotServer();
 
         foreach ($snapshots as $snapshot) {
-            $this->debug->out(sprintf('Sending snapshot "%s"', $snapshot->getName()));
+            $this->output->debug(sprintf('Sending snapshot "%s"', $snapshot->getName()));
             $this->client->post($this->configManagement->getSnapshotServerUri(), $snapshot);
         }
 
         $this->processManagement->stopPercySnapshotServer();
-        $this->debug->out('All snapshots sent!');
+        $this->output->debug('All snapshots sent!');
     }
 
     /**

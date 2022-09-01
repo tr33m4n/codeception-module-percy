@@ -8,6 +8,8 @@ use Codeception\Module\Percy\Exception\ConfigException;
 
 class ConfigManagement
 {
+    public const PERCY_NODE_PATH = 'PERCY_NODE_PATH';
+
     private Serializer $serializer;
 
     /**
@@ -83,6 +85,22 @@ class ConfigManagement
     }
 
     /**
+     * If `PERCY_NODE_PATH` has been configured, use that as the path to the Node executable, rather than what's
+     * configured in `PATH`
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     */
+    public function getNodePath(): string
+    {
+        $configuredNodePath = getenv(self::PERCY_NODE_PATH);
+        if (is_string($configuredNodePath) && strlen($configuredNodePath)) {
+            return $this->validateFilePath($configuredNodePath);
+        }
+
+        return 'node';
+    }
+
+    /**
      * Get snapshot server timeout
      */
     public function getSnapshotServerTimeout(): ?float
@@ -127,6 +145,19 @@ class ConfigManagement
     }
 
     /**
+     * Get snapshot path template
+     */
+    public function getSnapshotPathTemplate(): ?string
+    {
+        $snapshotPathTemplate = $this->get('snapshotPathTemplate');
+        if (!is_string($snapshotPathTemplate)) {
+            return null;
+        }
+
+        return codecept_root_dir($snapshotPathTemplate);
+    }
+
+    /**
      * Get snapshot config
      *
      * @return array<string, mixed>
@@ -168,14 +199,6 @@ class ConfigManagement
         }
 
         return $this->serializer->serialize($serializedConfig);
-    }
-
-    /**
-     * Check if we should clean snapshot storage
-     */
-    public function shouldCleanSnapshotStorage(): bool
-    {
-        return (bool) $this->get('cleanSnapshotStorage');
     }
 
     /**
