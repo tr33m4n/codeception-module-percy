@@ -77,11 +77,11 @@ final class ServiceContainer
     }
 
     /**
-     * Get debug
+     * Get output
      */
-    public function getDebug(): Debug
+    public function getOutput(): Output
     {
-        return $this->resolveService(Debug::class);
+        return $this->resolveService(Output::class);
     }
 
     /**
@@ -204,7 +204,7 @@ final class ServiceContainer
      */
     public function getProcessManagement(): ProcessManagement
     {
-        return $this->resolveService(ProcessManagement::class, [$this->getConfigManagement(), $this->getDebug()]);
+        return $this->resolveService(ProcessManagement::class, [$this->getConfigManagement(), $this->getOutput()]);
     }
 
     /**
@@ -230,7 +230,11 @@ final class ServiceContainer
     {
         return $this->resolveService(
             SnapshotRepository::class,
-            [$this->getSerializer(), $this->getConfigManagement()->getInstanceId()]
+            [
+                $this->getSerializer(),
+                $this->getConfigManagement()->getInstanceId(),
+                $this->getConfigManagement()->getSnapshotPathTemplate()
+            ]
         );
     }
 
@@ -246,7 +250,7 @@ final class ServiceContainer
                 $this->getSnapshotRepository(),
                 $this->getProcessManagement(),
                 $this->getClient(),
-                $this->getDebug()
+                $this->getOutput()
             ]
         );
     }

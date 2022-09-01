@@ -9,22 +9,25 @@ use Ramsey\Uuid\Uuid;
 
 class SnapshotRepository
 {
-    public const STORAGE_FILE_PATTERN = 'dom_snapshots' . DIRECTORY_SEPARATOR . '%s_%s.json';
-
     private Serializer $serializer;
 
     private string $instanceId;
+
+    private string $snapshotPathTemplate;
 
     /**
      * SnapshotRepository constructor.
      */
     public function __construct(
         Serializer $serializer,
-        ?string $instanceId = null
+        ?string $instanceId = null,
+        ?string $snapshotPathTemplate = null
     ) {
         $this->serializer = $serializer;
         // Ensure we're only managing snapshots created by this test run by prepending with an "instance ID"
         $this->instanceId = $instanceId ?? (string) Uuid::uuid4();
+        $this->snapshotPathTemplate = $snapshotPathTemplate
+            ?? codecept_output_dir('dom_snapshots' . DIRECTORY_SEPARATOR . '%s_%s.json');
     }
 
     /**
@@ -39,20 +42,7 @@ class SnapshotRepository
             throw new StorageException('`codecept_output_dir` function is not available!');
         }
 
-        $filePath = codecept_output_dir(
-            sprintf(self::STORAGE_FILE_PATTERN, $this->instanceId, (string) Uuid::uuid4())
-        );
-
-        $fileDirectory = dirname($filePath);
-        if (!file_exists($fileDirectory)) {
-            mkdir($fileDirectory, 0777, true);
-        }
-
-        if (!is_writable($fileDirectory)) {
-            chmod($fileDirectory, 0777);
-        }
-
-        $writeResults = file_put_contents($filePath, $this->serializer->serialize($snapshot));
+        $writeResults = file_put_contents($this->buildFilePath(), $this->serializer->serialize($snapshot));
         if (!$writeResults) {
             throw new StorageException('Something went wrong when writing the DOM string');
         }
@@ -113,14 +103,37 @@ class SnapshotRepository
      */
     private function getSnapshotFilePaths(string $instanceId = null): array
     {
-        return glob(
-            codecept_output_dir(
-                sprintf(
-                    self::STORAGE_FILE_PATTERN,
-                    $instanceId ?? $this->instanceId,
-                    '*'
-                )
+        return glob($this->buildFilePath($instanceId, '*')) ?: [];
+    }
+
+    /**
+     * Build file path
+     */
+    private function buildFilePath(?string $instanceId = null, ?string $snapshotId = null): string
+    {
+        return $this->verifyFilePath(
+            sprintf(
+                $this->snapshotPathTemplate,
+                $instanceId ?? $this->instanceId,
+                $snapshotId ?? (string) Uuid::uuid4()
             )
-        ) ?: [];
+        );
+    }
+
+    /**
+     * Verify file path
+     */
+    private function verifyFilePath(string $filePath): string
+    {
+        $fileDirectory = dirname($filePath);
+        if (!file_exists($fileDirectory)) {
+            mkdir($fileDirectory, 0777, true);
+        }
+
+        if (!is_writable($fileDirectory)) {
+            chmod($fileDirectory, 0777);
+        }
+
+        return $filePath;
     }
 }

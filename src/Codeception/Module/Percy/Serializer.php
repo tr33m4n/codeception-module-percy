@@ -18,7 +18,7 @@ class Serializer
     }
 
     /**
-     * Unserialize data
+     * Un-serialize data
      *
      * @throws \JsonException
      * @return array<string, mixed>

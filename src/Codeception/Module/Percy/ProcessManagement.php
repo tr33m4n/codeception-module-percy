@@ -9,11 +9,9 @@ use Symfony\Component\Process\Process;
 
 class ProcessManagement
 {
-    public const PERCY_NODE_PATH = 'PERCY_NODE_PATH';
-
     private ConfigManagement $configManagement;
 
-    private Debug $debug;
+    private Output $output;
 
     private ?Process $process = null;
 
@@ -22,10 +20,10 @@ class ProcessManagement
      */
     public function __construct(
         ConfigManagement $configManagement,
-        Debug $debug
+        Output $output
     ) {
         $this->configManagement = $configManagement;
-        $this->debug = $debug;
+        $this->output = $output;
     }
 
     /**
@@ -37,13 +35,13 @@ class ProcessManagement
     public function startPercySnapshotServer(): void
     {
         if ($this->process instanceof Process && $this->process->isRunning()) {
-            $this->debug->out('Snapshot server already running!');
+            $this->output->debug('Snapshot server already running!');
 
             return;
         }
 
         $command = [
-            $this->resolveNodePath(),
+            $this->configManagement->getNodePath(),
             $this->configManagement->getPercyCliExecutablePath(),
             'exec:start',
             '-P',
@@ -60,7 +58,7 @@ class ProcessManagement
         $this->process->start(
             function (string $type, string $output): void {
                 // Transform output to match the rest of the Codeception Percy output
-                $this->debug->out(
+                $this->output->debug(
                     str_replace('[percy', sprintf('[%s->CLI', Definitions::NAMESPACE), $output),
                     [],
                     null
@@ -68,11 +66,11 @@ class ProcessManagement
             }
         );
 
-        $this->debug->out(
+        $this->output->debug(
             'Snapshot server starting...',
             [
-                'Node path' => realpath($this->resolveNodePath()) ?: 'Default',
-                'Percy path' => realpath($this->configManagement->getPercyCliExecutablePath()) ?: '',
+                'Node path' => $this->configManagement->getNodePath(),
+                'Percy path' => $this->configManagement->getPercyCliExecutablePath(),
                 'Port' => (string) $this->configManagement->getSnapshotServerPort()
             ]
         );
@@ -83,12 +81,12 @@ class ProcessManagement
         );
 
         if (!$running) {
-            $this->debug->out($this->process->getErrorOutput());
+            $this->output->debug($this->process->getErrorOutput());
 
             throw new RuntimeException('Percy snapshot server is not running');
         }
 
-        $this->debug->out('Snapshot server ready...');
+        $this->output->debug('Snapshot server ready...');
     }
 
     /**
@@ -103,15 +101,6 @@ class ProcessManagement
         }
 
         $this->process->stop();
-    }
-
-    /**
-     * If `PERCY_NODE_PATH` has been configured, use that as the path to the Node executable, rather than what's
-     * configured in `PATH`
-     */
-    private function resolveNodePath(): string
-    {
-        return getenv(self::PERCY_NODE_PATH) ?: 'node';
     }
 
     /**
