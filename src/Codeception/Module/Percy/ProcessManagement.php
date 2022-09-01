@@ -69,8 +69,8 @@ class ProcessManagement
         $this->output->debug(
             'Snapshot server starting...',
             [
-                'Node path' => realpath($this->configManagement->getNodePath()) ?: 'Default',
-                'Percy path' => realpath($this->configManagement->getPercyCliExecutablePath()) ?: '',
+                'Node path' => $this->configManagement->getNodePath(),
+                'Percy path' => $this->configManagement->getPercyCliExecutablePath(),
                 'Port' => (string) $this->configManagement->getSnapshotServerPort()
             ]
         );

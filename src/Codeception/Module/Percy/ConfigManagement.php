@@ -56,7 +56,7 @@ class ConfigManagement
      */
     public function getPercyCliBrowserJsPath(): string
     {
-        return $this->validateFilePath(__DIR__ . '/../../../../node_modules/@percy/dom/dist/bundle.js');
+        return realpath($this->validateFilePath(__DIR__ . '/../../../../node_modules/@percy/dom/dist/bundle.js')) ?: '';
     }
 
     /**
@@ -66,7 +66,7 @@ class ConfigManagement
      */
     public function getPercyCliExecutablePath(): string
     {
-        return $this->validateFilePath(__DIR__ . '/../../../../node_modules/.bin/percy');
+        return realpath($this->validateFilePath(__DIR__ . '/../../../../node_modules/.bin/percy')) ?: '';
     }
 
     /**
@@ -94,7 +94,7 @@ class ConfigManagement
     {
         $configuredNodePath = getenv(self::PERCY_NODE_PATH);
         if (is_string($configuredNodePath) && strlen($configuredNodePath)) {
-            return $this->validateFilePath($configuredNodePath);
+            return realpath($this->validateFilePath($configuredNodePath)) ?: 'node';
         }
 
         return 'node';
