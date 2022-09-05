@@ -13,21 +13,16 @@ class SnapshotRepository
 
     private string $instanceId;
 
-    private string $snapshotPathTemplate;
-
     /**
      * SnapshotRepository constructor.
      */
     public function __construct(
         Serializer $serializer,
-        ?string $instanceId = null,
-        ?string $snapshotPathTemplate = null
+        ?string $instanceId = null
     ) {
         $this->serializer = $serializer;
         // Ensure we're only managing snapshots created by this test run by prepending with an "instance ID"
         $this->instanceId = $instanceId ?? (string) Uuid::uuid4();
-        $this->snapshotPathTemplate = $snapshotPathTemplate
-            ?? codecept_output_dir('dom_snapshots' . DIRECTORY_SEPARATOR . '%s_%s.json');
     }
 
     /**
@@ -73,13 +68,14 @@ class SnapshotRepository
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
      * @param string|null $instanceId
+     * @param string|null $loadPathTemplate
      * @return \Codeception\Module\Percy\Snapshot[]
      */
-    public function loadAll(string $instanceId = null): array
+    public function loadAll(string $instanceId = null, string $loadPathTemplate = null): array
     {
         return array_map(
             fn (string $snapshotFile): Snapshot => $this->load($snapshotFile),
-            $this->getSnapshotFilePaths($instanceId)
+            $this->getSnapshotFilePaths($instanceId, $loadPathTemplate)
         );
     }
 
@@ -101,19 +97,26 @@ class SnapshotRepository
      * @param string|null $instanceId
      * @return string[]
      */
-    private function getSnapshotFilePaths(string $instanceId = null): array
+    private function getSnapshotFilePaths(string $instanceId = null, ?string $loadPathTemplate = null): array
     {
-        return glob($this->buildFilePath($instanceId, '*')) ?: [];
+        return glob($this->buildFilePath($instanceId, '*', $loadPathTemplate)) ?: [];
     }
 
     /**
      * Build file path
      */
-    private function buildFilePath(?string $instanceId = null, ?string $snapshotId = null): string
-    {
+    private function buildFilePath(
+        ?string $instanceId = null,
+        ?string $snapshotId = null,
+        ?string $loadPathTemplate = null
+    ): string {
+        $filePath = $loadPathTemplate
+            ? codecept_root_dir($loadPathTemplate)
+            : codecept_output_dir('dom_snapshots' . DIRECTORY_SEPARATOR . '%s_%s.json');
+
         return $this->verifyFilePath(
             sprintf(
-                $this->snapshotPathTemplate,
+                $filePath,
                 $instanceId ?? $this->instanceId,
                 $snapshotId ?? (string) Uuid::uuid4()
             )

@@ -18,6 +18,8 @@ class SnapshotManagement
 
     private Output $output;
 
+    private ?string $loadPathTemplate;
+
     /**
      * SnapshotManagement constructor.
      */
@@ -26,13 +28,15 @@ class SnapshotManagement
         SnapshotRepository $snapshotRepository,
         ProcessManagement $processManagement,
         ClientInterface $client,
-        Output $output
+        Output $output,
+        ?string $loadPathTemplate = null
     ) {
         $this->configManagement = $configManagement;
         $this->snapshotRepository = $snapshotRepository;
         $this->processManagement = $processManagement;
         $this->client = $client;
         $this->output = $output;
+        $this->loadPathTemplate = $loadPathTemplate;
     }
 
     /**
@@ -87,7 +91,7 @@ class SnapshotManagement
     public function sendInstance(string $instanceId = null): void
     {
         // Passing `*` will load all snapshots from all runs, not just the current one
-        $snapshots = $this->snapshotRepository->loadAll($instanceId);
+        $snapshots = $this->snapshotRepository->loadAll($instanceId, $this->loadPathTemplate);
         if ([] === $snapshots) {
             $this->output->debug('No snapshots to send!');
 

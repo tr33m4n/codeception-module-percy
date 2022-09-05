@@ -232,8 +232,7 @@ final class ServiceContainer
             SnapshotRepository::class,
             [
                 $this->getSerializer(),
-                $this->getConfigManagement()->getInstanceId(),
-                $this->getConfigManagement()->getSnapshotPathTemplate()
+                $this->getConfigManagement()->getInstanceId()
             ]
         );
     }
@@ -241,7 +240,7 @@ final class ServiceContainer
     /**
      * Get snapshot management
      */
-    public function getSnapshotManagement(): SnapshotManagement
+    public function getSnapshotManagement(?string $loadPathTemplate = null): SnapshotManagement
     {
         return $this->resolveService(
             SnapshotManagement::class,
@@ -250,7 +249,8 @@ final class ServiceContainer
                 $this->getSnapshotRepository(),
                 $this->getProcessManagement(),
                 $this->getClient(),
-                $this->getOutput()
+                $this->getOutput(),
+                $loadPathTemplate
             ]
         );
     }

@@ -8,30 +8,16 @@ use Codeception\CustomCommandInterface;
 use Codeception\Lib\Console\Output;
 use Codeception\Module\Percy\Definitions;
 use Codeception\Module\Percy\ServiceContainer;
-use Codeception\Module\Percy\SnapshotManagement;
 use Codeception\Util\Debug;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ProcessSnapshots extends Command implements CustomCommandInterface
 {
-    private SnapshotManagement $snapshotManagement;
-
-    /**
-     * ProcessSnapshots constructor.
-     *
-     * @param string|null $name
-     */
-    public function __construct(
-        string $name = null
-    ) {
-        $serviceContainer = new ServiceContainer(null, Definitions::DEFAULT_CONFIG);
-        $this->snapshotManagement = $serviceContainer->getSnapshotManagement();
-
-        parent::__construct($name);
-    }
+    private const LOAD_PATH_TEMPLATE_OPTION = 'template';
 
     /**
      * @inheritDoc
@@ -50,6 +36,19 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function configure(): void
+    {
+        $this->addOption(
+            self::LOAD_PATH_TEMPLATE_OPTION,
+            't',
+            InputArgument::OPTIONAL,
+            'Pass a path template to use when loading snapshots. This will be resolved from the Codeception config root'
+        );
+    }
+
+    /**
      * {@inheritdoc}
      *
      * Process snapshots
@@ -63,14 +62,20 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var string|null $loadPathTemplate */
+        $loadPathTemplate = $input->getOption(self::LOAD_PATH_TEMPLATE_OPTION);
+
+        $serviceContainer = new ServiceContainer(null, Definitions::DEFAULT_CONFIG);
+        $snapshotManagement = $serviceContainer->getSnapshotManagement($loadPathTemplate);
+
         // Codeception uses its own "output" when configuring the `debug` methods. Create a new instance
         $codeceptionOutputInstance = new Output([]);
 
         $io = new SymfonyStyle($input, $codeceptionOutputInstance);
         Debug::setOutput($codeceptionOutputInstance);
 
-        $this->snapshotManagement->sendAll();
-        $this->snapshotManagement->resetAll();
+        $snapshotManagement->sendAll();
+        $snapshotManagement->resetAll();
 
         $io->success('Successfully processed snapshots');
 
