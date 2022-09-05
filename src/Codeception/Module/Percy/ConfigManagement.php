@@ -145,19 +145,6 @@ class ConfigManagement
     }
 
     /**
-     * Get snapshot path template
-     */
-    public function getSnapshotPathTemplate(): ?string
-    {
-        $snapshotPathTemplate = $this->get('snapshotPathTemplate');
-        if (!is_string($snapshotPathTemplate)) {
-            return null;
-        }
-
-        return codecept_root_dir($snapshotPathTemplate);
-    }
-
-    /**
      * Get snapshot config
      *
      * @return array<string, mixed>
