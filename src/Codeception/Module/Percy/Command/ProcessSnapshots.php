@@ -11,8 +11,8 @@ use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Util\Debug;
 use Exception;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -46,14 +46,14 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
         $this->addOption(
             self::LOAD_PATH_TEMPLATE_OPTION,
             't',
-            InputArgument::OPTIONAL,
+            InputOption::VALUE_OPTIONAL,
             'Pass a path template to use when loading snapshots. This will be resolved from the Codeception config root'
         );
 
         $this->addOption(
             self::SUPPRESS_THROW_OPTION,
             'e',
-            InputArgument::OPTIONAL,
+            InputOption::VALUE_OPTIONAL,
             'Whether to suppress throwing and exiting with an error, printing the error instead',
             false
         );
