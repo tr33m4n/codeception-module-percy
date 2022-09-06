@@ -116,7 +116,7 @@ class SnapshotRepository
             sprintf(
                 $filePath,
                 $instanceId ?? $this->instanceId,
-                $snapshotId ?? (string) Uuid::uuid4()
+                $snapshotId ?? (string) Uuid::uuid1()
             )
         );
     }
