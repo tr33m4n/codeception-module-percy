@@ -93,10 +93,9 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
         } catch (Exception $exception) {
             if (false === $input->getOption(self::SUPPRESS_THROW_OPTION)) {
                 throw $exception;
-            } else {
-                $output->writeln('Process snapshot command errored silently with the following:');
-                $output->writeln($exception->getMessage());
             }
+            $output->writeln('Process snapshot command errored silently with the following:');
+            $output->writeln($exception->getMessage());
         }
 
         return self::SUCCESS;
