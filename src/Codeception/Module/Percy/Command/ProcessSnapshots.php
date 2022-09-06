@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Command;
 
+use Codeception\Command\Shared\Config;
 use Codeception\CustomCommandInterface;
 use Codeception\Lib\Console\Output;
 use Codeception\Module\Percy\Definitions;
@@ -11,16 +12,15 @@ use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Util\Debug;
 use Exception;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ProcessSnapshots extends Command implements CustomCommandInterface
 {
-    private const LOAD_PATH_TEMPLATE_OPTION = 'template';
+    use Config;
 
-    private const SUPPRESS_THROW_OPTION = 'suppress_throw';
+    private const SUITE_ARGUMENT = 'suite';
 
     /**
      * @inheritDoc
@@ -43,19 +43,10 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
      */
     protected function configure(): void
     {
-        $this->addOption(
-            self::LOAD_PATH_TEMPLATE_OPTION,
-            't',
-            InputOption::VALUE_OPTIONAL,
-            'Pass a path template to use when loading snapshots. This will be resolved from the Codeception config root'
-        );
-
-        $this->addOption(
-            self::SUPPRESS_THROW_OPTION,
-            'e',
-            InputOption::VALUE_OPTIONAL,
-            'Whether to suppress throwing and exiting with an error, printing the error instead',
-            false
+        $this->addArgument(
+            self::SUITE_ARGUMENT,
+            InputArgument::REQUIRED,
+            'Suite to use when loading configuration'
         );
     }
 
@@ -68,34 +59,39 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
      * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \JsonException
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var string|null $loadPathTemplate */
-        $loadPathTemplate = $input->getOption(self::LOAD_PATH_TEMPLATE_OPTION);
-
-        $serviceContainer = new ServiceContainer(null, Definitions::DEFAULT_CONFIG);
-        $snapshotManagement = $serviceContainer->getSnapshotManagement($loadPathTemplate);
-
+        $modulesConfig = $this->getSuiteConfig($input->getArgument(self::SUITE_ARGUMENT))['modules'] ?? [];
         // Codeception uses its own "output" when configuring the `debug` methods. Create a new instance
-        $codeceptionOutputInstance = new Output([]);
+        Debug::setOutput(new Output($this->getGlobalConfig()));
 
-        $io = new SymfonyStyle($input, $codeceptionOutputInstance);
-        Debug::setOutput($codeceptionOutputInstance);
+        $serviceContainer = new ServiceContainer(
+            null,
+            array_merge(Definitions::DEFAULT_CONFIG, $modulesConfig['config'][Definitions::NAMESPACE] ?? [])
+        );
+
+        $snapshotManagement = $serviceContainer->getSnapshotManagement();
+        $configManagement = $serviceContainer->getConfigManagement();
+        $outputService = $serviceContainer->getOutput();
+
+        if (!in_array(Definitions::NAMESPACE, $modulesConfig['enabled'] ?? [])) {
+            $outputService->debug(sprintf('%s module is not enabled', Definitions::NAMESPACE));
+
+            return self::FAILURE;
+        }
 
         try {
             $snapshotManagement->sendAll();
             $snapshotManagement->resetAll();
 
-            $io->success('Successfully processed snapshots');
+            $outputService->debug('Successfully processed snapshots');
         } catch (Exception $exception) {
-            if (false === $input->getOption(self::SUPPRESS_THROW_OPTION)) {
+            if ($configManagement->shouldThrowOnError()) {
                 throw $exception;
             }
-            $output->writeln('Process snapshot command errored silently with the following:');
-            $output->writeln($exception->getMessage());
+
+            $outputService->debug($exception->getMessage(), ['Trace' => $exception->getTraceAsString()]);
         }
 
         return self::SUCCESS;

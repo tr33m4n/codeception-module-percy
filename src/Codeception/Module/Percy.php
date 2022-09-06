@@ -7,8 +7,8 @@ namespace Codeception\Module;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
 use Codeception\Module\Percy\ConfigManagement;
-use Codeception\Module\Percy\Output;
 use Codeception\Module\Percy\Definitions;
+use Codeception\Module\Percy\Output;
 use Codeception\Module\Percy\ProcessManagement;
 use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Module\Percy\SnapshotManagement;
@@ -74,11 +74,7 @@ class Percy extends Module
     /**
      * Take snapshot of DOM and send to https://percy.io
      *
-     * @throws \Codeception\Exception\ModuleException
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @throws \Codeception\Module\Percy\Exception\StorageException
-     * @throws \JsonException
-     * @throws \tr33m4n\CodeceptionModulePercyEnvironment\Exception\EnvironmentException
+     * @throws \Exception
      * @param array<string, mixed> $snapshotConfig
      */
     public function takeAPercySnapshot(
@@ -90,22 +86,26 @@ class Percy extends Module
             return;
         }
 
-        // Add Percy CLI JS to page
-        $this->webDriver->executeJS($this->configManagement->getPercyCliBrowserJs());
+        try {
+            // Add Percy CLI JS to page
+            $this->webDriver->executeJS($this->configManagement->getPercyCliBrowserJs());
 
-        /** @var string $domString */
-        $domString = $this->webDriver->executeJS(
-            sprintf('return PercyDOM.serialize(%s)', $this->configManagement->getSerializeConfig())
-        );
+            /** @var string $domString */
+            $domString = $this->webDriver->executeJS(
+                sprintf('return PercyDOM.serialize(%s)', $this->configManagement->getSerializeConfig())
+            );
 
-        $this->snapshotManagement->createSnapshot(
-            $domString,
-            $name,
-            $this->webDriver->webDriver->getCurrentURL(),
-            $this->environmentProvider->getClientInfo(),
-            $this->environmentProvider->getEnvironmentInfo(),
-            array_merge($this->configManagement->getSnapshotConfig(), $snapshotConfig)
-        );
+            $this->snapshotManagement->createSnapshot(
+                $domString,
+                $name,
+                $this->webDriver->webDriver->getCurrentURL(),
+                $this->environmentProvider->getClientInfo(),
+                $this->environmentProvider->getEnvironmentInfo(),
+                array_merge($this->configManagement->getSnapshotConfig(), $snapshotConfig)
+            );
+        } catch (Exception $exception) {
+            $this->onError($exception);
+        }
     }
 
     /**
@@ -126,7 +126,7 @@ class Percy extends Module
         try {
             $this->snapshotManagement->sendInstance();
         } catch (Exception $exception) {
-            $this->debugConnectionError($exception);
+            $this->onError($exception);
         }
     }
 
@@ -141,25 +141,29 @@ class Percy extends Module
      */
     public function _failed(TestInterface $test, $fail): void
     {
-        $this->snapshotManagement->resetInstance();
+        try {
+            $this->snapshotManagement->resetInstance();
+        } catch (Exception $exception) {
+            $this->onError($exception);
+        }
     }
 
     /**
-     * Echo connection error message
+     * On error
      *
      * @throws \Exception
      */
-    private function debugConnectionError(Exception $exception): void
+    private function onError(Exception $exception): void
     {
-        $this->output->debug($exception->getMessage(), ['Trace' => $exception->getTraceAsString()]);
-
         try {
             $this->processManagement->stopPercySnapshotServer();
         } catch (RuntimeException $exception) {
             // Fail silently if the process is not running
         }
 
-        if (!$this->configManagement->shouldThrowOnAdapterError()) {
+        if (!$this->configManagement->shouldThrowOnError()) {
+            $this->output->debug($exception->getMessage(), ['Trace' => $exception->getTraceAsString()]);
+
             return;
         }
 
