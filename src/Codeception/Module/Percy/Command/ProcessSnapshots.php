@@ -9,6 +9,7 @@ use Codeception\Lib\Console\Output;
 use Codeception\Module\Percy\Definitions;
 use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Util\Debug;
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,6 +19,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ProcessSnapshots extends Command implements CustomCommandInterface
 {
     private const LOAD_PATH_TEMPLATE_OPTION = 'template';
+
+    private const SUPPRESS_THROW_OPTION = 'suppress_throw';
 
     /**
      * @inheritDoc
@@ -45,6 +48,14 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
             't',
             InputArgument::OPTIONAL,
             'Pass a path template to use when loading snapshots. This will be resolved from the Codeception config root'
+        );
+
+        $this->addOption(
+            self::SUPPRESS_THROW_OPTION,
+            'e',
+            InputArgument::OPTIONAL,
+            'Whether to suppress throwing and exiting with an error, printing the error instead',
+            false
         );
     }
 
@@ -74,10 +85,19 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
         $io = new SymfonyStyle($input, $codeceptionOutputInstance);
         Debug::setOutput($codeceptionOutputInstance);
 
-        $snapshotManagement->sendAll();
-        $snapshotManagement->resetAll();
+        try {
+            $snapshotManagement->sendAll();
+            $snapshotManagement->resetAll();
 
-        $io->success('Successfully processed snapshots');
+            $io->success('Successfully processed snapshots');
+        } catch (Exception $exception) {
+            if (false === $input->getOption(self::SUPPRESS_THROW_OPTION)) {
+                throw $exception;
+            } else {
+                $output->writeln('Process snapshot command errored silently with the following:');
+                $output->writeln($exception->getMessage());
+            }
+        }
 
         return self::SUCCESS;
     }
