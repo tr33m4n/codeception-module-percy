@@ -173,6 +173,19 @@ class ConfigManagement
     }
 
     /**
+     * Get snapshot folder
+     */
+    public function getSnapshotFolder(): ?string
+    {
+        $snapshotFolder = $this->get('snapshotFolder');
+        if (!is_string($snapshotFolder)) {
+            return null;
+        }
+
+        return $snapshotFolder;
+    }
+
+    /**
      * Get serialize config
      *
      * @throws \JsonException
@@ -189,11 +202,11 @@ class ConfigManagement
     }
 
     /**
-     * Check if we should throw on adapter error
+     * Check if we should throw on error
      */
-    public function shouldThrowOnAdapterError(): bool
+    public function shouldThrowOnError(): bool
     {
-        return (bool) $this->get('throwOnAdapterError');
+        return (bool) $this->get('throwOnError');
     }
 
     /**
