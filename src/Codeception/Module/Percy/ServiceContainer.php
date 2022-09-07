@@ -200,6 +200,14 @@ final class ServiceContainer
     }
 
     /**
+     * Get validate environment
+     */
+    public function getValidateEnvironment(): ValidateEnvironment
+    {
+        return $this->resolveService(ValidateEnvironment::class, [$this->getConfigManagement()]);
+    }
+
+    /**
      * Get process management
      */
     public function getProcessManagement(): ProcessManagement

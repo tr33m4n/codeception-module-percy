@@ -7,7 +7,10 @@ namespace Codeception\Module\Percy\Command;
 use Codeception\Command\Shared\Config;
 use Codeception\CustomCommandInterface;
 use Codeception\Lib\Console\Output;
+use Codeception\Module\Percy\ConfigManagement;
 use Codeception\Module\Percy\Definitions;
+use Codeception\Module\Percy\Exception\EnvironmentException;
+use Codeception\Module\Percy\Output as PercyOutput;
 use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Util\Debug;
 use Exception;
@@ -55,10 +58,7 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
      *
      * Process snapshots
      *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
-     * @throws \Codeception\Module\Percy\Exception\StorageException
-     * @throws \JsonException
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -74,6 +74,7 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
         $snapshotManagement = $serviceContainer->getSnapshotManagement();
         $configManagement = $serviceContainer->getConfigManagement();
         $outputService = $serviceContainer->getOutput();
+        $validateEnvironment = $serviceContainer->getValidateEnvironment();
 
         if (!in_array(Definitions::NAMESPACE, $modulesConfig['enabled'] ?? [])) {
             $outputService->debug(sprintf('%s module is not enabled', Definitions::NAMESPACE));
@@ -82,17 +83,41 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
         }
 
         try {
+            $validateEnvironment->execute();
+
             $snapshotManagement->sendAll();
             $snapshotManagement->resetAll();
 
             $outputService->debug('Successfully processed snapshots');
         } catch (Exception $exception) {
-            if ($configManagement->shouldThrowOnError()) {
-                throw $exception;
-            }
-
-            $outputService->debug($exception->getMessage(), ['Trace' => $exception->getTraceAsString()]);
+            return $this->handleException($exception, $outputService, $configManagement);
         }
+
+        return self::SUCCESS;
+    }
+
+    /**
+     * Handle exception
+     *
+     * @throws \Exception
+     */
+    private function handleException(
+        Exception $exception,
+        PercyOutput $outputService,
+        ConfigManagement $configManagement
+    ): int {
+        // Always error silently if it's an environment exception
+        if ($exception instanceof EnvironmentException) {
+            $outputService->debug($exception->getMessage());
+
+            return self::SUCCESS;
+        }
+
+        if ($configManagement->shouldThrowOnError()) {
+            throw $exception;
+        }
+
+        $outputService->debug($exception->getMessage(), ['Trace' => $exception->getTraceAsString()]);
 
         return self::SUCCESS;
     }

@@ -10,6 +10,10 @@ class ConfigManagement
 {
     public const PERCY_NODE_PATH = 'PERCY_NODE_PATH';
 
+    public const PERCY_ENABLED = 'PERCY_ENABLED';
+
+    public const PERCY_TOKEN = 'PERCY_TOKEN';
+
     private Serializer $serializer;
 
     /**
@@ -47,6 +51,27 @@ class ConfigManagement
         }
 
         return null;
+    }
+
+    /**
+     * Whether Percy has been disabled in env config
+     */
+    public function isEnabled(): bool
+    {
+        $percyEnabled = getenv(self::PERCY_ENABLED);
+
+        // `getenv` will return `false` if the env var is not set, string "1" or "0" otherwise
+        return !is_string($percyEnabled) || filter_var($percyEnabled, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Whether the Percy token has been set
+     */
+    public function hasPercyToken(): bool
+    {
+        $percyToken = getenv(self::PERCY_TOKEN);
+
+        return is_string($percyToken) && strlen($percyToken);
     }
 
     /**

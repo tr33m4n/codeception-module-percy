@@ -8,10 +8,12 @@ use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
 use Codeception\Module\Percy\ConfigManagement;
 use Codeception\Module\Percy\Definitions;
+use Codeception\Module\Percy\Exception\EnvironmentException;
 use Codeception\Module\Percy\Output;
 use Codeception\Module\Percy\ProcessManagement;
 use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Module\Percy\SnapshotManagement;
+use Codeception\Module\Percy\ValidateEnvironment;
 use Codeception\TestInterface;
 use Exception;
 use Symfony\Component\Process\Exception\RuntimeException;
@@ -38,6 +40,8 @@ class Percy extends Module
     private SnapshotManagement $snapshotManagement;
 
     private EnvironmentProviderInterface $environmentProvider;
+
+    private ValidateEnvironment $validateEnvironment;
 
     private Output $output;
 
@@ -67,6 +71,7 @@ class Percy extends Module
         $this->processManagement = $serviceContainer->getProcessManagement();
         $this->snapshotManagement = $serviceContainer->getSnapshotManagement();
         $this->environmentProvider = $serviceContainer->getEnvironmentProvider();
+        $this->validateEnvironment = $serviceContainer->getValidateEnvironment();
         $this->output = $serviceContainer->getOutput();
         $this->webDriver = $webDriverModule;
     }
@@ -87,6 +92,8 @@ class Percy extends Module
         }
 
         try {
+            $this->validateEnvironment->execute();
+
             // Add Percy CLI JS to page
             $this->webDriver->executeJS($this->configManagement->getPercyCliBrowserJs());
 
@@ -117,13 +124,15 @@ class Percy extends Module
      */
     public function _afterSuite(): void
     {
-        if ($this->configManagement->shouldCollectOnly()) {
-            $this->output->debug('All snapshots collected!');
-
-            return;
-        }
-
         try {
+            $this->validateEnvironment->execute();
+
+            if ($this->configManagement->shouldCollectOnly()) {
+                $this->output->debug('All snapshots collected!');
+
+                return;
+            }
+
             $this->snapshotManagement->sendInstance();
         } catch (Exception $exception) {
             $this->onError($exception);
@@ -142,6 +151,8 @@ class Percy extends Module
     public function _failed(TestInterface $test, $fail): void
     {
         try {
+            $this->validateEnvironment->execute();
+
             $this->snapshotManagement->resetInstance();
         } catch (Exception $exception) {
             $this->onError($exception);
@@ -155,6 +166,13 @@ class Percy extends Module
      */
     private function onError(Exception $exception): void
     {
+        // Always error silently if it's an environment exception
+        if ($exception instanceof EnvironmentException) {
+            $this->output->debug($exception->getMessage());
+
+            return;
+        }
+
         try {
             $this->processManagement->stopPercySnapshotServer();
         } catch (RuntimeException $exception) {
