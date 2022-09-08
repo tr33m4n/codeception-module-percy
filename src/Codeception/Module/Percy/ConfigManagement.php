@@ -24,7 +24,7 @@ class ConfigManagement
     /**
      * ConfigManagement constructor.
      *
-     * @param array<string, mixed>                 $config
+     * @param array<string, mixed> $config
      */
     public function __construct(
         Serializer $serializer,
@@ -152,21 +152,6 @@ class ConfigManagement
         }
 
         return $snapshotServerPort;
-    }
-
-    /**
-     * Get snapshot server URI
-     *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
-     */
-    public function getSnapshotServerUri(): string
-    {
-        $snapshotServerUri = sprintf('http://localhost:%s/percy/snapshot', $this->getSnapshotServerPort());
-        if (!filter_var($snapshotServerUri, FILTER_VALIDATE_URL)) {
-            throw new ConfigException(sprintf('Snapshot URI "%s" is not valid', $snapshotServerUri));
-        }
-
-        return $snapshotServerUri;
     }
 
     /**

@@ -181,11 +181,11 @@ class Snapshot implements JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * To array
      *
      * @return array<string, mixed>
      */
-    public function jsonSerialize(): array
+    public function toArray(): array
     {
         return array_merge(
             [
@@ -197,5 +197,15 @@ class Snapshot implements JsonSerializable
             ],
             $this->config
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }
