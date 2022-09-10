@@ -28,11 +28,6 @@ use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProviderInterface;
  */
 class Percy extends Module
 {
-    /**
-     * @var array<string, mixed>
-     */
-    protected $config = Definitions::DEFAULT_CONFIG;
-
     private ConfigManagement $configManagement;
 
     private ProcessManagement $processManagement;
@@ -57,6 +52,9 @@ class Percy extends Module
         ModuleContainer $moduleContainer,
         array $config = null
     ) {
+        // Set within the constructor, so we can support Codeception 4 and 5 typed properties
+        $this->config = Definitions::DEFAULT_CONFIG;
+
         parent::__construct($moduleContainer, $config);
 
         /** @var \Codeception\Module\WebDriver $webDriverModule */

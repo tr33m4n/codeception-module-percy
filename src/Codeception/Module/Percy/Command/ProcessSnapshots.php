@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Command;
 
-use Codeception\Command\Shared\Config;
+use Codeception\Configuration;
 use Codeception\CustomCommandInterface;
 use Codeception\Lib\Console\Output;
 use Codeception\Module\Percy\ConfigManagement;
@@ -21,8 +21,6 @@ use Throwable;
 
 class ProcessSnapshots extends Command implements CustomCommandInterface
 {
-    use Config;
-
     private const SUITE_ARGUMENT = 'suite';
 
     /**
@@ -58,13 +56,17 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
      *
      * Process snapshots
      *
-     * @throws \Exception
+     * @throws \Throwable
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $modulesConfig = $this->getSuiteConfig($input->getArgument(self::SUITE_ARGUMENT))['modules'] ?? [];
+        $globalConfig = Configuration::config();
+        /** @var string $suite */
+        $suite = $input->getArgument(self::SUITE_ARGUMENT);
+        /** @var array<string, array<string, string[]>> $modulesConfig */
+        $modulesConfig = Configuration::suiteSettings($suite, $globalConfig)['modules'] ?? [];
         // Codeception uses its own "output" when configuring the `debug` methods. Create a new instance
-        Debug::setOutput(new Output($this->getGlobalConfig()));
+        Debug::setOutput(new Output($globalConfig));
 
         $serviceContainer = new ServiceContainer(
             null,
