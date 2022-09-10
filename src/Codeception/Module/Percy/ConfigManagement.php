@@ -10,6 +10,10 @@ class ConfigManagement
 {
     public const PERCY_NODE_PATH = 'PERCY_NODE_PATH';
 
+    public const PERCY_ENABLED = 'PERCY_ENABLED';
+
+    public const PERCY_TOKEN = 'PERCY_TOKEN';
+
     private Serializer $serializer;
 
     /**
@@ -20,7 +24,7 @@ class ConfigManagement
     /**
      * ConfigManagement constructor.
      *
-     * @param array<string, mixed>                 $config
+     * @param array<string, mixed> $config
      */
     public function __construct(
         Serializer $serializer,
@@ -47,6 +51,27 @@ class ConfigManagement
         }
 
         return null;
+    }
+
+    /**
+     * Whether Percy has been disabled in env config
+     */
+    public function isEnabled(): bool
+    {
+        $percyEnabled = getenv(self::PERCY_ENABLED);
+
+        // `getenv` will return `false` if the env var is not set, string "1" or "0" otherwise
+        return !is_string($percyEnabled) || filter_var($percyEnabled, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Whether the Percy token has been set
+     */
+    public function hasPercyToken(): bool
+    {
+        $percyToken = getenv(self::PERCY_TOKEN);
+
+        return is_string($percyToken) && strlen($percyToken);
     }
 
     /**
@@ -127,21 +152,6 @@ class ConfigManagement
         }
 
         return $snapshotServerPort;
-    }
-
-    /**
-     * Get snapshot server URI
-     *
-     * @throws \Codeception\Module\Percy\Exception\ConfigException
-     */
-    public function getSnapshotServerUri(): string
-    {
-        $snapshotServerUri = sprintf('http://localhost:%s/percy/snapshot', $this->getSnapshotServerPort());
-        if (!filter_var($snapshotServerUri, FILTER_VALIDATE_URL)) {
-            throw new ConfigException(sprintf('Snapshot URI "%s" is not valid', $snapshotServerUri));
-        }
-
-        return $snapshotServerUri;
     }
 
     /**

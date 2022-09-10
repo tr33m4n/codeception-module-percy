@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Codeception\Module\Percy;
 
 use Codeception\Module\Percy\Exception\ContainerException;
-use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
-use Codeception\Module\Percy\Exchange\Adapter\CurlAdapter;
 use Codeception\Module\Percy\Exchange\Client;
 use Codeception\Module\Percy\Exchange\ClientInterface;
 use Codeception\Module\WebDriver;
 use CzProject\GitPhp\Git;
+use GuzzleHttp\Client as GuzzleClient;
 use OndraM\CiDetector\Env as EnvHelper;
+use Codeception\Module\Percy\Exchange\UriFactory;
 use tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment;
 use tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment\CiType;
 use tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment\CiType\GitHub\EventDataProvider;
@@ -41,7 +41,7 @@ final class ServiceContainer
     /**
      * ServiceContainer constructor.
      *
-     * @param array<string, mixed>               $moduleConfig
+     * @param array<string, mixed> $moduleConfig
      */
     public function __construct(
         ?WebDriver $webDriver,
@@ -200,6 +200,22 @@ final class ServiceContainer
     }
 
     /**
+     * Get URI factory
+     */
+    public function getUriFactory(): UriFactory
+    {
+        return $this->resolveService(UriFactory::class, [$this->getConfigManagement()]);
+    }
+
+    /**
+     * Get validate environment
+     */
+    public function getValidateEnvironment(): ValidateEnvironment
+    {
+        return $this->resolveService(ValidateEnvironment::class, [$this->getConfigManagement()]);
+    }
+
+    /**
      * Get process management
      */
     public function getProcessManagement(): ProcessManagement
@@ -208,19 +224,17 @@ final class ServiceContainer
     }
 
     /**
-     * Get adapter
-     */
-    public function getAdapter(): AdapterInterface
-    {
-        return $this->resolveService(CurlAdapter::class);
-    }
-
-    /**
      * Get client
      */
     public function getClient(): ClientInterface
     {
-        return $this->resolveService(Client::class, [$this->getAdapter(), $this->getSerializer()]);
+        return $this->resolveService(
+            Client::class,
+            [
+                $this->serviceFactory->create(GuzzleClient::class),
+                $this->getUriFactory()
+            ]
+        );
     }
 
     /**

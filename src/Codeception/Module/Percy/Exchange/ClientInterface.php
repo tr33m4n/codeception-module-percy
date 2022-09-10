@@ -9,9 +9,16 @@ use Codeception\Module\Percy\Snapshot;
 interface ClientInterface
 {
     /**
-     * Post
+     * Send snapshot
      *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function post(string $uri, Snapshot $snapshot): string;
+    public function sendSnapshot(Snapshot $snapshot): void;
+
+    /**
+     * Perform health check
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function performHealthCheck(): void;
 }

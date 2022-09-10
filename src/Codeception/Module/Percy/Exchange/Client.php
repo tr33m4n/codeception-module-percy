@@ -4,42 +4,47 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy\Exchange;
 
-use Codeception\Module\Percy\Exchange\Adapter\AdapterInterface;
-use Codeception\Module\Percy\Serializer;
 use Codeception\Module\Percy\Snapshot;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\RequestOptions;
 
 class Client implements ClientInterface
 {
-    private AdapterInterface $adapter;
+    private GuzzleClient $guzzleClient;
 
-    private Serializer $serializer;
+    private UriFactory $uriFactory;
 
     /**
      * Client constructor.
      */
     public function __construct(
-        AdapterInterface $adapter,
-        Serializer $serializer
+        GuzzleClient $guzzleClient,
+        UriFactory $uriFactory
     ) {
-        $this->adapter = $adapter;
-        $this->serializer = $serializer;
+        $this->guzzleClient = $guzzleClient;
+        $this->uriFactory = $uriFactory;
     }
 
     /**
      * {@inheritdoc}
      *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
-     * @throws \JsonException
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
      */
-    public function post(string $uri, Snapshot $snapshot): string
+    public function sendSnapshot(Snapshot $snapshot): void
     {
-        $payloadAsString = $this->serializer->serialize($snapshot);
+        $this->guzzleClient->post(
+            $this->uriFactory->createSnapshotUri(),
+            [RequestOptions::JSON => $snapshot->toArray()]
+        );
+    }
 
-        return $this->adapter->setUri($uri)
-            ->setPayload($payloadAsString)
-            ->setHeaders([
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($payloadAsString)
-            ])->execute();
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \Codeception\Module\Percy\Exception\ConfigException
+     */
+    public function performHealthCheck(): void
+    {
+        $this->guzzleClient->get($this->uriFactory->createHealthCheckUri());
     }
 }

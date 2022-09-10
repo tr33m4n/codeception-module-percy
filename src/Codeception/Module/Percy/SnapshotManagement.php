@@ -65,9 +65,9 @@ class SnapshotManagement
     /**
      * Send all snapshots
      *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @throws \Codeception\Module\Percy\Exception\StorageException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
      */
     public function sendAll(): void
@@ -78,11 +78,10 @@ class SnapshotManagement
     /**
      * Send instance snapshots
      *
-     * @throws \Codeception\Module\Percy\Exception\AdapterException
      * @throws \Codeception\Module\Percy\Exception\ConfigException
      * @throws \Codeception\Module\Percy\Exception\StorageException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
-     * @param string|null $instanceId
      */
     public function sendInstance(string $instanceId = null): void
     {
@@ -97,9 +96,12 @@ class SnapshotManagement
         $this->output->debug(sprintf('Sending %s Percy snapshots...', count($snapshots)));
         $this->processManagement->startPercySnapshotServer();
 
+        // Ensure server can accept requests before continuing
+        $this->client->performHealthCheck();
+
         foreach ($snapshots as $snapshot) {
             $this->output->debug(sprintf('Sending snapshot "%s"', $snapshot->getName()));
-            $this->client->post($this->configManagement->getSnapshotServerUri(), $snapshot);
+            $this->client->sendSnapshot($snapshot);
         }
 
         $this->processManagement->stopPercySnapshotServer();
