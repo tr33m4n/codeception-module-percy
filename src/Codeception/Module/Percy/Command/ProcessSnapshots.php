@@ -63,6 +63,7 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
         $globalConfig = Configuration::config();
         /** @var string $suite */
         $suite = $input->getArgument(self::SUITE_ARGUMENT);
+        /** @var array<string, array<string, string[]>> $modulesConfig */
         $modulesConfig = Configuration::suiteSettings($suite, $globalConfig)['modules'] ?? [];
         // Codeception uses its own "output" when configuring the `debug` methods. Create a new instance
         Debug::setOutput(new Output($globalConfig));
