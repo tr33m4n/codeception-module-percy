@@ -9,15 +9,15 @@ use Codeception\CustomCommandInterface;
 use Codeception\Lib\Console\Output;
 use Codeception\Module\Percy\ConfigManagement;
 use Codeception\Module\Percy\Definitions;
-use Codeception\Module\Percy\Exception\EnvironmentException;
+use Codeception\Module\Percy\Exception\PercyDisabledException;
 use Codeception\Module\Percy\Output as PercyOutput;
 use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Util\Debug;
-use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class ProcessSnapshots extends Command implements CustomCommandInterface
 {
@@ -89,7 +89,7 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
             $snapshotManagement->resetAll();
 
             $outputService->debug('Successfully processed snapshots');
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             return $this->handleException($exception, $outputService, $configManagement);
         }
 
@@ -99,16 +99,16 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
     /**
      * Handle exception
      *
-     * @throws \Exception
+     * @throws \Throwable
      */
     private function handleException(
-        Exception $exception,
+        Throwable $exception,
         PercyOutput $outputService,
         ConfigManagement $configManagement
     ): int {
-        // Always error silently if it's an environment exception
-        if ($exception instanceof EnvironmentException) {
-            $outputService->debug($exception->getMessage());
+        // Always error silently if it's a "Percy disabled" exception
+        if ($exception instanceof PercyDisabledException) {
+            $outputService->debug($exception);
 
             return self::SUCCESS;
         }

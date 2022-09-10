@@ -8,15 +8,15 @@ use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
 use Codeception\Module\Percy\ConfigManagement;
 use Codeception\Module\Percy\Definitions;
-use Codeception\Module\Percy\Exception\EnvironmentException;
+use Codeception\Module\Percy\Exception\PercyDisabledException;
 use Codeception\Module\Percy\Output;
 use Codeception\Module\Percy\ProcessManagement;
 use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Module\Percy\SnapshotManagement;
 use Codeception\Module\Percy\ValidateEnvironment;
 use Codeception\TestInterface;
-use Exception;
 use Symfony\Component\Process\Exception\RuntimeException;
+use Throwable;
 use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProviderInterface;
 
 /**
@@ -79,7 +79,7 @@ class Percy extends Module
     /**
      * Take snapshot of DOM and send to https://percy.io
      *
-     * @throws \Exception
+     * @throws \Throwable
      * @param array<string, mixed> $snapshotConfig
      */
     public function takeAPercySnapshot(
@@ -110,7 +110,7 @@ class Percy extends Module
                 $this->environmentProvider->getEnvironmentInfo(),
                 array_merge($this->configManagement->getSnapshotConfig(), $snapshotConfig)
             );
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $this->onError($exception);
         }
     }
@@ -120,7 +120,7 @@ class Percy extends Module
      *
      * Iterate all payloads and send
      *
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function _afterSuite(): void
     {
@@ -134,7 +134,7 @@ class Percy extends Module
             }
 
             $this->snapshotManagement->sendInstance();
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $this->onError($exception);
         }
     }
@@ -144,9 +144,9 @@ class Percy extends Module
      *
      * Clear payload cache on failure
      *
-     * @throws \Exception
-     * @param \Codeception\TestInterface $test
+     * @throws \Throwable
      * @param \Exception                 $fail
+     * @param \Codeception\TestInterface $test
      */
     public function _failed(TestInterface $test, $fail): void
     {
@@ -154,7 +154,7 @@ class Percy extends Module
             $this->validateEnvironment->execute();
 
             $this->snapshotManagement->resetInstance();
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $this->onError($exception);
         }
     }
@@ -162,20 +162,20 @@ class Percy extends Module
     /**
      * On error
      *
-     * @throws \Exception
+     * @throws \Throwable
      */
-    private function onError(Exception $exception): void
+    private function onError(Throwable $exception): void
     {
-        // Always error silently if it's an environment exception
-        if ($exception instanceof EnvironmentException) {
-            $this->output->debug($exception->getMessage());
+        // Always error silently if it's a "Percy disabled" exception
+        if ($exception instanceof PercyDisabledException) {
+            $this->output->debug($exception);
 
             return;
         }
 
         try {
             $this->processManagement->stopPercySnapshotServer();
-        } catch (RuntimeException $exception) {
+        } catch (RuntimeException $runtimeException) {
             // Fail silently if the process is not running
         }
 

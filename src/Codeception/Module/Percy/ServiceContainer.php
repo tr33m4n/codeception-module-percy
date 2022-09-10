@@ -260,7 +260,6 @@ final class ServiceContainer
             SnapshotManagement::class,
             [
                 $this->getConfigManagement(),
-                $this->getUriManagement(),
                 $this->getSnapshotRepository(),
                 $this->getProcessManagement(),
                 $this->getClient(),
