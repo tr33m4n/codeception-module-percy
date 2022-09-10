@@ -28,6 +28,8 @@ jobs:
                 uses: actions/setup-node@v2
                 with:
                     node-version: 14
+            -   name: Init composer dependencies
+                run: composer update
             -   name: Install dependencies (Codeception v4)
                 run: composer update codeception/codeception:^4.0 codeception/module-webdriver codeception/module-phpbrowser -W
             -   name: Run test suite (Codeception v4)
