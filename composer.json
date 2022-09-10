@@ -50,6 +50,7 @@
         "test:static": "vendor/bin/phpstan analyse --no-interaction --no-progress && vendor/bin/phpcs --standard=PSR12 ./src",
         "test:unit": "php vendor/bin/codecept run unit",
         "test:start-server": "./tests/server/start.sh",
+        "test:stop-server": "./tests/server/stop.sh",
         "test:start-browser": "./tests/geckodriver/start.sh",
         "test:acceptance": "php vendor/bin/codecept run acceptance -vvv",
         "test": [

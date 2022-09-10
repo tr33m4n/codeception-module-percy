@@ -7,8 +7,6 @@ LOGFILE="$DIR_BASE/geckodriver.log"
 rm -f $LOGFILE
 touch $LOGFILE
 
-$DIR_BASE/stop.sh
-
 if [[ "$OSTYPE" == "darwin"* ]]; then
     printf "\033[92mLaunching geckodriver OSX\n\033[0m";
     $DIR_BASE/osx/geckodriver --version;
