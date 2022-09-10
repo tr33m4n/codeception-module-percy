@@ -9,4 +9,3 @@ fi
 printf "\n";
 
 set +e
-exit 0;
