@@ -29,13 +29,13 @@ jobs:
                 with:
                     node-version: 14
             -   name: Install dependencies (Codeception v4)
-                run: composer update
+                run: composer update codeception/codeception:^4.0 codeception/module-webdriver codeception/module-phpbrowser -W
             -   name: Run test suite (Codeception v4)
                 env:
                     PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
                 run: composer run test
             -   name: Install dependencies (Codeception v5)
-                run: composer update
+                run: composer update codeception/codeception:^5.0 codeception/module-webdriver codeception/module-phpbrowser -W
                 if: matrix.php == '8.0' || matrix.php == '8.1'
             -   name: Run test suite (Codeception v5)
                 env:
