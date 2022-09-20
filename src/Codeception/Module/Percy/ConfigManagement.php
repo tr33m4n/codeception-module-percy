@@ -10,7 +10,7 @@ class ConfigManagement
 {
     public const PERCY_NODE_PATH = 'PERCY_NODE_PATH';
 
-    public const PERCY_ENABLED = 'PERCY_ENABLED';
+    public const PERCY_ENABLE = 'PERCY_ENABLE';
 
     public const PERCY_TOKEN = 'PERCY_TOKEN';
 
@@ -58,7 +58,7 @@ class ConfigManagement
      */
     public function isEnabled(): bool
     {
-        $percyEnabled = getenv(self::PERCY_ENABLED);
+        $percyEnabled = getenv(self::PERCY_ENABLE);
 
         // `getenv` will return `false` if the env var is not set, string "1" or "0" otherwise
         return !is_string($percyEnabled) || filter_var($percyEnabled, FILTER_VALIDATE_BOOLEAN);
