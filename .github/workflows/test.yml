@@ -32,10 +32,11 @@ jobs:
                 run: composer update
             -   name: Install dependencies (Codeception v4)
                 run: composer update codeception/codeception:^4.0 codeception/module-webdriver codeception/module-phpbrowser -W
+            -   name: Setup Firefox
+                uses: browser-actions/setup-firefox@latest
             -   name: Run test suite (Codeception v4)
                 env:
                     PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-                uses: browser-actions/setup-firefox@latest
                 run: composer run test
             -   name: Install dependencies (Codeception v5)
                 run: composer update codeception/codeception:^5.0 codeception/module-webdriver codeception/module-phpbrowser -W
