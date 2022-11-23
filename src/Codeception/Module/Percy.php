@@ -95,13 +95,13 @@ class Percy extends Module
             // Add Percy CLI JS to page
             $this->webDriver->executeJS($this->configManagement->getPercyCliBrowserJs());
 
-            /** @var string $domString */
+            /** @var string|array{html?: string} $domString */
             $domString = $this->webDriver->executeJS(
                 sprintf('return PercyDOM.serialize(%s)', $this->configManagement->getSerializeConfig())
             );
 
             $this->snapshotManagement->createSnapshot(
-                $domString,
+                is_array($domString) ? $domString['html'] ?? '' : $domString,
                 $name,
                 $this->webDriver->webDriver->getCurrentURL(),
                 $this->environmentProvider->getClientInfo(),
