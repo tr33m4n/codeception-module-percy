@@ -104,6 +104,8 @@ class SnapshotManagement
             $this->client->sendSnapshot($snapshot);
         }
 
+        $this->processManagement->checkForErrorOutput();
+
         $this->processManagement->stopPercySnapshotServer();
         $this->output->debug('All snapshots sent!');
     }

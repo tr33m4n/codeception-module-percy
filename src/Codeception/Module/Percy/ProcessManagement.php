@@ -9,6 +9,8 @@ use Symfony\Component\Process\Process;
 
 class ProcessManagement
 {
+    private const NOT_RUNNING_MESSAGE = 'Percy snapshot server is not running';
+
     private ConfigManagement $configManagement;
 
     private Output $output;
@@ -83,10 +85,29 @@ class ProcessManagement
         if (!$running) {
             $this->output->debug($this->process->getErrorOutput());
 
-            throw new RuntimeException('Percy snapshot server is not running');
+            throw new RuntimeException(self::NOT_RUNNING_MESSAGE);
         }
 
         $this->output->debug('Snapshot server ready...');
+    }
+
+    /**
+     * Check for error output and throw
+     *
+     * @throws \Symfony\Component\Process\Exception\RuntimeException
+     */
+    public function checkForErrorOutput(): void
+    {
+        if (!$this->process instanceof Process || !$this->process->isRunning()) {
+            throw new RuntimeException(self::NOT_RUNNING_MESSAGE);
+        }
+
+        $errorOutput = $this->process->getErrorOutput();
+        if (!empty($errorOutput)) {
+            $this->output->debug($errorOutput);
+
+            throw new RuntimeException('Percy snapshot server has errored');
+        }
     }
 
     /**
@@ -97,7 +118,7 @@ class ProcessManagement
     public function stopPercySnapshotServer(): void
     {
         if (!$this->process instanceof Process || !$this->process->isRunning()) {
-            throw new RuntimeException('Percy snapshot server is not running');
+            throw new RuntimeException(self::NOT_RUNNING_MESSAGE);
         }
 
         $this->process->stop();
