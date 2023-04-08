@@ -15,6 +15,7 @@ use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Module\Percy\SnapshotManagement;
 use Codeception\Module\Percy\ValidateEnvironment;
 use Codeception\TestInterface;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Throwable;
 use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProviderInterface;
@@ -85,7 +86,7 @@ class Percy extends Module
         array $snapshotConfig = []
     ): void {
         // If the remote web driver doesn't exist, return
-        if (null === $this->webDriver->webDriver) {
+        if (!$this->webDriver->webDriver instanceof RemoteWebDriver) {
             return;
         }
 
