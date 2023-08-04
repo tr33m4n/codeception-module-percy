@@ -46,8 +46,8 @@ class Percy extends Module
     /**
      * Percy constructor.
      *
-     * @throws \Codeception\Exception\ModuleException
      * @param array<string, mixed>|null $config
+     * @throws \Codeception\Exception\ModuleException
      */
     public function __construct(
         ModuleContainer $moduleContainer,
@@ -78,8 +78,8 @@ class Percy extends Module
     /**
      * Take snapshot of DOM and send to https://percy.io
      *
-     * @throws \Throwable
      * @param array<string, mixed> $snapshotConfig
+     * @throws \Throwable
      */
     public function takeAPercySnapshot(
         string $name,
@@ -143,9 +143,8 @@ class Percy extends Module
      *
      * Clear payload cache on failure
      *
+     * @param \Exception $fail
      * @throws \Throwable
-     * @param \Exception                 $fail
-     * @param \Codeception\TestInterface $test
      */
     public function _failed(TestInterface $test, $fail): void
     {
