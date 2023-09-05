@@ -13,8 +13,5 @@
     },
     "dependencies": {
         "@percy/cli": "^1.15.0"
-    },
-    "overrides": {
-        "cosmiconfig": "8.2.0"
     }
 }
