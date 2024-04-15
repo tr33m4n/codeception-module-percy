@@ -1,3 +1,5 @@
+[![Test](https://github.com/tr33m4n/codeception-module-percy/actions/workflows/test.yml/badge.svg)](https://github.com/tr33m4n/codeception-module-percy/actions/workflows/test.yml)
+
 # codeception-module-percy
 Percy https://percy.io module for Codeception
 
