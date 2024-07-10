@@ -30,7 +30,7 @@
     },
     "require-dev": {
         "adamwojs/php-cs-fixer-phpdoc-force-fqcn": "^2.0",
-        "codeception/module-asserts": "^2.0",
+        "codeception/module-asserts": "^3.0",
         "codeception/module-phpbrowser": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.59",
         "phpstan/phpstan": "^1.11",
