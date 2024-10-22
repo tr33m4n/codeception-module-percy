@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Codeception\Module\Percy;
 
+use Codeception\Module\Percy\Exception\PercyQuotaExceededException;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
 
@@ -31,6 +32,7 @@ class ProcessManagement
      *
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      * @throws \Codeception\Module\Percy\Exception\ConfigException
+     * @throws \Codeception\Module\Percy\Exception\PercyQuotaExceededException
      */
     public function startPercySnapshotServer(): void
     {
@@ -81,9 +83,7 @@ class ProcessManagement
         );
 
         if (!$running) {
-            $this->output->debug($this->process->getErrorOutput());
-
-            throw new RuntimeException('Percy snapshot server is not running');
+            $this->handleRuntimeError();
         }
 
         $this->output->debug('Snapshot server ready...');
@@ -109,5 +109,27 @@ class ProcessManagement
     private function hasServerStarted(string $cliOutput): bool
     {
         return strpos($cliOutput, 'Percy has started!') !== false;
+    }
+
+    /**
+     * Handle runtime error
+     *
+     * @throws \Codeception\Module\Percy\Exception\PercyQuotaExceededException
+     * @throws \Symfony\Component\Process\Exception\RuntimeException
+     */
+    private function handleRuntimeError(): void
+    {
+        if (!$this->process instanceof Process) {
+            throw new RuntimeException('Percy snapshot server is not running');
+        }
+
+        $errorOutput = $this->process->getErrorOutput();
+        if (strpos($errorOutput, 'This organization has exceeded the limits') !== false) {
+            throw new PercyQuotaExceededException($errorOutput);
+        }
+
+        $this->output->debug($this->process->getErrorOutput());
+
+        throw new RuntimeException('Percy snapshot server is not running');
     }
 }
