@@ -69,6 +69,7 @@ class SnapshotManagement
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
+     * @throws \Codeception\Module\Percy\Exception\PercyQuotaExceededException
      */
     public function sendAll(): void
     {
@@ -82,6 +83,7 @@ class SnapshotManagement
      * @throws \Codeception\Module\Percy\Exception\StorageException
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
+     * @throws \Codeception\Module\Percy\Exception\PercyQuotaExceededException
      */
     public function sendInstance(string $instanceId = null): void
     {
