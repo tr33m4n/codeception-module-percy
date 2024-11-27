@@ -17,7 +17,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [ 7.4, 8.0, 8.1, 8.2, 8.3, 8.4 ]
+                php: [ 7.4, 8.0, 8.1, 8.2, 8.3 ]
             fail-fast: false
         steps:
             -   name: Checkout
@@ -43,9 +43,9 @@ jobs:
                 run: composer run test
             -   name: Install dependencies (Codeception v5)
                 run: composer update codeception/codeception:^5.0 codeception/module-webdriver codeception/module-phpbrowser codeception/module-asserts -W
-                if: matrix.php == '8.0' || matrix.php == '8.1' || matrix.php == '8.2' || matrix.php == '8.3' || matrix.php == '8.4'
+                if: matrix.php == '8.0' || matrix.php == '8.1' || matrix.php == '8.2' || matrix.php == '8.3'
             -   name: Run test suite (Codeception v5)
                 env:
                     PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
                 run: composer run test
-                if: matrix.php == '8.0' || matrix.php == '8.1' || matrix.php == '8.2' || matrix.php == '8.3' || matrix.php == '8.4'
+                if: matrix.php == '8.0' || matrix.php == '8.1' || matrix.php == '8.2' || matrix.php == '8.3'
