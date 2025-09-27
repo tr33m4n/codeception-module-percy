@@ -89,7 +89,6 @@ class SnapshotRepository
     /**
      * Get snapshot file paths
      *
-     * @param string|null $instanceId
      * @return string[]
      */
     private function getSnapshotFilePaths(?string $instanceId = null, ?string $snapshotFolder = null): array
