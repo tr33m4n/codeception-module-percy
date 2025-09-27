@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+printf "Configuring auth...\n"
+if [[ -f ~/.composer/auth.json ]]; then
+    cp ~/.composer/auth.json $DDEV_APPROOT/auth.json
+fi
+
+printf "Building project...\n"
+ddev composer install
