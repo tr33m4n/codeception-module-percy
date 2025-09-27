@@ -52,7 +52,7 @@ class Percy extends Module
      */
     public function __construct(
         ModuleContainer $moduleContainer,
-        array $config = null
+        ?array $config = null
     ) {
         // Set within the constructor, so we can support Codeception 4 and 5 typed properties
         $this->config = Definitions::DEFAULT_CONFIG;

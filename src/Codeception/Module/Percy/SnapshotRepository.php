@@ -68,7 +68,7 @@ class SnapshotRepository
      * @throws \JsonException
      * @return \Codeception\Module\Percy\Snapshot[]
      */
-    public function loadAll(string $instanceId = null, string $snapshotFolder = null): array
+    public function loadAll(?string $instanceId = null, ?string $snapshotFolder = null): array
     {
         return array_map(
             fn (string $snapshotFile): Snapshot => $this->load($snapshotFile),
@@ -79,7 +79,7 @@ class SnapshotRepository
     /**
      * Delete all snapshots
      */
-    public function deleteAll(string $instanceId = null, string $snapshotFolder = null): void
+    public function deleteAll(?string $instanceId = null, ?string $snapshotFolder = null): void
     {
         foreach ($this->getSnapshotFilePaths($instanceId, $snapshotFolder) as $snapshotFile) {
             unlink($snapshotFile);
@@ -92,7 +92,7 @@ class SnapshotRepository
      * @param string|null $instanceId
      * @return string[]
      */
-    private function getSnapshotFilePaths(string $instanceId = null, ?string $snapshotFolder = null): array
+    private function getSnapshotFilePaths(?string $instanceId = null, ?string $snapshotFolder = null): array
     {
         return glob($this->buildFilePath($instanceId, '*', $snapshotFolder)) ?: [];
     }

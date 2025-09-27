@@ -28,7 +28,7 @@ class ConfigManagement
     /**
      * Get config
      */
-    public function get(string $key = null): mixed
+    public function get(?string $key = null): mixed
     {
         if (!$key) {
             return $this->config;
