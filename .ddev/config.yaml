@@ -1,0 +1,14 @@
+name: tr33m4n-codeception-module-percy
+type: php
+docroot: ""
+php_version: "8.1"
+webserver_type: generic
+xdebug_enabled: true
+additional_hostnames: []
+additional_fqdns: []
+omit_containers: [db]
+use_dns_when_possible: true
+composer_version: "2"
+web_environment: []
+corepack_enable: false
+disable_upload_dirs_warning: true

@@ -9,15 +9,12 @@ use Codeception\Module\Percy\Exception\PercyDisabledException;
 
 class ValidateEnvironment
 {
-    private ConfigManagement $configManagement;
-
     /**
      * ValidateEnvironment constructor.
      */
     public function __construct(
-        ConfigManagement $configManagement
+        private readonly ConfigManagement $configManagement
     ) {
-        $this->configManagement = $configManagement;
     }
 
     /**

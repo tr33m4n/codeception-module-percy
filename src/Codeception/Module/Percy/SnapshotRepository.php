@@ -11,18 +11,15 @@ class SnapshotRepository
 {
     public const FILE_TEMPLATE = '%s_%s.json';
 
-    private Serializer $serializer;
-
-    private string $instanceId;
+    private readonly string $instanceId;
 
     /**
      * SnapshotRepository constructor.
      */
     public function __construct(
-        Serializer $serializer,
+        private readonly Serializer $serializer,
         ?string $instanceId = null
     ) {
-        $this->serializer = $serializer;
         // Ensure we're only managing snapshots created by this test run by prepending with an "instance ID"
         $this->instanceId = $instanceId ?? (string) Uuid::uuid4();
     }
@@ -71,7 +68,7 @@ class SnapshotRepository
      * @throws \JsonException
      * @return \Codeception\Module\Percy\Snapshot[]
      */
-    public function loadAll(string $instanceId = null, string $snapshotFolder = null): array
+    public function loadAll(?string $instanceId = null, ?string $snapshotFolder = null): array
     {
         return array_map(
             fn (string $snapshotFile): Snapshot => $this->load($snapshotFile),
@@ -82,7 +79,7 @@ class SnapshotRepository
     /**
      * Delete all snapshots
      */
-    public function deleteAll(string $instanceId = null, string $snapshotFolder = null): void
+    public function deleteAll(?string $instanceId = null, ?string $snapshotFolder = null): void
     {
         foreach ($this->getSnapshotFilePaths($instanceId, $snapshotFolder) as $snapshotFile) {
             unlink($snapshotFile);
@@ -92,10 +89,9 @@ class SnapshotRepository
     /**
      * Get snapshot file paths
      *
-     * @param string|null $instanceId
      * @return string[]
      */
-    private function getSnapshotFilePaths(string $instanceId = null, ?string $snapshotFolder = null): array
+    private function getSnapshotFilePaths(?string $instanceId = null, ?string $snapshotFolder = null): array
     {
         return glob($this->buildFilePath($instanceId, '*', $snapshotFolder)) ?: [];
     }

@@ -10,21 +10,15 @@ use Symfony\Component\Process\Process;
 
 class ProcessManagement
 {
-    private ConfigManagement $configManagement;
-
-    private Output $output;
-
     private ?Process $process = null;
 
     /**
      * ProcessManagement constructor.
      */
     public function __construct(
-        ConfigManagement $configManagement,
-        Output $output
+        private readonly ConfigManagement $configManagement,
+        private readonly Output $output
     ) {
-        $this->configManagement = $configManagement;
-        $this->output = $output;
     }
 
     /**
@@ -108,7 +102,7 @@ class ProcessManagement
      */
     private function hasServerStarted(string $cliOutput): bool
     {
-        return strpos($cliOutput, 'Percy has started!') !== false;
+        return str_contains($cliOutput, 'Percy has started!');
     }
 
     /**
@@ -124,7 +118,7 @@ class ProcessManagement
         }
 
         $errorOutput = $this->process->getErrorOutput();
-        if (strpos($errorOutput, 'This organization has exceeded the limits') !== false) {
+        if (str_contains($errorOutput, 'This organization has exceeded the limits')) {
             throw new PercyQuotaExceededException($errorOutput);
         }
 

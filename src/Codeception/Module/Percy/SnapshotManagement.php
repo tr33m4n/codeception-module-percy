@@ -8,31 +8,16 @@ use Codeception\Module\Percy\Exchange\ClientInterface;
 
 class SnapshotManagement
 {
-    private ConfigManagement $configManagement;
-
-    private SnapshotRepository $snapshotRepository;
-
-    private ProcessManagement $processManagement;
-
-    private ClientInterface $client;
-
-    private Output $output;
-
     /**
      * SnapshotManagement constructor.
      */
     public function __construct(
-        ConfigManagement $configManagement,
-        SnapshotRepository $snapshotRepository,
-        ProcessManagement $processManagement,
-        ClientInterface $client,
-        Output $output
+        private readonly ConfigManagement $configManagement,
+        private readonly SnapshotRepository $snapshotRepository,
+        private readonly ProcessManagement $processManagement,
+        private readonly ClientInterface $client,
+        private readonly Output $output
     ) {
-        $this->configManagement = $configManagement;
-        $this->snapshotRepository = $snapshotRepository;
-        $this->processManagement = $processManagement;
-        $this->client = $client;
-        $this->output = $output;
     }
 
     /**
@@ -85,7 +70,7 @@ class SnapshotManagement
      * @throws \JsonException
      * @throws \Codeception\Module\Percy\Exception\PercyQuotaExceededException
      */
-    public function sendInstance(string $instanceId = null): void
+    public function sendInstance(?string $instanceId = null): void
     {
         // Passing `*` will load all snapshots from all runs, not just the current one
         $snapshots = $this->snapshotRepository->loadAll($instanceId, $this->configManagement->getSnapshotFolder());
@@ -120,10 +105,8 @@ class SnapshotManagement
 
     /**
      * Reset instance
-     *
-     * @param string|null $instanceId
      */
-    public function resetInstance(string $instanceId = null): void
+    public function resetInstance(?string $instanceId = null): void
     {
         $this->snapshotRepository->deleteAll($instanceId, $this->configManagement->getSnapshotFolder());
     }

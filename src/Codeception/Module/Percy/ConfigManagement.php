@@ -14,33 +14,21 @@ class ConfigManagement
 
     public const PERCY_TOKEN = 'PERCY_TOKEN';
 
-    private Serializer $serializer;
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $config;
-
     /**
      * ConfigManagement constructor.
      *
      * @param array<string, mixed> $config
      */
     public function __construct(
-        Serializer $serializer,
-        array $config = []
+        private readonly Serializer $serializer,
+        private readonly array $config = []
     ) {
-        $this->serializer = $serializer;
-        $this->config = $config;
     }
 
     /**
      * Get config
-     *
-     * @param string|null $key
-     * @return mixed|null
      */
-    public function get(string $key = null)
+    public function get(?string $key = null): mixed
     {
         if (!$key) {
             return $this->config;

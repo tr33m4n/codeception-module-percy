@@ -129,10 +129,8 @@ class Snapshot implements JsonSerializable
 
     /**
      * With value
-     *
-     * @param mixed  $value
      */
-    public function withConfigValue(string $key, $value): Snapshot
+    public function withConfigValue(string $key, mixed $value): Snapshot
     {
         $snapshot = clone $this;
         $snapshot->config[$key] = $value;

@@ -10,19 +10,13 @@ use GuzzleHttp\RequestOptions;
 
 class Client implements ClientInterface
 {
-    private GuzzleClient $guzzleClient;
-
-    private UriFactory $uriFactory;
-
     /**
      * Client constructor.
      */
     public function __construct(
-        GuzzleClient $guzzleClient,
-        UriFactory $uriFactory
+        private readonly GuzzleClient $guzzleClient,
+        private readonly UriFactory $uriFactory
     ) {
-        $this->guzzleClient = $guzzleClient;
-        $this->uriFactory = $uriFactory;
     }
 
     /**

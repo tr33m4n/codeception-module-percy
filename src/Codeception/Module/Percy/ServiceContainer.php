@@ -7,11 +7,11 @@ namespace Codeception\Module\Percy;
 use Codeception\Module\Percy\Exception\ContainerException;
 use Codeception\Module\Percy\Exchange\Client;
 use Codeception\Module\Percy\Exchange\ClientInterface;
+use Codeception\Module\Percy\Exchange\UriFactory;
 use Codeception\Module\WebDriver;
 use CzProject\GitPhp\Git;
 use GuzzleHttp\Client as GuzzleClient;
 use OndraM\CiDetector\Env as EnvHelper;
-use Codeception\Module\Percy\Exchange\UriFactory;
 use tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment;
 use tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment\CiType;
 use tr33m4n\CodeceptionModulePercyEnvironment\CiEnvironment\CiType\GitHub\EventDataProvider;
@@ -24,14 +24,7 @@ use tr33m4n\CodeceptionModulePercyEnvironment\PercyEnvironment;
 
 final class ServiceContainer
 {
-    private ServiceFactory $serviceFactory;
-
-    private ?WebDriver $webDriver;
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $moduleConfig;
+    private readonly ServiceFactory $serviceFactory;
 
     /**
      * @var array<string, mixed>
@@ -44,12 +37,10 @@ final class ServiceContainer
      * @param array<string, mixed> $moduleConfig
      */
     public function __construct(
-        ?WebDriver $webDriver,
-        array $moduleConfig = []
+        private readonly ?WebDriver $webDriver,
+        private readonly array $moduleConfig = []
     ) {
         $this->serviceFactory = new ServiceFactory();
-        $this->webDriver = $webDriver;
-        $this->moduleConfig = $moduleConfig;
     }
 
     /**
@@ -272,10 +263,9 @@ final class ServiceContainer
      * Resolve service
      *
      * @param class-string $className
-     * @param mixed[]      $parameters
-     * @return mixed
+     * @param array<int, mixed> $parameters
      */
-    private function resolveService(string $className, array $parameters = [])
+    private function resolveService(string $className, array $parameters = []): mixed
     {
         if (array_key_exists($className, $this->services)) {
             return $this->services[$className];

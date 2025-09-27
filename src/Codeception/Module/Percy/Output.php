@@ -11,11 +11,13 @@ class Output
     /**
      * Output debug to CLI
      *
-     * @param string|\Codeception\Module\Percy\Exception\AbstractException $message
-     * @param array<string, string>                                        $context
+     * @param array<string, string> $context
      */
-    public function debug($message, array $context = [], ?string $namespace = Definitions::NAMESPACE): void
-    {
+    public function debug(
+        AbstractException | string $message,
+        array $context = [],
+        ?string $namespace = Definitions::NAMESPACE
+    ): void {
         if ($message instanceof AbstractException) {
             $message = str_replace(sprintf('%s: ', Definitions::NAMESPACE), '', $message->getMessage());
         }

@@ -86,3 +86,11 @@ $I->takeAPercySnapshot('My snapshot name', [
     Snapshot::ENABLE_JAVASCRIPT => true // Enable/disable JavaScript
 ]);
 ```
+
+### Development
+This module comes with `ddev` configuration to aid with local development. To setup the project do:
+1. Install `ddev` https://docs.ddev.com/en/stable/users/install/ddev-installation/
+2. Run `ddev build`
+3. Optionally run `ddev test` to run static analysis and Codeception test suites. Note, you'll need a Percy token set for the Codeception test suites to complete
+
+This will composer install deps into a `ddev` environment. For more information about developing with `ddev`, see their official documentation
