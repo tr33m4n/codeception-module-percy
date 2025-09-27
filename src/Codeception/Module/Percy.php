@@ -9,6 +9,7 @@ use Codeception\Module;
 use Codeception\Module\Percy\ConfigManagement;
 use Codeception\Module\Percy\Definitions;
 use Codeception\Module\Percy\Exception\PercyDisabledException;
+use Codeception\Module\Percy\Exception\PercyQuotaExceededException;
 use Codeception\Module\Percy\Output;
 use Codeception\Module\Percy\ProcessManagement;
 use Codeception\Module\Percy\ServiceContainer;
@@ -164,8 +165,8 @@ class Percy extends Module
      */
     private function onError(Throwable $exception): void
     {
-        // Always error silently if it's a "Percy disabled" exception
-        if ($exception instanceof PercyDisabledException) {
+        // Always error silently if it's a "Percy disabled" exception or "quota exceeded" exception
+        if ($exception instanceof PercyDisabledException || $exception instanceof PercyQuotaExceededException) {
             $this->output->debug($exception);
 
             return;

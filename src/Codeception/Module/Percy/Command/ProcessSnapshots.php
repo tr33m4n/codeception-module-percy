@@ -10,6 +10,7 @@ use Codeception\Lib\Console\Output;
 use Codeception\Module\Percy\ConfigManagement;
 use Codeception\Module\Percy\Definitions;
 use Codeception\Module\Percy\Exception\PercyDisabledException;
+use Codeception\Module\Percy\Exception\PercyQuotaExceededException;
 use Codeception\Module\Percy\Output as PercyOutput;
 use Codeception\Module\Percy\ServiceContainer;
 use Codeception\Util\Debug;
@@ -108,8 +109,8 @@ class ProcessSnapshots extends Command implements CustomCommandInterface
         PercyOutput $outputService,
         ConfigManagement $configManagement
     ): int {
-        // Always error silently if it's a "Percy disabled" exception
-        if ($exception instanceof PercyDisabledException) {
+        // Always error silently if it's a "Percy disabled" exception or "quota exceeded" exception
+        if ($exception instanceof PercyDisabledException  || $exception instanceof PercyQuotaExceededException) {
             $outputService->debug($exception);
 
             return self::SUCCESS;

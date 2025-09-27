@@ -25,6 +25,9 @@ class Serializer
      */
     public function unserialize(string $data): array
     {
-        return (array) json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+        /** @var array<string, mixed> $result */
+        $result = (array) json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+
+        return $result;
     }
 }
