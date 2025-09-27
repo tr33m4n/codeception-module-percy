@@ -5,7 +5,7 @@ Percy https://percy.io module for Codeception
 
 ## Requirements
 - Node.js `>=14.0.0`
-- PHP `>= 7.4`
+- PHP `>= 8.1`
 - Composer `v2`
 
 ## Installation
