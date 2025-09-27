@@ -9,8 +9,8 @@ final class ServiceFactory
     /**
      * Create instance of a class
      *
-     * @param class-string         $className
-     * @param array<string, mixed> $parameters
+     * @param class-string $className
+     * @param array<int, mixed> $parameters
      */
     public function create(string $className, array $parameters = []): object
     {

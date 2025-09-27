@@ -30,19 +30,19 @@ use tr33m4n\CodeceptionModulePercyEnvironment\EnvironmentProviderInterface;
  */
 class Percy extends Module
 {
-    private ConfigManagement $configManagement;
+    private readonly ConfigManagement $configManagement;
 
-    private ProcessManagement $processManagement;
+    private readonly ProcessManagement $processManagement;
 
-    private SnapshotManagement $snapshotManagement;
+    private readonly SnapshotManagement $snapshotManagement;
 
-    private EnvironmentProviderInterface $environmentProvider;
+    private readonly EnvironmentProviderInterface $environmentProvider;
 
-    private ValidateEnvironment $validateEnvironment;
+    private readonly ValidateEnvironment $validateEnvironment;
 
-    private Output $output;
+    private readonly Output $output;
 
-    private WebDriver $webDriver;
+    private readonly WebDriver $webDriver;
 
     /**
      * Percy constructor.
@@ -174,7 +174,7 @@ class Percy extends Module
 
         try {
             $this->processManagement->stopPercySnapshotServer();
-        } catch (RuntimeException $runtimeException) {
+        } catch (RuntimeException) {
             // Fail silently if the process is not running
         }
 

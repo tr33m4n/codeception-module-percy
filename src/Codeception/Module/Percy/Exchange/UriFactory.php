@@ -10,15 +10,12 @@ use Psr\Http\Message\UriInterface;
 
 class UriFactory
 {
-    private ConfigManagement $configManagement;
-
     /**
      * UriFactory constructor.
      */
     public function __construct(
-        ConfigManagement $configManagement
+        private readonly ConfigManagement $configManagement
     ) {
-        $this->configManagement = $configManagement;
     }
 
     /**

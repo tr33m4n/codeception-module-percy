@@ -8,31 +8,16 @@ use Codeception\Module\Percy\Exchange\ClientInterface;
 
 class SnapshotManagement
 {
-    private ConfigManagement $configManagement;
-
-    private SnapshotRepository $snapshotRepository;
-
-    private ProcessManagement $processManagement;
-
-    private ClientInterface $client;
-
-    private Output $output;
-
     /**
      * SnapshotManagement constructor.
      */
     public function __construct(
-        ConfigManagement $configManagement,
-        SnapshotRepository $snapshotRepository,
-        ProcessManagement $processManagement,
-        ClientInterface $client,
-        Output $output
+        private readonly ConfigManagement $configManagement,
+        private readonly SnapshotRepository $snapshotRepository,
+        private readonly ProcessManagement $processManagement,
+        private readonly ClientInterface $client,
+        private readonly Output $output
     ) {
-        $this->configManagement = $configManagement;
-        $this->snapshotRepository = $snapshotRepository;
-        $this->processManagement = $processManagement;
-        $this->client = $client;
-        $this->output = $output;
     }
 
     /**

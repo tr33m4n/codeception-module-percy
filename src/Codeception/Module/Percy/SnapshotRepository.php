@@ -11,18 +11,15 @@ class SnapshotRepository
 {
     public const FILE_TEMPLATE = '%s_%s.json';
 
-    private Serializer $serializer;
-
-    private string $instanceId;
+    private readonly string $instanceId;
 
     /**
      * SnapshotRepository constructor.
      */
     public function __construct(
-        Serializer $serializer,
+        private readonly Serializer $serializer,
         ?string $instanceId = null
     ) {
-        $this->serializer = $serializer;
         // Ensure we're only managing snapshots created by this test run by prepending with an "instance ID"
         $this->instanceId = $instanceId ?? (string) Uuid::uuid4();
     }
