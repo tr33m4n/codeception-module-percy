@@ -129,13 +129,17 @@ class ConfigManagement
      */
     public function getSnapshotServerPort(): int
     {
-        /** @var int $snapshotServerPort */
         $snapshotServerPort = $this->get('snapshotServerPort');
-        if (!is_int($snapshotServerPort)) {
-            throw new ConfigException(sprintf('"%s" is an invalid port number', $snapshotServerPort));
+        if (!is_numeric($snapshotServerPort)) {
+            throw new ConfigException(
+                sprintf(
+                    '"%s" is an invalid port number',
+                    is_scalar($snapshotServerPort) ? (string) $snapshotServerPort : ''
+                )
+            );
         }
 
-        return $snapshotServerPort;
+        return (int) $snapshotServerPort;
     }
 
     /**
@@ -150,6 +154,7 @@ class ConfigManagement
             return [];
         }
 
+        /** @var array<string, mixed> $snapshotConfig */
         return $snapshotConfig;
     }
 
@@ -186,7 +191,6 @@ class ConfigManagement
      */
     public function getSerializeConfig(): string
     {
-        /** @var array<string, mixed> $serializedConfig */
         $serializedConfig = $this->get('serializeConfig');
         if (!is_array($serializedConfig)) {
             return '';

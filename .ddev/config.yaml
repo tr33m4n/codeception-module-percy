@@ -1,7 +1,7 @@
 name: tr33m4n-codeception-module-percy
 type: php
 docroot: ""
-php_version: "8.1"
+php_version: "8.2"
 webserver_type: generic
 xdebug_enabled: true
 additional_hostnames: []

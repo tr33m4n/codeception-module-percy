@@ -9,7 +9,7 @@ class Serializer
     /**
      * Serialize data
      *
-     * @param \Codeception\Module\Percy\Snapshot|array<string, mixed> $data
+     * @param \Codeception\Module\Percy\Snapshot|array<mixed, mixed> $data
      * @throws \JsonException
      */
     public function serialize(array | Snapshot $data): string

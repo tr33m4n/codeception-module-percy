@@ -34,7 +34,7 @@ final class ServiceContainer
     /**
      * ServiceContainer constructor.
      *
-     * @param array<string, mixed> $moduleConfig
+     * @param array<string|int, mixed> $moduleConfig
      */
     public function __construct(
         private readonly ?WebDriver $webDriver,
@@ -83,23 +83,23 @@ final class ServiceContainer
     public function getCiTypes(): array
     {
         $ciTypes = [
-            (string) CiType::APPVEYOR() => CiType\AppVeyor::class,
-            (string) CiType::AWS_CODEBUILD() => CiType\AwsCodeBuild::class,
-            (string) CiType::AZURE_PIPELINES() => CiType\AzurePipelines::class,
-            (string) CiType::BAMBOO() => CiType\Bamboo::class,
-            (string) CiType::BITBUCKET_PIPELINES() => CiType\BitbucketPipelines::class,
-            (string) CiType::BUDDY() => CiType\Buddy::class,
-            (string) CiType::CIRCLE() => CiType\Circle::class,
-            (string) CiType::CODESHIP() => CiType\CodeShip::class,
-            (string) CiType::CONTINUOUSPHP() => CiType\Continuousphp::class,
-            (string) CiType::DRONE() => CiType\Drone::class,
-            (string) CiType::GITHUB_ACTIONS() => CiType\GitHubActions::class,
-            (string) CiType::GITLAB() => CiType\GitLab::class,
-            (string) CiType::JENKINS() => CiType\Jenkins::class,
-            (string) CiType::SOURCEHUT() => CiType\SourceHut::class,
-            (string) CiType::TEAMCITY() => CiType\TeamCity::class,
-            (string) CiType::TRAVIS() => CiType\Travis::class,
-            (string) CiType::WERCKER() => CiType\Wercker::class,
+            CiType::APPVEYOR->value => CiType\AppVeyor::class,
+            CiType::AWS_CODEBUILD->value => CiType\AwsCodeBuild::class,
+            CiType::AZURE_PIPELINES->value => CiType\AzurePipelines::class,
+            CiType::BAMBOO->value => CiType\Bamboo::class,
+            CiType::BITBUCKET_PIPELINES->value => CiType\BitbucketPipelines::class,
+            CiType::BUDDY->value => CiType\Buddy::class,
+            CiType::CIRCLE->value => CiType\Circle::class,
+            CiType::CODESHIP->value => CiType\CodeShip::class,
+            CiType::CONTINUOUSPHP->value => CiType\Continuousphp::class,
+            CiType::DRONE->value => CiType\Drone::class,
+            CiType::GITHUB_ACTIONS->value => CiType\GitHubActions::class,
+            CiType::GITLAB->value => CiType\GitLab::class,
+            CiType::JENKINS->value => CiType\Jenkins::class,
+            CiType::SOURCEHUT->value => CiType\SourceHut::class,
+            CiType::TEAMCITY->value => CiType\TeamCity::class,
+            CiType::TRAVIS->value => CiType\Travis::class,
+            CiType::WERCKER->value => CiType\Wercker::class,
         ];
 
         return array_map(function (string $ciTypeClass) {

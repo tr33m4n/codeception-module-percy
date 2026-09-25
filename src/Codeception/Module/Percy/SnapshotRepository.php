@@ -64,14 +64,12 @@ class SnapshotRepository
     /**
      * Load all snapshots
      *
-     * @throws \Codeception\Module\Percy\Exception\StorageException
-     * @throws \JsonException
      * @return \Codeception\Module\Percy\Snapshot[]
      */
     public function loadAll(?string $instanceId = null, ?string $snapshotFolder = null): array
     {
         return array_map(
-            fn (string $snapshotFile): Snapshot => $this->load($snapshotFile),
+            $this->load(...),
             $this->getSnapshotFilePaths($instanceId, $snapshotFolder)
         );
     }
@@ -107,6 +105,8 @@ class SnapshotRepository
         $filePath = $snapshotFolder
             ? codecept_root_dir(trim($snapshotFolder, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . self::FILE_TEMPLATE)
             : codecept_output_dir('dom_snapshots' . DIRECTORY_SEPARATOR . self::FILE_TEMPLATE);
+
+        $filePath = is_string($filePath) ? $filePath : '';
 
         return $this->verifyFilePath(
             sprintf(
