@@ -20,7 +20,7 @@
         "eloquent/composer-npm-bridge": "^5.0",
         "guzzlehttp/guzzle": ">=6.5.8",
         "ramsey/uuid": "^4.1",
-        "symfony/process": "^7.0",
+        "symfony/process": "^7.4.22",
         "tr33m4n/codeception-module-percy-environment": "^2.0"
     },
     "autoload": {
@@ -31,7 +31,7 @@
     "require-dev": {
         "adamwojs/php-cs-fixer-phpdoc-force-fqcn": "^2.0",
         "codeception/module-asserts": "^3.1",
-        "codeception/module-phpbrowser": "^3.0",
+        "codeception/module-phpbrowser": "^4.1",
         "friendsofphp/php-cs-fixer": "^3.95",
         "phpstan/phpstan": "^2.2",
         "rector/rector": "^2.6",

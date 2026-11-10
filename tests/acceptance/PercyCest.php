@@ -8,8 +8,9 @@ class PercyCest
     /**
      * Test basic Percy snapshot
      *
-     * @throws \Codeception\Module\Percy\Exception\StorageException
      * @param \AcceptanceTester $I
+     * @throws \Throwable
+     * @throws \Codeception\Module\Percy\Exception\StorageException
      */
     public function testBasicPercySnapshot(AcceptanceTester $I)
     {
