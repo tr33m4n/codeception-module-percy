@@ -20,7 +20,7 @@
         "eloquent/composer-npm-bridge": "^5.0",
         "guzzlehttp/guzzle": ">=6.5.8",
         "ramsey/uuid": "^4.1",
-        "symfony/process": "^7.4.22",
+        "symfony/process": "^8.1.10",
         "tr33m4n/codeception-module-percy-environment": "^2.0"
     },
     "autoload": {
